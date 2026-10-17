@@ -1,6 +1,6 @@
 {
   "schemaVersion": "desksom.release/v1",
-  "version": "0.2.0-rc.1",
+  "version": "0.2.0-rc.2",
   "files": [
     {
       "path": ".gitattributes",
@@ -34,8 +34,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 1734,
-      "sha256": "71f15578fb3a584eb5b46262d9e3cc45272c1910e30b60e2b55b0abe0162e3cc"
+      "bytes": 2121,
+      "sha256": "deb06b63adf808c94bf837e0d8c4ce5289e86f722556e27f27c7898f091fe092"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -64,8 +64,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 3513,
-      "sha256": "d768c2c21a55970903a7a0f5989c7e1fe497c994ffaf76301b02eb0987ab4824"
+      "bytes": 3563,
+      "sha256": "a02588ebf12906235cab8ecb85a892815a28485c2ce130cbca926ca7251dc5ff"
     },
     {
       "path": "SECURITY.md",
@@ -95,7 +95,7 @@
     {
       "path": "broker.mjs",
       "bytes": 11454,
-      "sha256": "9242e0da7575419e3794b38bb3ee92e5e6a9151dd2a89bf6324a19b8cb789d47"
+      "sha256": "2f8c92e3a21ab06bb9b2ad8dd424b331c7f127b857de10231cd16517cb2818d9"
     },
     {
       "path": "docs/DEPENDENCY_REVIEW.md",
@@ -109,8 +109,8 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 3547,
-      "sha256": "7541224087bb5a60e706381db49b6bab27bba4c86871c60f8fd85f51efc28e35"
+      "bytes": 3654,
+      "sha256": "1abe58e070d16198b1c20ee3b037885e8dea9ce8007d3a1d2f3dbdcea9d3f06a"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -145,7 +145,7 @@
     {
       "path": "modern.mjs",
       "bytes": 3504,
-      "sha256": "d2944ccfe1c8edcd405d7d5215b6ed4b6475ae94b14d3f3a73b55be8f1852505"
+      "sha256": "acde50718b02a69eb217a42438f63ec3a363cc4268701126384104aec7fe84e9"
     },
     {
       "path": "modern.test.mjs",
@@ -155,12 +155,12 @@
     {
       "path": "package-lock.json",
       "bytes": 318762,
-      "sha256": "60fd1fb6465765405fd1d4dc71e23f47f6baec64e7b9621ff0d0af81afeade6c"
+      "sha256": "37dc3b2786484812dcbf656ccacb3f7445238c8e231d46ee3196b4f65e6a449f"
     },
     {
       "path": "package.json",
       "bytes": 548,
-      "sha256": "bfed4fc7aa177e8588e377beb8111b64740a74e193b1bc6e8563d7d002554d43"
+      "sha256": "72f813722efaf18ff43f17c31868c161a79e9b4e829d93d37983107a00bae7ea"
     },
     {
       "path": "release-policy.json",
@@ -229,8 +229,8 @@
     },
     {
       "path": "scripts/lib/install-core.mjs",
-      "bytes": 32211,
-      "sha256": "9247a658890a962d4b17312a675bfd82a6ebcb3b1a3965649e638ad8ec78c9a8"
+      "bytes": 32393,
+      "sha256": "331a25cab602ed098ca09d0fe84582cf65963e379a84094507d51ccbf1489a33"
     },
     {
       "path": "scripts/lib/windows.mjs",
@@ -239,8 +239,8 @@
     },
     {
       "path": "scripts/tests/installer.test.mjs",
-      "bytes": 9795,
-      "sha256": "f6812536abcdb5bc5cd0ae613b127b0862bf8b6f076bc72c7d921699bd240600"
+      "bytes": 10118,
+      "sha256": "6bbd100ee0927bf2c3978185db408b2bd562ef2741e8f64a7e512b4c5bd8af5d"
     },
     {
       "path": "scripts/tests/windows-helper.test.ps1",

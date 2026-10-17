@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.2: owner-trial restart phase repair
+
+After an owner-tested stop and restart, the installation receipt now updates from STOPPED to LOCAL_READY (or TUNNEL_READY for a configured tunnel) only after successful service readiness. New regression checks cover the transition. The inherited dependency advisories remain disclosed without imposing an extra maintainer approval gate.
+
 ## 0.2.0-rc.1: AI-first installation candidate
 
 Human double-click setup and agent-directed JSON commands now use one installer. A read-only preflight produces a source/host/user/path-bound plan; installation requires its approved digest and acknowledgment of terminal permissions. Per-instance runtime, state, ports and task ownership support isolated evaluation alongside an existing service.

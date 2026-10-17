@@ -4,10 +4,10 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {canonical,hashObject,normalizeWin,insideWin,overlapWin,safeRelative,instanceName,DeskSomError,loadRelease,hashFile,createJson,envelope,redactedError,assertNoLinks} from '../lib/common.mjs';
-import {makePlan,checkPlanShape,taskDefinition,taskMatches,identityMatches,ensureTask,install} from '../lib/install-core.mjs';
+import {makePlan,checkPlanShape,taskDefinition,taskMatches,identityMatches,ensureTask,install,phaseAfterVerifiedStart} from '../lib/install-core.mjs';
 import {parseArgs,run} from '../cli.mjs';
 const env={platform:'win32',architecture:'x64',host:'TEST-PC',sid:'S-1-5-21-1-2-3-1001',localAppData:'C:\\Users\\Test\\AppData\\Local',windowsDir:'C:\\Windows',programFiles:'C:\\Program Files',elevated:false,node:'C:\\Node\\node.exe',pwsh:'C:\\PowerShell\\pwsh.exe',nodeMajor:22,pwshSupported:true};
-const release={fingerprint:'a'.repeat(64),manifest:{version:'0.2.0-rc.1'}};
+const release={fingerprint:'a'.repeat(64),manifest:{version:'0.2.0-rc.2'}};
 const spec={instance:'test',installRoot:'C:\\Install\\DeskSom',stateRoot:'C:\\State\\DeskSom',allowedDirectories:['C:\\Work'],port:19671};
 const source='C:\\Downloads\\DeskSom';
 const errorCode=code=>e=>e instanceof DeskSomError&&e.code===code;
@@ -106,8 +106,13 @@ test('create-only JSON output refuses to overwrite an existing file',async t=>{
 test('release digest checks reject changed source and duplicate manifest entries',async t=>{
  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'desksom-manifest-'));t.after(()=>fs.rm(dir,{recursive:true,force:true}));
  await fs.writeFile(path.join(dir,'a.txt'),'reviewed');const entry={path:'a.txt',sha256:await hashFile(path.join(dir,'a.txt')),bytes:8};
- await fs.writeFile(path.join(dir,'release-manifest.json'),JSON.stringify({schemaVersion:'desksom.release/v1',version:'0.2.0-rc.1',files:[entry]}));
+ await fs.writeFile(path.join(dir,'release-manifest.json'),JSON.stringify({schemaVersion:'desksom.release/v1',version:'0.2.0-rc.2',files:[entry]}));
  await fs.writeFile(path.join(dir,'a.txt'),'modified');await assert.rejects(loadRelease(dir),errorCode('SOURCE_DRIFT'));
  await fs.writeFile(path.join(dir,'a.txt'),'reviewed');await fs.writeFile(path.join(dir,'release-manifest.json'),JSON.stringify({schemaVersion:'desksom.release/v1',version:'v',files:[entry,entry]}));
  await assert.rejects(loadRelease(dir),errorCode('INVALID_MANIFEST'));
+});
+
+test('confirmed service restart records local or tunnel readiness, not stale STOPPED',()=>{
+ assert.equal(phaseAfterVerifiedStart({credentialsConfigured:false,phase:'STOPPED'}),'LOCAL_READY');
+ assert.equal(phaseAfterVerifiedStart({credentialsConfigured:true,phase:'STOPPED'}),'TUNNEL_READY');
 });

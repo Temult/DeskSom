@@ -359,6 +359,7 @@ export async function repair(sourceRoot,stateRoot,platform,{apply=false,operatio
     return envelope('repair',{status:'REPAIR_APPLIED',operation,changesMade:true,nextAction:'Run verify; this does not authorize or replay any application command.'});
   } finally {await lease.release();}
 }
+export function phaseAfterVerifiedStart(state) { return state.credentialsConfigured ? 'TUNNEL_READY' : 'LOCAL_READY'; }
 export async function serviceControl(sourceRoot,stateRoot,platform,command,{confirmStop=false,enable=false}={}) {
   const state=await loadOwned(sourceRoot,stateRoot,platform);
   const lease=await platform.lock(stateRoot);
@@ -377,8 +378,8 @@ export async function serviceControl(sourceRoot,stateRoot,platform,command,{conf
         if (!t.enabled) await platform.taskEnable(t.name);
         await startOwned(state,kind,platform);
       }
-      state.operatorStopped=false; await saveState(state);
-      return envelope('start',{status:'SERVICES_READY',nextAction:'Verify a fresh boot identity before continuing work.'});
+      state.operatorStopped=false; state.phase=phaseAfterVerifiedStart(state); await saveState(state);
+      return envelope('start',{status:'SERVICES_READY',phase:state.phase,nextAction:'Verify a fresh boot identity before continuing work.'});
     }
     if (command!=='stop' || !confirmStop) fail('STOP_APPROVAL_REQUIRED','Stopping can interrupt running jobs.', 'Explicitly approve stop only after reconciling active jobs.',10);
     // Start the stop intent before effects. Recovery must never undo a deliberate stop.
