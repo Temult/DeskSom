@@ -1,0 +1,5 @@
+{
+  "instance": "default",
+  "allowedDirectories": ["C:\\Projects\\MyProject"],
+  "port": 18789
+}

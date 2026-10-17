@@ -1,0 +1,33 @@
+name: Windows source checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  source-tests:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # reviewed v4 ref
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # reviewed v4 ref
+        with:
+          node-version: '22'
+      - name: Verify packaged source manifest
+        shell: pwsh
+        run: |
+          node scripts/Check-Release.mjs
+          if ($LASTEXITCODE) { throw 'Source manifest check failed' }
+      - name: Pure installer and security unit tests
+        shell: pwsh
+        run: |
+          node --test scripts/tests/installer.test.mjs security.test.mjs
+          if ($LASTEXITCODE) { throw 'Unit tests failed' }
+      - name: Parse all PowerShell source
+        shell: pwsh
+        run: |
+          foreach ($f in Get-ChildItem -Recurse -File -Filter '*.ps1') {
+            $tokens=$null; $errors=$null
+            $null=[Management.Automation.Language.Parser]::ParseFile($f.FullName,[ref]$tokens,[ref]$errors)
+            if ($errors.Count) { throw ('PowerShell parse failed: '+$f.FullName) }
+          }
+# Full installation/lifecycle qualification requires a separate normal-user
+# Windows test. This workflow does not claim hosted-runner service deployment.

@@ -1,0 +1,19 @@
+{
+  "name": "desksom",
+  "version": "0.2.0-rc.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@wonderwhy-er/desktop-commander": "0.2.52"
+  },
+  "description": "Private Windows-to-ChatGPT MCP bridge built on open-source Desktop Commander",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test:acceptance": "node acceptance.mjs",
+    "test": "node --test security.test.mjs modern.test.mjs scripts/tests/installer.test.mjs",
+    "test:installer": "node --test scripts/tests/installer.test.mjs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,266 @@
+{
+  "schemaVersion": "desksom.release/v1",
+  "version": "0.2.0-rc.1",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 14,
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": ".github/workflows/windows.yml",
+      "bytes": 1354,
+      "sha256": "47f76c20740495b387cb96c18844f51f761529942b56243f8d10e2f453bf53d6"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 607,
+      "sha256": "191b228e9527dd5ac5bdc2aee4c7d4b762ed194d066354ffcec128718704c691"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 3450,
+      "sha256": "d056b538c1eafd1d486eff6eef98563f01b4cdc21f5f6c07f9bb0b72d317a5c9"
+    },
+    {
+      "path": "AI_INSTALL.md",
+      "bytes": 6373,
+      "sha256": "15fbf5c851fa99910fb2336a69c7acac5a24eb3be017ee1da08168545ce47837"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "bytes": 2792,
+      "sha256": "ac9d3ac1f93b3b549cc15eed667a48f5cc109969e387faee1cb4046da2f8adf7"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 1734,
+      "sha256": "71f15578fb3a584eb5b46262d9e3cc45272c1910e30b60e2b55b0abe0162e3cc"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1004,
+      "sha256": "f9eca171844171610214372808f1cdfe26b696e78478d6340825f418cf85828e"
+    },
+    {
+      "path": "DeskSom.ps1",
+      "bytes": 591,
+      "sha256": "739a6457f62410c48bde8af61988c1b126f58c196c29bf0b258b933442c23f7b"
+    },
+    {
+      "path": "INSTALLATION.md",
+      "bytes": 3461,
+      "sha256": "966cf6ddeb55105c27f4fa84e3524d06666c815991b46041ca7b7a207f6d9f16"
+    },
+    {
+      "path": "Install-DeskSom.ps1",
+      "bytes": 460,
+      "sha256": "08080b8fa1f51d2fc8e402352836bb1bcd90d12897e0bf7d946a5bdb535190e9"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1063,
+      "sha256": "fd64bfc88db1429919242bfcfa45c51aefd0165cc8337d0f2cbd5e01d136d5f2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3513,
+      "sha256": "d768c2c21a55970903a7a0f5989c7e1fe497c994ffaf76301b02eb0987ab4824"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 3795,
+      "sha256": "b027a19cd1c4d00fbbd2d16d301e2ec9f7f2b77d196a4df86dcc80d80093e609"
+    },
+    {
+      "path": "Start-DeskSom.cmd",
+      "bytes": 446,
+      "sha256": "8ad33716cf056070142e82d65ffdaa05696fa32b4673f1c26350e4c9700f5504"
+    },
+    {
+      "path": "Start-DeskSom.ps1",
+      "bytes": 6603,
+      "sha256": "de5fa2b8d71c3c8f6c72b443ff97478b03a915286ce7de75eb4e74abc8d5e647"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 868,
+      "sha256": "2364122485867b69749e5930ecbd37cda1d23f607ef36cf64081555d24f82ff4"
+    },
+    {
+      "path": "acceptance.mjs",
+      "bytes": 10239,
+      "sha256": "08080360df343a66d2aacbfffe37810745a2eb6a8951c4d6e830e9de84bf3c9f"
+    },
+    {
+      "path": "broker.mjs",
+      "bytes": 11454,
+      "sha256": "9242e0da7575419e3794b38bb3ee92e5e6a9151dd2a89bf6324a19b8cb789d47"
+    },
+    {
+      "path": "docs/DEPENDENCY_REVIEW.md",
+      "bytes": 3462,
+      "sha256": "212f3039953176c3e179116d6565a9040bb99ed074f7bfb8392fa078e74a3016"
+    },
+    {
+      "path": "docs/PREREQUISITES.md",
+      "bytes": 2716,
+      "sha256": "2378059fe311fb4c3db1f3c04c083258467b38490549513c623c9aa87d8f5ba1"
+    },
+    {
+      "path": "docs/QUALIFICATION.md",
+      "bytes": 3547,
+      "sha256": "7541224087bb5a60e706381db49b6bab27bba4c86871c60f8fd85f51efc28e35"
+    },
+    {
+      "path": "docs/RELEASE_CHECKLIST.md",
+      "bytes": 3239,
+      "sha256": "8d48dd62d0379776394e251d6872f1e3c45fb7f31d7a0220d89c445042018ae5"
+    },
+    {
+      "path": "docs/RESULT_CONTRACT.md",
+      "bytes": 3043,
+      "sha256": "3e02191df3ae290d773389c43176d08f67ca2b30d9b1751d0be506c0ec4079d3"
+    },
+    {
+      "path": "docs/STATE_MACHINE.md",
+      "bytes": 2854,
+      "sha256": "19c25a512cd0f3dcb877eae30eac96ab04c7176e6cd9ff81fe9714e86c065a38"
+    },
+    {
+      "path": "docs/TROUBLESHOOTING.md",
+      "bytes": 4003,
+      "sha256": "065ad02346ac1f3dcf73708cd74ed8b770d4344cf64bc6282d72fe353e8398ac"
+    },
+    {
+      "path": "engine.mjs",
+      "bytes": 1744,
+      "sha256": "44e72047a70c8b78a09c4dbfb88f1677c6d9fefc3a7882284508175d1b96fcf9"
+    },
+    {
+      "path": "examples/install-request.json",
+      "bytes": 98,
+      "sha256": "bc75d5acfdc501b63f2629154cffd2a5e7ff6119c2f387213321383a92f48e35"
+    },
+    {
+      "path": "modern.mjs",
+      "bytes": 3504,
+      "sha256": "d2944ccfe1c8edcd405d7d5215b6ed4b6475ae94b14d3f3a73b55be8f1852505"
+    },
+    {
+      "path": "modern.test.mjs",
+      "bytes": 7935,
+      "sha256": "5381b71f094b4cd0a1fa37b078246924e40924305240e3bf9acf3b21c4753042"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 318762,
+      "sha256": "60fd1fb6465765405fd1d4dc71e23f47f6baec64e7b9621ff0d0af81afeade6c"
+    },
+    {
+      "path": "package.json",
+      "bytes": 548,
+      "sha256": "bfed4fc7aa177e8588e377beb8111b64740a74e193b1bc6e8563d7d002554d43"
+    },
+    {
+      "path": "release-policy.json",
+      "bytes": 637,
+      "sha256": "9b1d3d7c1584e912e7fc8a2d4601b5430b81f6011af193ba69c1fe99a9906463"
+    },
+    {
+      "path": "scripts/Check-Release.mjs",
+      "bytes": 1220,
+      "sha256": "20eb943db6f6b5f15d7fbf1a2a62b62cdc18592aedd16fbb880b2a876c120460"
+    },
+    {
+      "path": "scripts/Configure-Tunnel.ps1",
+      "bytes": 4084,
+      "sha256": "5691afcc8efbd98401912e489477ef5fcc1727b539290707c8ce6b7b3d8045ae"
+    },
+    {
+      "path": "scripts/Export-Diagnostics.ps1",
+      "bytes": 270,
+      "sha256": "85a8513b1aa01696f5f903cf707ff3aacaf62b53b6f69a41fbf9e850d00c77a2"
+    },
+    {
+      "path": "scripts/Preflight.ps1",
+      "bytes": 304,
+      "sha256": "44267899442140c1176598556e79a7f7fc4c9f6b3e004fa5c5044a97711822b8"
+    },
+    {
+      "path": "scripts/Repair.ps1",
+      "bytes": 426,
+      "sha256": "9e3570353da78b882fe38061a1361c0d012c335d5b910fa1950ecbcd1a584e2b"
+    },
+    {
+      "path": "scripts/Run-Service.ps1",
+      "bytes": 5852,
+      "sha256": "afc8e8dec6d2a816d9bd7f6cfe44ef875ed8cd6520c4b813778ba311a69cbd3d"
+    },
+    {
+      "path": "scripts/Seal-Release.mjs",
+      "bytes": 1965,
+      "sha256": "3b85b764830ede828dbbed9f72c313c000079b7417c7ca28763990fe165f56bb"
+    },
+    {
+      "path": "scripts/Task-Launcher.ps1",
+      "bytes": 1700,
+      "sha256": "ac19abbe7acd9d6e9b6a896425bcc60e289cd4fb2e22f7128c0045b7f8b93745"
+    },
+    {
+      "path": "scripts/Verify.ps1",
+      "bytes": 349,
+      "sha256": "7580142a6c213595dd5ad4ee781eeb90e6451023c2b3f847d910f5584e3d6c52"
+    },
+    {
+      "path": "scripts/WindowsHost.ps1",
+      "bytes": 28765,
+      "sha256": "3162d5673bc0707170f1e15e34c12a147fdc728a142b08b121a0a548db652b3c"
+    },
+    {
+      "path": "scripts/cli.mjs",
+      "bytes": 7484,
+      "sha256": "17361cef9fadb7082c604c5dabac431e13970a8c00626091cd72ab8eb42cd26c"
+    },
+    {
+      "path": "scripts/lib/common.mjs",
+      "bytes": 6113,
+      "sha256": "3e0585362b9cbbaaba1109d0c8b5090871d00a3ca8e467cc8ecb8b50f521d9b6"
+    },
+    {
+      "path": "scripts/lib/install-core.mjs",
+      "bytes": 32211,
+      "sha256": "9247a658890a962d4b17312a675bfd82a6ebcb3b1a3965649e638ad8ec78c9a8"
+    },
+    {
+      "path": "scripts/lib/windows.mjs",
+      "bytes": 11076,
+      "sha256": "e96d048480a1518cb5174d3c057f9d75fbf5b3a3f0bfcd18e28957ed72c90dbc"
+    },
+    {
+      "path": "scripts/tests/installer.test.mjs",
+      "bytes": 9795,
+      "sha256": "f6812536abcdb5bc5cd0ae613b127b0862bf8b6f076bc72c7d921699bd240600"
+    },
+    {
+      "path": "scripts/tests/windows-helper.test.ps1",
+      "bytes": 4530,
+      "sha256": "b0166749bc400bd74da37d865b92cbf5c84fa18cf4aefadcb71042c21c7e370f"
+    },
+    {
+      "path": "security.mjs",
+      "bytes": 1739,
+      "sha256": "3a3cc7ae2fe995ed309c7429dbabaceaab7f09e4bb235fdb76c34833f902f627"
+    },
+    {
+      "path": "security.test.mjs",
+      "bytes": 1899,
+      "sha256": "056e71317c2cce8e31c45072f2ed4b0af38554a60e8165ce95138931e25e3773"
+    },
+    {
+      "path": "setup.mjs",
+      "bytes": 3311,
+      "sha256": "421096af484de78bfcad58d1fada9f3a4c414f31d79356e311424dad52cae70a"
+    }
+  ]
+}

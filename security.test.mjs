@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { tokenMatches, validLocalRequest, childEnvironment, boundedArguments, safeError } from './security.mjs';
+test('strong exact bearer only', () => { const t = 'a'.repeat(64); assert(tokenMatches(`Bearer ${t}`, t)); for (const h of [undefined, '', t, `Bearer ${t}x`, `Basic ${t}`]) assert(!tokenMatches(h, t)); });
+test('short or missing secrets fail closed', () => { assert(!tokenMatches('Bearer a', 'a')); assert(!tokenMatches('', undefined)); });
+test('loopback host and browser origin gate', () => { assert(validLocalRequest('127.0.0.1:1234', undefined, 1234)); assert(validLocalRequest('localhost:1234', 'http://localhost:1234', 1234)); for (const host of ['evil.example:1234','127.0.0.1:80','127.0.0.1:1234@evil.example']) assert(!validLocalRequest(host,undefined,1234)); assert(!validLocalRequest('127.0.0.1:1234','https://evil.example',1234)); });
+test('control-plane secrets never enter the tool engine environment', () => { const e = childEnvironment({PATH:'keep',USERPROFILE:'keep',OPENAI_API_KEY:'drop',OPENAI_ADMIN_KEY:'drop',CONTROL_PLANE_API_KEY:'drop',DESKSOM_HTTP_TOKEN:'drop',DESKSOM_MCP_AUTH:'drop',CLOUDFLARED_TOKEN:'drop',TUNNEL_CLIENT_CONFIG:'drop'}); assert.deepEqual(Object.keys(e).sort(),['DESKTOP_COMMANDER_DISABLE_TELEMETRY','PATH','USERPROFILE']); });
+test('bounded waits do not mutate caller arguments', () => { const a={timeout_ms:999999,command:'echo ok'}; assert.equal(boundedArguments('start_process',a).timeout_ms,2000); assert.equal(a.timeout_ms,999999); assert.equal(boundedArguments('write_file',{content:'ok'}).content,'ok'); assert.throws(()=>boundedArguments('start_process',{timeout_ms:-1})); });
+test('error redaction', () => { assert(!safeError(new Error('key sk-testing_123 Bearer abc123')).includes('sk-testing_123')); assert(!safeError('Bearer abc123').includes('abc123')); });
