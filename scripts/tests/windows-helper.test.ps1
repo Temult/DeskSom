@@ -39,6 +39,14 @@ try{
   Check 'successful verifier removes only its disposable file' (@(Get-ChildItem $work -File).Count -eq 0)
   $receipts=@(Get-ChildItem $private -Filter 'verification-*.json' -File)
   Check 'successful verifier creates one passing receipt' ($receipts.Count -eq 1 -and (Ds-ReadJson $receipts[0].FullName).phase -eq 'PASS')
+  $newWork=Join-Path $fixture 'work-new'
+  [void][IO.Directory]::CreateDirectory($newWork)
+  $state.activeAllowedDirectories=@($newWork)
+  $newVerification=Ds-VerifyMcp $state $true
+  Check 'dynamic file-tool roots verify without editing original plan' ($newVerification.passed -and
+    (@(Get-ChildItem $newWork -File).Count -eq 0) -and
+    $state.plan.allowedDirectories[0] -ceq $work)
+  $state.Remove('activeAllowedDirectories')
   $pending=Join-Path $private 'verification-unresolved.json'
   Ds-WriteJson $pending @{schemaVersion='desksom.verification/v1';phase='INTENT';nonce='synthetic'}
   $blocked=$false

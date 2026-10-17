@@ -6,6 +6,9 @@ $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'WindowsHost.ps1') -Action Library
 $state=Ds-State $StateFile -CheckSource
 if($state.operatorStopped){Ds-Fail 'OWNER_STOPPED' 'The owner stopped this service.'}
+if($state.ContainsKey('pendingRootsChange') -and $state.pendingRootsChange){Ds-Fail 'ROOTS_CHANGE_UNCERTAIN' 'An unfinished folder update blocks service startup until reconciled.'}
+$roots=@(if($state.ContainsKey('activeAllowedDirectories') -and @($state.activeAllowedDirectories).Count){$state.activeAllowedDirectories}else{$state.plan.allowedDirectories})
+$revision=if($state.ContainsKey('rootsRevision')){[int]$state.rootsRevision}else{0}
 $principal=[Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent())
 if($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){Ds-Fail 'ELEVATED_SESSION' 'DeskSom services must not run elevated.'}
 $policy=Ds-ReadJson (Join-Path $state.runtimeRoot 'release-policy.json')
@@ -13,8 +16,10 @@ $settings=Ds-ReadJson (Join-Path $state.plan.stateRoot 'settings.json')
 if($settings.installationId -cne $state.installationId -or $settings.sourceFingerprint -cne $state.plan.sourceFingerprint -or
    $settings.port -ne $state.plan.port -or $settings.expectedHost -cne $state.plan.binding.host -or
    $settings.instance -cne $state.plan.instance -or $settings.stateDir -ine $state.plan.stateRoot -or
-   $settings.workDir -ine $state.plan.allowedDirectories[0] -or
-   (($settings.allowedDirectories|ConvertTo-Json -Compress) -cne ($state.plan.allowedDirectories|ConvertTo-Json -Compress))){Ds-Fail 'SETTINGS_DRIFT' 'Runtime settings changed.'}
+   $settings.workDir -ine $roots[0] -or $settings.rootsRevision -ne $revision -or
+   (($settings.allowedDirectories|ConvertTo-Json -Compress) -cne ($roots|ConvertTo-Json -Compress))){Ds-Fail 'SETTINGS_DRIFT' 'Runtime settings changed.'}
+$engine=Ds-ReadJson (Join-Path $state.plan.stateRoot 'dc\config.json')
+if(($engine.allowedDirectories|ConvertTo-Json -Compress) -cne ($roots|ConvertTo-Json -Compress)){Ds-Fail 'ROOTS_CONFIG_DRIFT' 'Engine folders differ from approved owner state.'}
 $psi=[Diagnostics.ProcessStartInfo]::new();$psi.UseShellExecute=$false;$psi.CreateNoWindow=$true
 $psi.WorkingDirectory=$state.runtimeRoot;$psi.RedirectStandardOutput=$true;$psi.RedirectStandardError=$true
 foreach($key in @($psi.Environment.Keys)){

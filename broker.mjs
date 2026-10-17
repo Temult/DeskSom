@@ -31,8 +31,11 @@ if (mode === 'http' && (!httpToken || httpToken.length < 32)) throw new Error('A
 const env = childEnvironment(process.env);
 env.DESKSOM_STATE_DIR = path.join(privateState, 'dc');
 const child = new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'engine.mjs')], cwd: cfg.workDir, env, stderr: 'pipe' });
-const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.3' }, { capabilities: {} });
+const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.4' }, { capabilities: {} });
 let ready = false, closing = false, completed = 0, active = 0;
+// In-memory per-boot counters only. No command arguments, file paths or contents.
+const metrics={attempted:0,succeeded:0,rejected:0,uncertain:0,elapsedMs:0,lastCompletedAt:null};
+const perTool=new Map();
 let auditChain = Promise.resolve();
 const auditPath = path.join(privateState, 'logs', `audit-${bootId}.jsonl`);
 function audit(record) {
@@ -56,10 +59,16 @@ client.onclose = () => {
   if (!closing) { audit({ event: 'upstream_lost', replay: false }); process.stderr.write('DeskSom engine disconnected. No tool call will be replayed.\n'); }
 };
 function status() {
-  return { name: 'DeskSom', version: '0.2.0-rc.3', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready, mode,
+  return { name: 'DeskSom', version: '0.2.0-rc.4', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready, mode,
     upstreamVersion: '0.2.52', enginePid: child.pid ?? null, tools: catalog.length, catalogSha256: catalogHash,
     advertisedToolCount: advertisedCapabilities.toolCount, advertisedCapabilities,
     activeCalls: active, completedCalls: completed, allowedFileRoots: cfg.allowedDirectories,
+    rootsRevision:cfg.rootsRevision??0,
+    statistics:{scope:'CURRENT_BROKER_BOOT',uptimeSeconds:Math.max(0,Math.floor((Date.now()-Date.parse(started))/1000)),
+      attempted:metrics.attempted,succeeded:metrics.succeeded,rejected:metrics.rejected,uncertain:metrics.uncertain,
+      active:active,avgElapsedMs:metrics.succeeded+metrics.rejected+metrics.uncertain?Math.round(metrics.elapsedMs/(metrics.succeeded+metrics.rejected+metrics.uncertain)):0,
+      lastCompletedAt:metrics.lastCompletedAt,
+      tools:[...perTool.entries()].map(([name,counts])=>({name,...counts})).sort((a,b)=>b.completed-a.completed).slice(0,12)},
     authority: 'trusted-local operator; file roots do not sandbox terminal commands',
     hostedDesktopCommanderRelay: false, modelApiCalls: false, automaticWriteReplay: false };
 }
@@ -75,22 +84,25 @@ async function dispatchTool(params) {
     let args;
     try { args = boundedArguments(name, params.arguments); }
     catch (e) { return { isError: true, content: [{ type: 'text', text: safeError(e) }] }; }
-    active++;
+    active++;metrics.attempted++;
+    const counter=perTool.get(name)??{completed:0,failed:0};perTool.set(name,counter);
     audit({ event: 'call_started', id, tool: name, argumentsSha256: createHash('sha256').update(JSON.stringify(args)).digest('hex') });
     try {
       const result = await client.callTool({ name, arguments: args }, undefined, { timeout: 120000 });
-      completed++;
+      completed++;counter.completed++;metrics.elapsedMs+=Date.now()-begin;metrics.lastCompletedAt=new Date().toISOString();
+      if(result.isError===true){metrics.rejected++;counter.failed++;}else{metrics.succeeded++;}
       audit({ event: 'call_finished', id, tool: name, elapsedMs: Date.now() - begin, isError: result.isError === true });
       if (Buffer.byteLength(JSON.stringify(result)) > MAX_RESULT) return { isError: true, content: [{ type: 'text', text: 'RESULT_TOO_LARGE: the tool did execute. Use smaller read/output ranges; do not blindly repeat writes.' }] };
       return result;
     } catch (e) {
+      metrics.uncertain++;counter.failed++;metrics.elapsedMs+=Date.now()-begin;metrics.lastCompletedAt=new Date().toISOString();
       audit({ event: 'call_uncertain', id, tool: name, elapsedMs: Date.now() - begin });
       return { isError: true, content: [{ type: 'text', text: `CALL_OUTCOME_UNCERTAIN: ${safeError(e)}. No replay performed. Inspect side effects before retrying.` }] };
     } finally { active--; }
 }
 
 function makeServer() {
-  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.3' }, { capabilities: { tools: {} },
+  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.4' }, { capabilities: { tools: {} },
     instructions: 'DeskSom runs on the explicitly named Windows host. Preserve project authority boundaries. A terminal has the Windows account permissions, not a sandbox. Never reuse a consumed grant or infer production authorization. No automatic retries of writes after ambiguous errors. Check desksom_status after reconnect. Its advertisedToolCount and advertisedCapabilities describe the SERVER catalog, not the tool subset visible or permitted in this ChatGPT conversation. If a tool is unavailable here, report client tool exposure/permission separately from Windows authorization; never bypass a genuine denial.' });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: [identityTool, ...catalog] }));
   server.setRequestHandler(CallToolRequestSchema, async request => dispatchTool(request.params));

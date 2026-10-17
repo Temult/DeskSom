@@ -22,6 +22,12 @@ In ChatGPT, add a custom MCP connection, choose Tunnel, select this tunnel, and 
 
 Ask ChatGPT to call **desksom_status** and confirm the intended computer and installation. Have it create, read back and delete one disposable file in your project folder. This is the final acceptance test. A local green status is not proof that ChatGPT is connected.
 
+## Everyday controls
+
+At sign-in, Windows starts the DeskSom service tasks and tray icon. Windows Start also contains the instance's DeskSom Control Panel. Use Folders to add/remove approved project directories; Statistics for per-boot counts; Settings for deliberate start/stop and opening private state. An installation can launch the tray immediately with the TRAY prompt.
+
+These non-elevated tasks start when the user logs in, not before Windows sign-in, and request up to 20 one-minute retries after unsuccessful exit. A deliberate stop remains stopped. Terminal permissions remain broader than file-tool directories. See docs/OWNER_CONTROLS.md.
+
 ## Later maintenance
 
 For ordinary maintenance, ask your AI to follow AI_INSTALL.md using the installed runtime or the original source. Status and repair diagnosis are read-only. Applying a repair, starting disabled tasks, stopping services or removing tasks requires explicit authorization. A deliberate stop stays stopped. Uninstall retains your work, keys and runtime so nothing valuable is silently deleted.

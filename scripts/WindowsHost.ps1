@@ -122,7 +122,7 @@ function Ds-Probe($State) {
     $r=Ds-Rpc $State 'tools/call' @{name='desksom_status';arguments=@{}}
     if($r.status -ne 200 -or $r.body.ContainsKey('error') -or -not $r.body.result.ContainsKey('structuredContent')){return @{ready=$false;reason='INVALID_STATUS_RESPONSE'}}
     $v=$r.body.result.structuredContent
-    $out=@{};foreach($key in @('host','version','instance','installationId','sourceFingerprint','bootId','ready','activeCalls','upstreamVersion','mode')){if($v.ContainsKey($key)){$out[$key]=$v[$key]}}
+    $out=@{};foreach($key in @('host','version','instance','installationId','sourceFingerprint','bootId','ready','activeCalls','upstreamVersion','mode','allowedFileRoots','rootsRevision','statistics')){if($v.ContainsKey($key)){$out[$key]=$v[$key]}}
     return $out
   }catch{return @{ready=$false;reason='LOCAL_UNREACHABLE_OR_UNAUTHENTICATED'}}
 }
@@ -173,6 +173,57 @@ function Ds-EnsureLaunchers($State) {
     else{[IO.File]::WriteAllText($launcher,$content,[Text.UTF8Encoding]::new($false))}
   }
 }
+
+function Ds-TrayLinks($State,[ValidateSet('install','remove','launch','status')][string]$Mode) {
+  $startup=[Environment]::GetFolderPath([Environment+SpecialFolder]::Startup)
+  $programs=[Environment]::GetFolderPath([Environment+SpecialFolder]::Programs)
+  $label='DeskSom-'+$State.plan.instance
+  $tray=Join-Path $State.runtimeRoot 'scripts\Tray-App.ps1'
+  $panel=Join-Path $State.runtimeRoot 'scripts\ControlPanel.ps1'
+  $stateFile=Join-Path $State.plan.stateRoot 'install.json'
+  $exe=$State.environment.windowsPowerShell
+  $expected=@(
+    @{path=(Join-Path $startup ($label+'.lnk'));script=$tray;arguments=('-NoProfile -STA -WindowStyle Hidden -File "'+$tray+'" -StateFile "'+$stateFile+'"');desc=('DeskSom tray installation: '+$State.installationId)},
+    @{path=(Join-Path $programs ($label+' Control Panel.lnk'));script=$panel;arguments=('-NoProfile -STA -WindowStyle Hidden -File "'+$panel+'" -StateFile "'+$stateFile+'"');desc=('DeskSom control panel installation: '+$State.installationId)}
+  )
+  $shell=New-Object -ComObject WScript.Shell
+  foreach($link in $expected){
+    Ds-CheckPath $link.path
+    $present=Test-Path -LiteralPath $link.path -PathType Leaf
+    if($present){
+      $actual=$shell.CreateShortcut($link.path)
+      if($actual.TargetPath -ine $exe -or $actual.Arguments -cne $link.arguments -or $actual.Description -cne $link.desc -or
+         $actual.WorkingDirectory -ine $State.plan.installRoot){
+         Ds-Fail 'TRAY_SHORTCUT_DRIFT' 'An existing Windows startup or Start Menu shortcut differs from this installation. It will not be overwritten or removed.'
+      }
+    }elseif($Mode -eq 'install'){
+      $shortcut=$shell.CreateShortcut($link.path)
+      $shortcut.TargetPath=$exe
+      $shortcut.Arguments=$link.arguments
+      $shortcut.WorkingDirectory=$State.plan.installRoot
+      $shortcut.Description=$link.desc
+      $shortcut.WindowStyle=7
+      $shortcut.Save()
+      if(-not(Test-Path -LiteralPath $link.path)){Ds-Fail 'TRAY_SHORTCUT_UNCERTAIN' 'Windows did not confirm shortcut creation.'}
+    }
+    if($Mode -eq 'remove' -and $present){Remove-Item -LiteralPath $link.path -Force}
+  }
+  if($Mode -eq 'launch'){
+    $run=$expected[0]
+    if(-not(Test-Path -LiteralPath $run.path)){Ds-Fail 'TRAY_NOT_CONFIGURED' 'Install the owned startup shortcut first.'}
+    $existing=@(Get-CimInstance Win32_Process -Filter "Name = 'powershell.exe'"|Where-Object {
+      $_.CommandLine -and $_.CommandLine.IndexOf($tray,[StringComparison]::OrdinalIgnoreCase) -ge 0 -and
+      $_.CommandLine.IndexOf($stateFile,[StringComparison]::OrdinalIgnoreCase) -ge 0
+    })
+    if($existing.Count){return @{configured=$true;alreadyRunning=$true;started=$false}}
+    $launched=Start-Process -FilePath $exe -ArgumentList $run.arguments -WorkingDirectory $State.plan.installRoot -PassThru
+    return @{configured=$true;started=$true;pid=$launched.Id}
+  }
+  return @{configured=($Mode -eq 'install' -or $Mode -eq 'status');mode=$Mode;
+    startupShortcutExists=(Test-Path -LiteralPath $expected[0].path);
+    controlPanelShortcutExists=(Test-Path -LiteralPath $expected[1].path)}
+}
+
 function Ds-ExtractTunnel($State,$Policy) {
   if($Policy.tunnelArchiveUrl -cne 'https://github.com/openai/tunnel-client/releases/download/v0.0.16/tunnel-client-v0.0.16-windows-amd64.zip'){
     Ds-Fail 'UNAPPROVED_DOWNLOAD' 'Tunnel download URL is not the reviewed upstream release.'
@@ -241,7 +292,8 @@ function Ds-VerifyMcp($State,[bool]$Exercise) {
       $receiptState=Ds-ReadJson $prior.FullName
       if($receiptState.phase -notin @('PASS','RECONCILED')){Ds-Fail 'VERIFICATION_OUTCOME_UNCERTAIN' 'A previous disposable test has an unresolved receipt. Inspect and reconcile it before creating another test file.'}
     }
-    $nonce=[Guid]::NewGuid().ToString('N');$filename=Join-Path $State.plan.allowedDirectories[0] ('desksom-check-'+$nonce+'.txt')
+    $roots=@(if($State.ContainsKey('activeAllowedDirectories') -and @($State.activeAllowedDirectories).Count){$State.activeAllowedDirectories}else{$State.plan.allowedDirectories})
+    $nonce=[Guid]::NewGuid().ToString('N');$filename=Join-Path $roots[0] ('desksom-check-'+$nonce+'.txt')
     if(Test-Path -LiteralPath $filename){Ds-Fail 'FIXTURE_COLLISION' 'A verification fixture already exists; it will not be overwritten.'}
     Ds-CheckPath $filename
     $content='DeskSom disposable verification '+$nonce
@@ -329,7 +381,7 @@ try{
       $act=New-ScheduledTaskAction -Execute $d.execute -Argument $d.arguments -WorkingDirectory $d.workingDirectory
       $trigger=New-ScheduledTaskTrigger -AtLogOn -User $d.sid;$trigger.Delay='PT10S'
       $principal=New-ScheduledTaskPrincipal -UserId $d.sid -LogonType Interactive -RunLevel Limited
-      $settings=New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1) -MultipleInstances IgnoreNew
+      $settings=New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 20 -RestartInterval (New-TimeSpan -Minutes 1) -MultipleInstances IgnoreNew
       Register-ScheduledTask -TaskName $d.name -Action $act -Trigger $trigger -Principal $principal -Settings $settings -Description ('DeskSom installation: '+$d.installationId)|Out-Null
       @{created=$true};break
     }
@@ -348,6 +400,10 @@ try{
       };@{present=$true;plaintextReturned=$false};break
     }
     'ensure-launchers' {$s=Ds-State $q.stateFile -CheckSource;Ds-EnsureLaunchers $s;@{verified=$true};break}
+    'tray-install' {$s=Ds-State $q.stateFile -CheckSource;Ds-TrayLinks $s 'install';break}
+    'tray-status' {$s=Ds-State $q.stateFile;Ds-TrayLinks $s 'status';break}
+    'tray-launch' {$s=Ds-State $q.stateFile -CheckSource;Ds-TrayLinks $s 'launch';break}
+    'tray-remove' {$s=Ds-State $q.stateFile -CheckSource;Ds-TrayLinks $s 'remove';break}
     'prepare-tunnel' {$s=Ds-State $q.stateFile -CheckSource;Ds-ExtractTunnel $s $q.policy;break}
     'stop-service' {$s=Ds-State $q.stateFile -CheckSource;Ds-StopService $s $q.kind;break}
     'remove-stopped-task' {

@@ -46,7 +46,13 @@ Keep the tunnel running. In ChatGPT, add a custom MCP connection using **Connect
 
 Invoke `desksom_status` through the newly connected DeskSom, not through another desktop operator or a direct local HTTP substitute. Match host, instance, version, installationId and sourceFingerprint to the approved installation. Obtain permission for a disposable create/read/delete test in an allowed folder and observe its cleanup. Record exactly which tool connection supplied the evidence. Only then report end-to-end setup complete; no local installer output proves it.
 
-## 7. Diagnose, resume or stop
+## 7. Owner controls
+
+The new folder-management command can list, propose and apply revisions to the set of allowed file-tool roots, without modifying the original immutable install plan. Show the owner the full proposed roots, require the exact approval digest and an explicit restart confirmation, then verify the restarted service. The apply action restarts DeskSom and may sever any tool invocation through that same connection. Prefer the owner's local Control Panel or a separately launched, approved Windows terminal for apply, rather than running it through the broker being restarted. If an update is interrupted, preserve the intent; never blindly replay.
+
+The installer owns the Startup and Start Menu shortcuts for the Windows tray and control panel. The tray can be launched explicitly now or at the next sign-in. The statistics returned through DeskSom status are volatile per-boot aggregate counters. See docs/OWNER_CONTROLS.md.
+
+## 8. Diagnose, resume or stop
 
     pwsh.exe -NoProfile -File "<runtime>\DeskSom.ps1" repair --state "<state>" --json
     pwsh.exe -NoProfile -File "<runtime>\DeskSom.ps1" repair --state "<state>" --apply --operation restore-missing-tasks --json

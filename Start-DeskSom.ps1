@@ -80,6 +80,12 @@ Write-Host 'Preparing and testing the service. This can take several minutes. Cl
 $result=Json-CLI @('install','--plan',$planFile,'--approve',$plan.planSha256,'--accept-shell-access','--json')
 Write-Host $result.status
 Write-Host 'The local service is installed. A working ChatGPT connection still requires your own tunnel and a real tool call.'
+Write-Host 'DeskSom is scheduled to start at your Windows sign-in and recover from ordinary process crashes.'
+Write-Host 'The tray icon is installed for the next sign-in; you can open it now.'
+if((Read-Host 'Type TRAY to start the DeskSom tray icon now, or press Enter to continue') -ceq 'TRAY'){
+  $trayResult=Json-CLI @('tray','--action','launch','--state',$plan.stateRoot,'--json')
+  Write-Host ('Tray: '+$trayResult.status)
+}
 if((Read-Host 'Type CONNECT to continue with the owner-only tunnel prompt, or press Enter to stop here') -ceq 'CONNECT'){
   & $pwsh -NoProfile -File (Join-Path $root 'scripts\Configure-Tunnel.ps1') -StateRoot $plan.stateRoot -OpenSettings
   exit $LASTEXITCODE

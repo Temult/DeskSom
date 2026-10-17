@@ -4,6 +4,9 @@ import crypto from 'node:crypto';
 import {DeskSomError, fail, canonical, hashObject, hashFile, exists, readJson, atomicJson, createJson,
   keysOnly, instanceName, normalizeWin, insideWin, overlapWin, assertNoLinks, loadRelease, now, envelope} from './common.mjs';
 
+export const effectiveRoots = state => state.activeAllowedDirectories ?? state.plan.allowedDirectories;
+export const rootsRevision = state => state.rootsRevision ?? 0;
+
 export function makePlan(sourceRoot, spec, environment, release) {
   keysOnly(spec, ['instance','installRoot','stateRoot','allowedDirectories','port'], 'installation specification');
   const instance = instanceName(spec.instance ?? 'default');
@@ -151,11 +154,11 @@ async function copyRelease(sourceRoot,runtime,release) {
   if (await exists(to)) { if ((await fs.readFile(to)).compare(data)!==0) fail('RUNTIME_SOURCE_DRIFT','Runtime release manifest differs.',undefined,21); }
   else await fs.writeFile(to,data,{flag:'wx'});
 }
-async function settings(state) {
-  const p=state.plan;
-  return {expectedHost:p.binding.host,port:p.port,stateDir:p.stateRoot,workDir:p.allowedDirectories[0],
-    allowedDirectories:p.allowedDirectories,instance:p.instance,installationId:state.installationId,
-    sourceFingerprint:p.sourceFingerprint};
+export async function settings(state) {
+  const p=state.plan, roots=effectiveRoots(state);
+  return {expectedHost:p.binding.host,port:p.port,stateDir:p.stateRoot,workDir:roots[0],
+    allowedDirectories:roots,rootsRevision:rootsRevision(state),
+    instance:p.instance,installationId:state.installationId,sourceFingerprint:p.sourceFingerprint};
 }
 async function sealDependencies(runtime) {
   const files=[];
@@ -202,7 +205,8 @@ export async function install(sourceRoot,plan,options,platform) {
       await platform.protectDirectory(plan.stateRoot);
       state={schemaVersion:'desksom.install/v1',installationId:crypto.randomUUID(),planSha256:plan.planSha256,plan,
         environment:{node:environment.node,pwsh:environment.pwsh,npmCli:environment.npmCli,wscript:environment.wscript,windowsPowerShell:environment.windowsPowerShell},
-        phase:'RESERVED',completed:{},pending:null,createdAt:now(),operatorStopped:false,credentialsConfigured:false};
+        phase:'RESERVED',completed:{},pending:null,createdAt:now(),operatorStopped:false,credentialsConfigured:false,
+        rootsRevision:0,activeAllowedDirectories:plan.allowedDirectories};
       await createJson(path.join(plan.stateRoot,'install.json'),state);
     }
     await assertOwnership(plan,state); lease.assertHeld();
@@ -264,6 +268,7 @@ export async function install(sourceRoot,plan,options,platform) {
     if (state.operatorStopped) return envelope('install',{status:'INSTALLED_STOPPED',nextAction:'The owner stopped this installation. Use an explicit start command to run it again.'});
     await startOwned(state,'local',platform);
     state.phase='LOCAL_READY'; await saveState(state);
+    await step(state,'tray_startup',async()=>platform.ensureTrayStartup(state));
     return envelope('install',{status:'LOCAL_READY',stateRoot:plan.stateRoot,installationId:state.installationId,
       sourceFingerprint:plan.sourceFingerprint,qualification:state.qualification,nextAction:'Enter your own tunnel credentials locally, connect ChatGPT, and verify a real ChatGPT tool call.'});
   } finally { await lease.release(); }
@@ -286,11 +291,15 @@ export async function loadOwned(sourceRoot,stateRoot,platform,deep=false) {
   const expectedPlan=makePlan(state.plan.sourceRoot,{instance:state.plan.instance,installRoot:state.plan.installRoot,stateRoot:state.plan.stateRoot,allowedDirectories:state.plan.allowedDirectories,port:state.plan.port},environment,callerRelease);
   if (canonical(expectedPlan)!==canonical(state.plan)) fail('PLAN_STALE','Management source, host, user or policy differs from the installed plan.',undefined,21);
   await assertOwnership(state.plan,state);
+  if (state.pendingRootsChange) fail('ROOTS_CHANGE_UNCERTAIN','An interrupted folder update must be inspected before further management commands.', 'Preserve state and pending change receipt; do not blindly replay.',25);
   const runtimeRelease=await loadRelease(state.runtimeRoot);
   if (runtimeRelease.fingerprint!==state.plan.sourceFingerprint || await hashFile(path.join(state.runtimeRoot,'release-manifest.json'))!==state.releaseManifestSha256)
     fail('RUNTIME_SOURCE_DRIFT','The deployed source no longer matches the installation record.',undefined,21);
   const expected=await settings(state), actual=await readJson(path.join(state.plan.stateRoot,'settings.json'));
-  if (canonical(expected)!==canonical(actual)) fail('SETTINGS_DRIFT','Runtime settings differ from the approved plan.',undefined,21);
+  if (canonical(expected)!==canonical(actual)) fail('SETTINGS_DRIFT','Runtime settings differ from the approved root policy.',undefined,21);
+  const dcConfig=await readJson(path.join(state.plan.stateRoot,'dc','config.json'));
+  if (canonical(dcConfig.allowedDirectories)!==canonical(effectiveRoots(state)))
+    fail('ROOTS_CONFIG_DRIFT','Engine file-tool folders differ from the approved policy.', 'Inspect private state and engine configuration; do not auto-repair.',21);
   if (!(await checkDependencies(state.runtimeRoot,await readJson(path.join(state.plan.stateRoot,'dependencies.json')),deep)))
     fail('DEPENDENCY_DRIFT','Installed dependencies failed integrity checks.',undefined,21);
   const policy=await readJson(path.join(state.runtimeRoot,'release-policy.json'));
@@ -334,6 +343,7 @@ export async function status(sourceRoot,stateRoot,platform,{deep=false,exercise=
     host:state.plan.binding.host,sourceFingerprint:state.plan.sourceFingerprint,localReady,tunnelReady:tunnel?.ready===true && tunnel.controlPlane==='ok',
     readyForChatGPTVerification:localReady && verification?.passed===true && tunnel?.ready===true && tunnel.controlPlane==='ok',
     tasks,local,tunnel,verification,operatorStopped:state.operatorStopped,
+    allowedDirectories:effectiveRoots(state),rootsRevision:rootsRevision(state),statistics:local?.statistics??null,
     nextAction:'Local checks cannot prove ChatGPT connectivity. The owner or agent must make a real tool call in ChatGPT.'});
 }
 export async function repair(sourceRoot,stateRoot,platform,{apply=false,operation}={}) {

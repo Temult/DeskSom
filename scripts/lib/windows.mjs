@@ -42,6 +42,10 @@ export class WindowsPlatform {
   verifyMcp(state,exercise=false){return this.helper('verify',{stateFile:path.join(state.plan.stateRoot,'install.json'),exercise},60000);}
   ensureSecret(state){return this.helper('ensure-secret',{stateFile:path.join(state.plan.stateRoot,'install.json')});}
   ensureLaunchers(state){return this.helper('ensure-launchers',{stateFile:path.join(state.plan.stateRoot,'install.json')});}
+  ensureTrayStartup(state){return this.helper('tray-install',{stateFile:path.join(state.plan.stateRoot,'install.json')});}
+  trayStatus(state){return this.helper('tray-status',{stateFile:path.join(state.plan.stateRoot,'install.json')});}
+  launchTray(state){return this.helper('tray-launch',{stateFile:path.join(state.plan.stateRoot,'install.json')});}
+  removeTrayStartup(state){return this.helper('tray-remove',{stateFile:path.join(state.plan.stateRoot,'install.json')});}
   stopService(state,kind){return this.helper('stop-service',{stateFile:path.join(state.plan.stateRoot,'install.json'),kind},45000);}
   async waitReady(state,kind){
     for(let i=0;i<60;i++) {
@@ -127,7 +131,7 @@ export class WindowsPlatform {
   }
   prepareTunnel(state,policy){return this.helper('prepare-tunnel',{stateFile:path.join(state.plan.stateRoot,'install.json'),policy},180000);}
   async qualify(state) {
-    await this.native(state,'unit-tests',state.environment.node,['--test','--test-concurrency=1','security.test.mjs','modern.test.mjs','catalog.test.mjs','discovery.integration.test.mjs','scripts/tests/installer.test.mjs'],{timeout:240000});
+    await this.native(state,'unit-tests',state.environment.node,['--test','--test-concurrency=1','security.test.mjs','modern.test.mjs','catalog.test.mjs','discovery.integration.test.mjs','scripts/tests/installer.test.mjs','scripts/tests/roots.test.mjs'],{timeout:240000});
     await this.native(state,'windows-helper-tests',state.environment.pwsh,['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/windows-helper.test.ps1')],{timeout:60000});
     const target=path.join(state.runtimeRoot,'ACCEPTANCE.json');
     if(await exists(target))await fs.rename(target,path.join(state.plan.stateRoot,'logs','previous-acceptance-'+Date.now()+'.json'));

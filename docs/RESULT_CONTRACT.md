@@ -26,6 +26,10 @@ Examples of important codes: PLAN_CHANGED, PLAN_STALE, SOURCE_DRIFT, DEPENDENCY_
 
 `export-diagnostics` writes a create-only, fixed-field summary. It excludes hostnames, usernames, SIDs, paths, task arguments, raw logs, key material and application contents. Plan/status outputs are local operator records and can include host/path metadata; do not treat them as public support exports.
 
+## Folder change and tray results
+
+The folders command supports list, plan and apply. ROOTS_LISTED and ROOTS_PLAN_READY are non-mutating, while ROOTS_UPDATED and ROOTS_UPDATED_STOPPED indicate a verified approved change. An ambiguous operation blocks service startup with ROOTS_CHANGE_UNCERTAIN rather than replaying a write. The tray command supports status and launch. The in-memory statistics attached to DeskSom status reset after a broker restart.
+
 ## DeskSom MCP identity capability extension
 
 The MCP `desksom_status` tool also provides `advertisedToolCount`, `advertisedCapabilities` and `catalogSha256`. The 24 upstream tools are counted in `tools` for backward compatibility; `advertisedToolCount` includes the identity tool itself, totaling 25. The capability summary lists advertised file-mutation and host-execution names plus server-only discovery limits. It cannot see what actions ChatGPT exposed in the current conversation and does not prove authorization. Use `docs/CHAT_DISCOVERY_DIAGNOSTIC.md` to distinguish a client-side omitted tool from an actual server or Windows access error.

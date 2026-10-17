@@ -1,6 +1,6 @@
 {
   "name": "desksom",
-  "version": "0.2.0-rc.3",
+  "version": "0.2.0-rc.4",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -12,9 +12,10 @@
   },
   "scripts": {
     "test:acceptance": "node acceptance.mjs",
-    "test": "node --test --test-concurrency=1 security.test.mjs modern.test.mjs catalog.test.mjs discovery.integration.test.mjs scripts/tests/installer.test.mjs",
+    "test": "node --test --test-concurrency=1 security.test.mjs modern.test.mjs catalog.test.mjs discovery.integration.test.mjs scripts/tests/installer.test.mjs scripts/tests/roots.test.mjs",
     "test:installer": "node --test scripts/tests/installer.test.mjs",
-    "test:discovery": "node --test --test-concurrency=1 catalog.test.mjs discovery.integration.test.mjs"
+    "test:discovery": "node --test --test-concurrency=1 catalog.test.mjs discovery.integration.test.mjs",
+    "test:roots": "node --test scripts/tests/roots.test.mjs"
   },
   "license": "MIT"
 }

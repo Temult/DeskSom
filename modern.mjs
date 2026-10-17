@@ -4,7 +4,7 @@ export const META_VERSION = 'io.modelcontextprotocol/protocolVersion';
 export const META_CLIENT = 'io.modelcontextprotocol/clientInfo';
 export const META_CAPS = 'io.modelcontextprotocol/clientCapabilities';
 const SERVER_NAME = 'somnerai-desksom';
-const SERVER_VERSION = '0.2.0-rc.3';
+const SERVER_VERSION = '0.2.0-rc.4';
 const SERVER_INSTRUCTIONS = 'DeskSom is an explicitly identified trusted-local Windows operator, not a sandbox. Preserve project authorization gates, never replay ambiguous writes, and inspect exact host identity before actions.';
 
 function object(v) { return v !== null && typeof v === 'object' && !Array.isArray(v); }

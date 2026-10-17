@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.4: Owner controls and resilience
+
+Added revisioned, approved file-tool folder changes without mutating the original plan; a Windows tray and control panel with installation-owned Startup and Start Menu shortcuts; per-boot in-memory usage counters without a database; and up to 20 one-minute Task Scheduler restart attempts after unsuccessful exits. Active work and ambiguous outcomes remain protected against blind restart/replay. The original v0.2 discovery and tunnel authority boundaries remain.
+
 ## 0.2.0-rc.3: Discovery Resilience R1 integration
 
 Integrated reviewed donor catalog compaction, truthful non-read-only annotations on file/host mutations, server-advertised capability reporting, and a reproducible cross-conversation diagnostic. Existing v0.2 installation identities, source fingerprints, tool schemas, task/credential controls and no-blind-replay behavior remain intact. No ChatGPT-side visibility guarantee or production cutover is claimed.

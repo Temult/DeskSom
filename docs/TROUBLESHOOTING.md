@@ -24,6 +24,10 @@ First use `DeskSom.ps1 status --state "<state directory>" --json`, or `repair` w
 
 `repair` is diagnostic unless `--apply` and an operation are explicitly supplied. `restore-missing-tasks` recreates only missing exactly owned tasks and does not start application work. `start-stopped` respects the owner stop marker and never force-kills a foreign process. Changed task arguments, principal, run level, launch path or ownership marker cause refusal.
 
+## Folder changes and tray
+
+Use the Control Panel Folders tab or the reviewed folder-change CLI. Do not edit the sealed plan, private settings or Desktop Commander engine config directly. An interrupted ROOTS_CHANGE_UNCERTAIN intent blocks startup; inspect the exact previous and proposed roots plus private state/config before any deliberate reconciliation. The tray reports local responsiveness, not ChatGPT tool authorization. The service and tray run after the owner signs into Windows.
+
 ## Tunnel and ChatGPT
 
 A runtime key is entered through scripts/Configure-Tunnel.ps1 in a local masked prompt. Existing keys and tunnel association are not silently replaced. Check source/local readiness first, then the tunnel's actual health/polling state, then the ChatGPT connection. Key rotation is not the default response to an MCP setup error.
