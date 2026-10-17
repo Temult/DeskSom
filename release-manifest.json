@@ -69,8 +69,8 @@
     },
     {
       "path": "SECURITY.md",
-      "bytes": 3795,
-      "sha256": "b027a19cd1c4d00fbbd2d16d301e2ec9f7f2b77d196a4df86dcc80d80093e609"
+      "bytes": 3915,
+      "sha256": "15f1dd562312bfe42557d9e47076249b28a8c06e9f287b847090f33c7514d021"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -99,8 +99,8 @@
     },
     {
       "path": "docs/DEPENDENCY_REVIEW.md",
-      "bytes": 3462,
-      "sha256": "212f3039953176c3e179116d6565a9040bb99ed074f7bfb8392fa078e74a3016"
+      "bytes": 3540,
+      "sha256": "c91930b2dcc717c91bd92563f81e3103180f60fa800b7ea08745a3b01b8114be"
     },
     {
       "path": "docs/PREREQUISITES.md",

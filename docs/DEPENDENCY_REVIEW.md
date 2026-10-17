@@ -1,6 +1,6 @@
-# Dependency security review: open release gate
+# Dependency security review: disclosed advisories
 
-**This release candidate is not dependency-security-cleared for broad distribution.** Functional installation tests passed, but an October 17, 2026 read-only npm audit of the pinned production dependency tree reported **11 affected-package findings: 5 high and 6 moderate, with no critical finding reported**. Propagated dependency findings are included in that count; it is not a count of 11 independently demonstrated exploits.
+**The pinned upstream dependencies contain disclosed advisories; this document is not an additional human approval gate.** Functional installation tests passed, but an October 17, 2026 read-only npm audit of the pinned production dependency tree reported **11 affected-package findings: 5 high and 6 moderate, with no critical finding reported**. Propagated dependency findings are included in that count; it is not a count of 11 independently demonstrated exploits.
 
 The tree remains pinned to Desktop Commander 0.2.52 and its reviewed lockfile. No `npm audit fix`, forced override, major engine upgrade or production mutation was used to hide the findings. Each actual installed dependency is separately hash-sealed by the installer; that proves identity, not absence of vulnerabilities.
 
@@ -20,7 +20,7 @@ A high package severity is not proof of a Windows remote-code-execution path. In
 
 Evaluate a separate, pinned dependency-refresh candidate. Upstream Desktop Commander 0.3.0 metadata uses sharp 0.35.5 or newer but also changes the engine and raises the Node baseline, so it must be treated as an explicit compatibility upgrade. Its PDF-related chain still needs review; a major upgrade is not proof that every audit finding disappears.
 
-Map the affected packages to actual tool input paths, update compatible patched components where possible, and rerun clean installation, tool-catalog, native lifecycle and negative tests. For an advisory without a published fix, consider a narrowly reviewed implementation replacement or an explicit documented risk decision, not a fake version, suppressed audit or broad reset. Keep public rollout on hold until that decision and the non-developer pilot are reviewed.
+Map the affected packages to actual tool input paths, update compatible patched components where possible, and rerun clean installation, tool-catalog, native lifecycle and negative tests. For an advisory without a published fix, consider a narrowly reviewed implementation replacement or an explicit documented risk decision, not a fake version, suppressed audit or broad reset. The advisories remain documented, and the installer does not require a separate dependency sign-off before use or distribution.
 
 Primary advisory references, reviewed October 17, 2026:
 https://github.com/advisories/GHSA-vfj7-8cjw-p6xm

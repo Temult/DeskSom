@@ -2,7 +2,7 @@
 
 DeskSom is a **trusted-local remote command executor**, not a sandbox or a multi-user security boundary. A connected agent can invoke terminal tools with the running Windows account's permissions. Work-folder restrictions apply to direct file tools, not the shell. Keeping service/state outside those work roots reduces accidental exposure but does not confine a malicious authorized shell caller.
 
-Current release gate: [the pinned dependency audit](docs/DEPENDENCY_REVIEW.md) contains open findings. A passing functional test suite does not clear them.
+**Known dependency advisories:** The pinned dependency audit has documented findings in [the dependency review](docs/DEPENDENCY_REVIEW.md). The findings are disclosed, not an additional maintainer-approval or installation gate. Passing functional tests does not resolve them.
 
 ## Controls and their limits
 
