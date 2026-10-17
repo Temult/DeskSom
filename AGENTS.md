@@ -20,6 +20,10 @@ Read-only failures may be retried after inspecting the error. After a write, tim
 
 Repair is diagnostic by default. Only `restore-missing-tasks` and `start-stopped` can be explicitly applied. A task with changed identity is not ours to overwrite. A deliberate owner stop must remain stopped until explicitly restarted. Uninstall removes only stopped, verified owned tasks and retains runtime, credentials and work files.
 
+## ChatGPT tool exposure diagnostics
+
+If a conversation reports DeskSom is read-only, first call desksom_status and compare its advertisedToolCount, advertisedCapabilities, bootId and catalogSha256 with the tools actually visible in that conversation. Do not conclude Windows ACL denial from an omitted ChatGPT tool. Classify missing tools, client denials, host rejections, confirmed writes and ambiguous outcomes using docs/CHAT_DISCOVERY_DIAGNOSTIC.md. Do not bypass a genuine client denial through a different transport or process tool.
+
 ## Evidence and completion
 
 Use exit codes and structured result fields, not printed success strings alone. `PREPARED`, `LOCAL_READY` and `TUNNEL_READY` are different checkpoints. Local commands deliberately report `setupComplete:false`. End-to-end acceptance requires an observed ChatGPT call to `desksom_status` matching this host, instance, version, installation ID and source fingerprint, followed by an owner-approved disposable file check.

@@ -11,6 +11,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { modernExchange } from './modern.mjs';
+import { prepareCatalog, catalogCapabilities } from './catalog.mjs';
 import { MAX_BODY, MAX_RESULT, DISABLED, tokenMatches, validLocalRequest, childEnvironment, boundedArguments, safeError } from './security.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -30,7 +31,7 @@ if (mode === 'http' && (!httpToken || httpToken.length < 32)) throw new Error('A
 const env = childEnvironment(process.env);
 env.DESKSOM_STATE_DIR = path.join(privateState, 'dc');
 const child = new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'engine.mjs')], cwd: cfg.workDir, env, stderr: 'pipe' });
-const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.2' }, { capabilities: {} });
+const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.3' }, { capabilities: {} });
 let ready = false, closing = false, completed = 0, active = 0;
 let auditChain = Promise.resolve();
 const auditPath = path.join(privateState, 'logs', `audit-${bootId}.jsonl`);
@@ -42,21 +43,8 @@ function audit(record) {
 client.onerror = e => { process.stderr.write(`DeskSom upstream: ${safeError(e)}\n`); };
 await client.connect(child);
 if (child.stderr) child.stderr.on('data', b => process.stderr.write(safeError(b.toString()) + '\n'));
-function stripUnservedUiMetadata(tool) {
-  const sanitized = { ...tool };
-  if (tool._meta && typeof tool._meta === 'object' && !Array.isArray(tool._meta)) {
-    const meta = { ...tool._meta };
-    // The upstream desktop UI resources cannot be served by this bridge.
-    // Never advertise inaccessible UI templates to ChatGPT's MCP scanner.
-    for (const key of ['ui/resourceUri', 'openai/outputTemplate', 'openai/widgetAccessible', 'ui']) {
-      delete meta[key];
-    }
-    if (Object.keys(meta).length) sanitized._meta = meta;
-    else delete sanitized._meta;
-  }
-  return sanitized;
-}
-const catalog = (await client.listTools()).tools.filter(t => !DISABLED.has(t.name)).map(stripUnservedUiMetadata);
+const catalog = prepareCatalog((await client.listTools()).tools, DISABLED);
+const advertisedCapabilities = catalogCapabilities([{name:'desksom_status'}, ...catalog]);
 if (catalog.some(t => JSON.stringify(t).includes('ui://desktop-commander/'))) {
   throw new Error('Unserved upstream UI resource leaked into tool catalog');
 }
@@ -68,8 +56,9 @@ client.onclose = () => {
   if (!closing) { audit({ event: 'upstream_lost', replay: false }); process.stderr.write('DeskSom engine disconnected. No tool call will be replayed.\n'); }
 };
 function status() {
-  return { name: 'DeskSom', version: '0.2.0-rc.2', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready, mode,
+  return { name: 'DeskSom', version: '0.2.0-rc.3', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready, mode,
     upstreamVersion: '0.2.52', enginePid: child.pid ?? null, tools: catalog.length, catalogSha256: catalogHash,
+    advertisedToolCount: advertisedCapabilities.toolCount, advertisedCapabilities,
     activeCalls: active, completedCalls: completed, allowedFileRoots: cfg.allowedDirectories,
     authority: 'trusted-local operator; file roots do not sandbox terminal commands',
     hostedDesktopCommanderRelay: false, modelApiCalls: false, automaticWriteReplay: false };
@@ -101,8 +90,8 @@ async function dispatchTool(params) {
 }
 
 function makeServer() {
-  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.2' }, { capabilities: { tools: {} },
-    instructions: 'DeskSom runs on the explicitly named Windows host. Preserve project authority boundaries. A terminal has the Windows account permissions, not a sandbox. Never reuse a consumed grant or infer production authorization. No automatic retries of writes after ambiguous errors. Check desksom_status after reconnect.' });
+  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.3' }, { capabilities: { tools: {} },
+    instructions: 'DeskSom runs on the explicitly named Windows host. Preserve project authority boundaries. A terminal has the Windows account permissions, not a sandbox. Never reuse a consumed grant or infer production authorization. No automatic retries of writes after ambiguous errors. Check desksom_status after reconnect. Its advertisedToolCount and advertisedCapabilities describe the SERVER catalog, not the tool subset visible or permitted in this ChatGPT conversation. If a tool is unavailable here, report client tool exposure/permission separately from Windows authorization; never bypass a genuine denial.' });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: [identityTool, ...catalog] }));
   server.setRequestHandler(CallToolRequestSchema, async request => dispatchTool(request.params));
   return server;

@@ -45,3 +45,6 @@ plan.json
 request.json
 qa-plan-*.json
 qa-request-*.json
+
+# Isolated discovery protocol fixtures
+probe-fixture-*/

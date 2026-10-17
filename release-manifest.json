@@ -1,6 +1,6 @@
 {
   "schemaVersion": "desksom.release/v1",
-  "version": "0.2.0-rc.2",
+  "version": "0.2.0-rc.3",
   "files": [
     {
       "path": ".gitattributes",
@@ -14,13 +14,13 @@
     },
     {
       "path": ".gitignore",
-      "bytes": 607,
-      "sha256": "191b228e9527dd5ac5bdc2aee4c7d4b762ed194d066354ffcec128718704c691"
+      "bytes": 664,
+      "sha256": "1a2837156ab537725cf9d05c59a3a97ca2f732e658ebd57410f6bea63601265e"
     },
     {
       "path": "AGENTS.md",
-      "bytes": 3450,
-      "sha256": "d056b538c1eafd1d486eff6eef98563f01b4cdc21f5f6c07f9bb0b72d317a5c9"
+      "bytes": 3991,
+      "sha256": "5199aff119da38fc721c9378fc6ad1f22b75660e887fbfcb18aafcb218db8b22"
     },
     {
       "path": "AI_INSTALL.md",
@@ -29,13 +29,13 @@
     },
     {
       "path": "ARCHITECTURE.md",
-      "bytes": 2792,
-      "sha256": "ac9d3ac1f93b3b549cc15eed667a48f5cc109969e387faee1cb4046da2f8adf7"
+      "bytes": 3049,
+      "sha256": "f044964a3cbac27f71564233cb5214b4c95eb5b8ac09ff2738ee3392e18e3d68"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 2121,
-      "sha256": "deb06b63adf808c94bf837e0d8c4ce5289e86f722556e27f27c7898f091fe092"
+      "bytes": 2583,
+      "sha256": "1c61852e91ee0020ee00ceb76fdb8b80f839d1b2a36c6431170c994ddb6647fb"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -64,13 +64,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 3563,
-      "sha256": "a02588ebf12906235cab8ecb85a892815a28485c2ce130cbca926ca7251dc5ff"
+      "bytes": 4096,
+      "sha256": "64fb5fb0cd13a6b9287d014d847104d411bbd7ae95e96f1b2e619f81eab098ad"
     },
     {
       "path": "SECURITY.md",
-      "bytes": 3915,
-      "sha256": "15f1dd562312bfe42557d9e47076249b28a8c06e9f287b847090f33c7514d021"
+      "bytes": 4372,
+      "sha256": "0337d8d22ecf79948a09734bc1a5d907fb550573fb1dfee563e8454f48e2c760"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -94,13 +94,43 @@
     },
     {
       "path": "broker.mjs",
-      "bytes": 11454,
-      "sha256": "2f8c92e3a21ab06bb9b2ad8dd424b331c7f127b857de10231cd16517cb2818d9"
+      "bytes": 11358,
+      "sha256": "0148cee011874b3e193ee1a2fd3ea10ee8acc5b99390ce2621a6e37299deb413"
+    },
+    {
+      "path": "catalog.mjs",
+      "bytes": 5033,
+      "sha256": "eac2b8374d43cbb307a5845082ad0e28f4c89b282c9c52ef32843f913fb68068"
+    },
+    {
+      "path": "catalog.test.mjs",
+      "bytes": 2510,
+      "sha256": "fdffdd841a4367991829eb8e27523b4a89a356d5fd7f294f5dd271060d8363a1"
+    },
+    {
+      "path": "discovery.integration.test.mjs",
+      "bytes": 6329,
+      "sha256": "24e6e629d3b8970f6f3f49ea3eee65580f5cfeb9f828a13966aa81eef6c7bb3b"
+    },
+    {
+      "path": "docs/CHAT_DISCOVERY_DIAGNOSTIC.md",
+      "bytes": 4440,
+      "sha256": "0a791f65467be349ece7a40d4dcc418ab83ebd6677072746e009d3035fa67be4"
     },
     {
       "path": "docs/DEPENDENCY_REVIEW.md",
       "bytes": 3540,
       "sha256": "c91930b2dcc717c91bd92563f81e3103180f60fa800b7ea08745a3b01b8114be"
+    },
+    {
+      "path": "docs/DISCOVERY_R1_INTEGRATION.md",
+      "bytes": 4119,
+      "sha256": "d906266c930a8e6bc1db701da6f8c0369888272993c44e669c782e140763c2db"
+    },
+    {
+      "path": "docs/DISCOVERY_RESILIENCE.md",
+      "bytes": 5285,
+      "sha256": "e940884cf087b6b6c26c2e909a4e58ddd531d4b6e67d05e0b7b771f764190ee8"
     },
     {
       "path": "docs/PREREQUISITES.md",
@@ -109,18 +139,18 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 3654,
-      "sha256": "1abe58e070d16198b1c20ee3b037885e8dea9ce8007d3a1d2f3dbdcea9d3f06a"
+      "bytes": 4153,
+      "sha256": "e0068be32d9acb64546da810036f5fb3b970fa6d7cb26d2acc262625962d759c"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
-      "bytes": 3239,
-      "sha256": "8d48dd62d0379776394e251d6872f1e3c45fb7f31d7a0220d89c445042018ae5"
+      "bytes": 4060,
+      "sha256": "c06f7a93f38c5173046eca0194791f83eaff804215f301e2301710d45cb8850c"
     },
     {
       "path": "docs/RESULT_CONTRACT.md",
-      "bytes": 3043,
-      "sha256": "3e02191df3ae290d773389c43176d08f67ca2b30d9b1751d0be506c0ec4079d3"
+      "bytes": 3694,
+      "sha256": "2c13b495ee8e7b7cecd55fe8bd3787bd132cf118c0a47b49f513c212d39a2648"
     },
     {
       "path": "docs/STATE_MACHINE.md",
@@ -145,7 +175,7 @@
     {
       "path": "modern.mjs",
       "bytes": 3504,
-      "sha256": "acde50718b02a69eb217a42438f63ec3a363cc4268701126384104aec7fe84e9"
+      "sha256": "bef5da89793adef514191c9c8922d458ce97d49814395e71ab47790dc2f0c4aa"
     },
     {
       "path": "modern.test.mjs",
@@ -155,12 +185,12 @@
     {
       "path": "package-lock.json",
       "bytes": 318762,
-      "sha256": "37dc3b2786484812dcbf656ccacb3f7445238c8e231d46ee3196b4f65e6a449f"
+      "sha256": "3bde13a3c297c45659df8e1a1650d0b2f513d986dec4824e17f19ec3b72f5a94"
     },
     {
       "path": "package.json",
-      "bytes": 548,
-      "sha256": "72f813722efaf18ff43f17c31868c161a79e9b4e829d93d37983107a00bae7ea"
+      "bytes": 723,
+      "sha256": "b6f636788264ade8a9fd5f4578c2e994c2830edc4cf5095a758e9a5810698033"
     },
     {
       "path": "release-policy.json",
@@ -234,8 +264,8 @@
     },
     {
       "path": "scripts/lib/windows.mjs",
-      "bytes": 11076,
-      "sha256": "e96d048480a1518cb5174d3c057f9d75fbf5b3a3f0bfcd18e28957ed72c90dbc"
+      "bytes": 11151,
+      "sha256": "5076c176b66e13085fe23523abf7215b47047b313de0686e5b8fe3bbc8eee52b"
     },
     {
       "path": "scripts/tests/installer.test.mjs",

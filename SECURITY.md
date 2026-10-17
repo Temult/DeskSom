@@ -27,3 +27,7 @@ Audit and upstream process logs may contain sensitive task arguments, outputs, p
 ## Distribution and reporting
 
 Distribute the source, not your live installation, tunnel, state or API keys. Each user installs their own private connection. OpenAI's private tunnel transport does not make this suitable for a public shared-shell plugin. For vulnerabilities, contact the repository maintainer privately; do not post tokens, exploit details or other people's files in a public issue. No security-response SLA or independent external audit is claimed.
+
+## Tool annotations are not authorization
+
+Compact MCP descriptions and `readOnlyHint:false` flags are truthful declarations of server behavior, not permission grants. The server's capability report does not know which tools a given ChatGPT conversation sees or is authorized to call. A missing or denied client-side action must not be bypassed through a shell tool, alternative transport or newly created account. See `docs/CHAT_DISCOVERY_DIAGNOSTIC.md`.

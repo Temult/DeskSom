@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.3: Discovery Resilience R1 integration
+
+Integrated reviewed donor catalog compaction, truthful non-read-only annotations on file/host mutations, server-advertised capability reporting, and a reproducible cross-conversation diagnostic. Existing v0.2 installation identities, source fingerprints, tool schemas, task/credential controls and no-blind-replay behavior remain intact. No ChatGPT-side visibility guarantee or production cutover is claimed.
+
 ## 0.2.0-rc.2: owner-trial restart phase repair
 
 After an owner-tested stop and restart, the installation receipt now updates from STOPPED to LOCAL_READY (or TUNNEL_READY for a configured tunnel) only after successful service readiness. New regression checks cover the transition. The inherited dependency advisories remain disclosed without imposing an extra maintainer approval gate.

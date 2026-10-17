@@ -19,3 +19,7 @@ Have a non-developer use the prepared ZIP and Start-DeskSom.cmd on their own Win
 Publishing source is not publishing one shared ChatGPT plugin. Secure MCP Tunnel is a private-connection mechanism. Every recipient creates their own installation and private account association. Public plugin-store submission has different endpoint requirements and is outside this release.
 
 Official account/transport reference, checked October 17, 2026: https://developers.openai.com/api/docs/guides/secure-mcp-tunnels . Prefer the actual current UI and supported account capabilities over historical screenshots.
+
+## MCP tool metadata changes
+
+Changes to `catalog.mjs` descriptions or annotations change `catalogSha256` even when tool names and schemas are unchanged. Review `docs/DISCOVERY_R1_INTEGRATION.md`, run the synthetic modern/legacy catalog and disposable write tests, and plan a production maintenance window. OpenAI custom MCP apps or workspace connections can keep a previously approved tool snapshot, so ensure the appropriate admin/owner refreshes the tool list when controls permit it; newly seen actions may need explicit enablement. Confirm actual ChatGPT tool exposure in a fresh chat and compare against a problematic old chat under the same server boot ID/catalog hash. Do not restart production merely to investigate an old conversation and do not infer client authorization from server-advertised capabilities.

@@ -25,3 +25,7 @@ Exit codes: 0 means the requested command reported success; 10 requests owner ac
 Examples of important codes: PLAN_CHANGED, PLAN_STALE, SOURCE_DRIFT, DEPENDENCY_DRIFT, TASK_DRIFT, PORT_OCCUPIED, OWNER_STOPPED, CHILD_OUTCOME_UNCERTAIN, VERIFICATION_OUTCOME_UNCERTAIN, START_OUTCOME_UNCERTAIN and TASK_WRITE_UNCERTAIN. Do not convert an uncertainty into success or automatic replay.
 
 `export-diagnostics` writes a create-only, fixed-field summary. It excludes hostnames, usernames, SIDs, paths, task arguments, raw logs, key material and application contents. Plan/status outputs are local operator records and can include host/path metadata; do not treat them as public support exports.
+
+## DeskSom MCP identity capability extension
+
+The MCP `desksom_status` tool also provides `advertisedToolCount`, `advertisedCapabilities` and `catalogSha256`. The 24 upstream tools are counted in `tools` for backward compatibility; `advertisedToolCount` includes the identity tool itself, totaling 25. The capability summary lists advertised file-mutation and host-execution names plus server-only discovery limits. It cannot see what actions ChatGPT exposed in the current conversation and does not prove authorization. Use `docs/CHAT_DISCOVERY_DIAGNOSTIC.md` to distinguish a client-side omitted tool from an actual server or Windows access error.

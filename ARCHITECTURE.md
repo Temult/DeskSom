@@ -19,7 +19,7 @@ Preparation uses pinned npm lockfile dependencies, a recorded one-line-path over
 
 The two Windows tasks are `DeskSom-<instance>-Local` and `DeskSom-<instance>-Tunnel`. Their owner SID, executable, arguments, working directory, run level, logon type and installation marker must match. A stable Windows launcher resolves the available PowerShell installation at startup rather than retaining a disappearing Store-version path. Repair can restore missing owned tasks or start stopped services; it cannot reset a different installation.
 
-The runtime broker exposes one DeskSom identity tool and 24 admitted upstream tools. It supports legacy MCP and the 2026-07-28 self-contained discovery/tool protocol. Unserved Desktop Commander UI metadata is removed. The same bounded, audited dispatcher executes tool calls; it never replays an ambiguous application mutation.
+The runtime broker exposes one DeskSom identity tool and 24 admitted upstream tools. Its source-bound discovery adapter shortens 24 upstream descriptions, preserves their input schemas and provides explicit non-read-only mutation annotations. Server-advertised capability names in desksom_status are not per-conversation ChatGPT tool grants. It supports legacy MCP and the 2026-07-28 self-contained discovery/tool protocol. Unserved Desktop Commander UI metadata is removed. The same bounded, audited dispatcher executes tool calls; it never replays an ambiguous application mutation.
 
 Host status adds instance, installationId and sourceFingerprint so local verification cannot mistake a different DeskSom installation for the intended one. A successful local verification is still not evidence that ChatGPT used the tunnel. That distinction is preserved in every JSON result.
 
