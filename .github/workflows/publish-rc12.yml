@@ -1,0 +1,54 @@
+name: Publish DeskSom v0.2.0-rc.12 prerelease
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'downloads/v0.2.0-rc.12/**'
+      - '.github/workflows/publish-rc12.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tagged source and publication files
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact release tag and packaged downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'v0.2.0-rc.12^{}')" = 'ad3a67e493ebd4f832a221654329e327113458ea'
+          cd downloads/v0.2.0-rc.12
+          sha256sum -c DeskSom-v0.2.0-rc.12-DOWNLOADS-SHA256.txt
+          test -s DeskSom-v0.2.0-rc.12-RELEASE-NOTES.md
+
+      - name: Publish immutable prerelease assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          TAG='v0.2.0-rc.12'
+          BASE='downloads/v0.2.0-rc.12'
+          if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists; preserve it and inspect rather than replacing assets."
+            exit 1
+          fi
+          gh release create "$TAG" \
+            "$BASE/DeskSom-Setup-v0.2.0-rc.12.exe" \
+            "$BASE/DeskSom-v0.2.0-rc.12-portable.zip" \
+            "$BASE/DeskSom-v0.2.0-rc.12-DOWNLOADS-SHA256.txt" \
+            --repo "$GH_REPO" \
+            --verify-tag \
+            --title 'DeskSom v0.2.0-rc.12 (prerelease)' \
+            --notes-file "$BASE/DeskSom-v0.2.0-rc.12-RELEASE-NOTES.md" \
+            --prerelease

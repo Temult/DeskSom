@@ -1,0 +1,35 @@
+{
+    "schemaVersion":  "desksom.rc12-windows-packaging/v1",
+    "release":  "0.2.0-rc.12",
+    "status":  "ARTIFACTS_VERIFIED_OWNER_CLEAN_MACHINE_EXE_TEST_PENDING",
+    "sourceCommit":  "ad3a67e493ebd4f832a221654329e327113458ea",
+    "sourceFingerprint":  "830d86bec0eba52e738f94369e7f548b990bd4723b528499834b874331e7bc52",
+    "artifacts":  [
+                      {
+                          "format":  "unsigned Windows .NET Framework 4.8 executable",
+                          "sha256":  "1270f2618a3671b53e011a30818ad2bfcdbf987b8b57c2abe6313753616720fa",
+                          "file":  "DeskSom-Setup-v0.2.0-rc.12.exe",
+                          "bytes":  250368
+                      },
+                      {
+                          "format":  "portable, source-verified ZIP",
+                          "sha256":  "6f8bd305c1753450817aa3936f7dd9a44505918f7bab56cc7172dad73a52d24b",
+                          "file":  "DeskSom-v0.2.0-rc.12-portable.zip",
+                          "bytes":  235957
+                      }
+                  ],
+    "checks":  {
+                   "sourceAndFreshArchive":  "PASS",
+                   "embeddedZipAndPowerShellScriptSHA256":  "PASS",
+                   "windowsManifestAsInvoker":  "PASS",
+                   "versionResource":  "0.2.0.12",
+                   "exeVerifyOnlyExecution":  "PASS",
+                   "finalReleaseAssetByteEquality":  "PASS",
+                   "userOwnedInstall":  "NOT_TESTED",
+                   "githubUpload":  "PENDING_REPOSITORY_CREATION"
+               },
+    "existingInstallationsModified":  false,
+    "exeSigned":  false,
+    "qa":  "ops\\rc12-github-package-20261018",
+    "createdUtc":  "2026-10-18T15:52:52.1673024Z"
+}
