@@ -34,10 +34,10 @@ Read the owner-controls documentation for folder approvals, privacy, startup and
 
 It creates a separate per-user runtime and private state, installs pinned dependencies, verifies the tunnel download, runs local checks, and registers a named, non-elevated Windows task. A saved plan and operation receipts support safe continuation. Repeated installation preserves credentials; changed files, foreign tasks, port conflicts and uncertain subprocess outcomes stop the workflow rather than trigger a reset.
 
-The final account steps stay with you: create/select your own private tunnel, confirm its organization/workspace, enter its runtime key in a **local masked prompt**, and add the private MCP connection in ChatGPT. Local health checks never claim that last step succeeded.
+The final account steps stay with you: create/select your own private tunnel, confirm its organization/workspace, and enter its runtime key in a **local masked prompt**. DeskSom then opens a guided ChatGPT Plugins checklist with Open Plugins and copyable tunnel ID/test message buttons, rather than leaving you to figure out plugin creation. The owner must still review the ChatGPT risk notice and approve the custom connection. Local health checks never claim that final ChatGPT call succeeded.
 
 ## Read more
 
 [AI installation](AI_INSTALL.md) · [Human setup](INSTALLATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Security](SECURITY.md) · [Architecture](ARCHITECTURE.md) · [Test and release status](docs/QUALIFICATION.md)
 
-This **0.2.0-rc.11 release candidate** targets Windows x64, PowerShell 7.4+ and Node.js 22+. The engine is pinned to Desktop Commander 0.2.52 and tunnel-client to 0.0.16. It is a source distribution for individual private installations, not a shared public shell or a public ChatGPT plugin-store submission. Each recipient uses their own credentials. The existing 0.1.x installer and task names are not silently migrated.
+This **0.2.0-rc.12 release candidate** targets Windows x64, PowerShell 7.4+ and Node.js 22+. The engine is pinned to Desktop Commander 0.2.52 and tunnel-client to 0.0.16. It is a source distribution for individual private installations, not a shared public shell or a public ChatGPT plugin-store submission. Each recipient uses their own credentials. The existing 0.1.x installer and task names are not silently migrated.

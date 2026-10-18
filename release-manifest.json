@@ -1,6 +1,6 @@
 {
   "schemaVersion": "desksom.release/v1",
-  "version": "0.2.0-rc.11",
+  "version": "0.2.0-rc.12",
   "files": [
     {
       "path": ".gitattributes",
@@ -24,8 +24,8 @@
     },
     {
       "path": "AI_INSTALL.md",
-      "bytes": 7518,
-      "sha256": "bee2cbfad8a9e6cd8ebc0e64dca4dd8452fdce8261a1aadb05b35b6df1810777"
+      "bytes": 8199,
+      "sha256": "86a3d0c143bb41448a72bbc7bd27abe42236a3cf9e4eae05bfc7ad78574b3d16"
     },
     {
       "path": "ARCHITECTURE.md",
@@ -34,8 +34,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 7452,
-      "sha256": "b4fd774f12cabb429eda3b6199ee9d872ae3e12275e798582c39e1b8cc499068"
+      "bytes": 8407,
+      "sha256": "ba0761fcfadf90740ea96f8ee15ede23aa4ebe91dd6af72dca4214eae6aa2677"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -64,8 +64,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4980,
-      "sha256": "1bc5885b82a247f2ca817b4acf3329545243e400ae5ee7514b024869b00d966c"
+      "bytes": 5205,
+      "sha256": "0b6099e51311074c4bd153e321e9bab96ace6990ea6e60a42989d66ab4bc9c00"
     },
     {
       "path": "SECURITY.md",
@@ -79,8 +79,8 @@
     },
     {
       "path": "Start-DeskSom-GUI.ps1",
-      "bytes": 22480,
-      "sha256": "80aa8fea06acd1f0a124b8fe58b03732d78cf48f4fbd40cb3ef0120c8e381e1d"
+      "bytes": 22986,
+      "sha256": "a435278b3faa7985dc9afdc83b6bc71491655edb80d466b4f840a31f5a22e225"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -105,7 +105,7 @@
     {
       "path": "broker.mjs",
       "bytes": 12629,
-      "sha256": "6c88be967a86945d5a0dc37f294ce4f07e1f195341cfbda7fa173c654911d9e8"
+      "sha256": "540fed6ac80d7b5c321c6984f448d79425f435eac5865ad1587a7f06d9ef11a1"
     },
     {
       "path": "catalog.mjs",
@@ -144,8 +144,8 @@
     },
     {
       "path": "docs/OWNER_CONTROLS.md",
-      "bytes": 5146,
-      "sha256": "b401fcc132fb41429bacd151d06f14ce1d0001c61490cf5494efb9697efc238f"
+      "bytes": 5570,
+      "sha256": "d47b213589fed37eab6ccb8f818da29bebedc28c7ce7b4bb4beda98cac95a8ac"
     },
     {
       "path": "docs/PREREQUISITES.md",
@@ -154,8 +154,8 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 8420,
-      "sha256": "5566f5add4edd711744811538631d2f086dafac5484d7f290d567c448e1ec3b8"
+      "bytes": 9205,
+      "sha256": "9a92e191c84506673149731692069074a06f7875d9cbf907ae5684c1f5b70be7"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -190,7 +190,7 @@
     {
       "path": "modern.mjs",
       "bytes": 3505,
-      "sha256": "cc07a94a78dc17d3a8195201c3e9439331cbc23dfb7585e2153aed8ced3752f9"
+      "sha256": "8b9ddc629cf110dee54990a786b96da86ceb681c12594a3f9ef39e6cda36fb85"
     },
     {
       "path": "modern.test.mjs",
@@ -200,17 +200,22 @@
     {
       "path": "package-lock.json",
       "bytes": 318764,
-      "sha256": "60d2c881052298ea1b3611e4745ad1ba07aa50acb1a34486d8e1b34df80ddfb8"
+      "sha256": "ce65ec519cf2519284a5e7d68aacbe8c6b566fe56ff88cbb3f80fa58dfa744f0"
     },
     {
       "path": "package.json",
       "bytes": 994,
-      "sha256": "2bc5cf0a90c97a7d9a9ccc6c197bb8685bb58be94ef3d21a516bb5358fcabe30"
+      "sha256": "329f89b95fe962a4b64bc9e40a3f46a1305fa5738bf65b8830ac1d7df1d37070"
     },
     {
       "path": "release-policy.json",
       "bytes": 637,
       "sha256": "9b1d3d7c1584e912e7fc8a2d4601b5430b81f6011af193ba69c1fe99a9906463"
+    },
+    {
+      "path": "scripts/ChatGPT-Connection-Guide.ps1",
+      "bytes": 7302,
+      "sha256": "d8cbc22e3a338122fbd7aa7e65a1701bf9038bf532d7952c6838e35b0b12eb32"
     },
     {
       "path": "scripts/Check-Release.mjs",
@@ -219,8 +224,8 @@
     },
     {
       "path": "scripts/Configure-Tunnel.ps1",
-      "bytes": 4792,
-      "sha256": "ab4c2aaf43efc0542247d6ad254ab198f554068da9c9c878aa0e2de9223fe01e"
+      "bytes": 4612,
+      "sha256": "bb85134ec4c7f7b842952eef557aa7be254b9637e7b1b29dd080ecebcc8ea8f5"
     },
     {
       "path": "scripts/Connection-Prompts.ps1",
@@ -229,8 +234,8 @@
     },
     {
       "path": "scripts/ControlPanel.ps1",
-      "bytes": 15793,
-      "sha256": "38aa7a0367917873f262d8e2284c6c99f20ddfc0c926fdd2b831883edbdc581e"
+      "bytes": 16665,
+      "sha256": "de3b6fc41653d4982c1de7c999f087dee46dc30cce037511df3186b2ad291dd7"
     },
     {
       "path": "scripts/Export-Diagnostics.ps1",
@@ -314,13 +319,18 @@
     },
     {
       "path": "scripts/lib/windows.mjs",
-      "bytes": 12335,
-      "sha256": "1d4c73ef231b1a6d35b355e2794b77763a8dd986425fe0dc90ad871cb7fc05ed"
+      "bytes": 12559,
+      "sha256": "57851fdc09c3057372cfb320bb44555d2fdeb8e9b19341ac8ff5dbf4dfe31fca"
+    },
+    {
+      "path": "scripts/tests/chatgpt-connection-guide.test.ps1",
+      "bytes": 2746,
+      "sha256": "f59b6d6ff975a311c107711228a44b4b7c0be3a3100468afdaa80e950e412616"
     },
     {
       "path": "scripts/tests/gui-completion.test.ps1",
       "bytes": 3142,
-      "sha256": "8c9c47b1c8edf2272a685b754476c840d90fbdd4ffca04c5d85b1d1d8f929a03"
+      "sha256": "d6df87bb0ada5c5478eeabe73c3bee67d8f04737bb64d90435fc14cbff29b41e"
     },
     {
       "path": "scripts/tests/gui-dpi.test.ps1",
@@ -329,8 +339,8 @@
     },
     {
       "path": "scripts/tests/gui.test.mjs",
-      "bytes": 3798,
-      "sha256": "8ae549eb6eac0a532d6d5cd1814c1b7c6349716c6af429b2a812dd781fd96dcd"
+      "bytes": 4832,
+      "sha256": "f67a1bcafa142f24aa8d5966e7f547cb32e9e377bacb1b2289b5ddb262c0a66c"
     },
     {
       "path": "scripts/tests/installer.test.mjs",

@@ -366,11 +366,19 @@ $prereq.Add_Click({
 $btnConnect.Add_Click({
  try{
   if(-not $script:installed){throw 'Complete the local installation first.'}
-  $config=Join-Path $root 'scripts\Configure-Tunnel.ps1'
-  $arguments=@('-NoProfile','-STA','-File',('"' + $config + '"'),'-StateRoot',
-    ('"' + $script:plan.stateRoot + '"'),'-Graphical','-OpenSettings')
+  $stateRoot=$script:plan.stateRoot
+  $stateFile=Join-Path $stateRoot 'install.json'
+  $association=Join-Path $stateRoot 'connection.json'
+  $saved=Get-Content -LiteralPath $stateFile -Raw -Encoding UTF8|ConvertFrom-Json
+  if($saved.credentialsConfigured -eq $true -and (Test-Path -LiteralPath $association -PathType Leaf)){
+    $guide=Join-Path $root 'scripts\ChatGPT-Connection-Guide.ps1'
+    $arguments=@('-NoProfile','-STA','-File',('"' + $guide + '"'),'-StateRoot',('"' + $stateRoot + '"'))
+  }else{
+    $config=Join-Path $root 'scripts\Configure-Tunnel.ps1'
+    $arguments=@('-NoProfile','-STA','-File',('"' + $config + '"'),'-StateRoot',('"' + $stateRoot + '"'),'-Graphical','-OpenSettings')
+  }
   Start-Process -FilePath $script:pwsh -ArgumentList $arguments|Out-Null
-  $statusConnect.Text='The private connection assistant opened. You can finish it later without reinstalling.'
+  $statusConnect.Text='Continue the guided private ChatGPT connection steps. You can return later without reinstalling.'
  }catch{Report $_.Exception.Message $true}
 })
 $btnControl.Add_Click({

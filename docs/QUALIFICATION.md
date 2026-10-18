@@ -1,6 +1,6 @@
 # Qualification and release boundaries
 
-The public source is a **0.2.0-rc.11 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+The public source is a **0.2.0-rc.12 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
 
 The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
 
@@ -27,6 +27,10 @@ The WinForms setup, tray, control panel, and local private-account dialogs enabl
 ## Graphical installer qualification
 
 The graphical setup reuses the existing release manifest, plan generation, owner approval and installed CLI rather than introducing a second installer backend. Pure tests verify the graphical entry point, CLI fallback, approvals, masked local connection prompts, and prerequisites. Windows PowerShell AST checks cover all new scripts. The actual graphical appearance, first-time user workflow, WinGet prompts on a machine missing dependencies, and a new owner's private ChatGPT tunnel still require a desktop pilot.
+
+## Guided ChatGPT account connection qualification
+
+A source-only native ChatGPT connection guide follows successful private tunnel setup and can be reopened from the installer or Control Panel. The owner must select the tunnel in ChatGPT, choose the appropriate ChatGPT-facing authentication, review the risk warning and install the plugin. No API key is read by the guide; it copies only the owner-approved tunnel identifier or a version/installation-bound identity test prompt on direct clicks. The guide does not create a plugin or claim ChatGPT integration was verified. Native source/layout tests run under Windows PowerShell 5.1, with an optional non-mutating local association identity check. True browser account selection and plugin registration still require human review.
 
 ## Owner control qualification
 

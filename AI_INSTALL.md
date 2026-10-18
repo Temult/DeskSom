@@ -42,6 +42,8 @@ Do not collect the API key yourself. There is intentionally no key parameter. Th
 
 ## 6. The actual ChatGPT acceptance boundary
 
+The Windows owner may use the **Connect ChatGPT** button after installation or **Finish ChatGPT setup** in the Control Panel. The local assistant handles the Platform tunnel ID and restricted key using masked owner-only dialogs, then shows a six-step ChatGPT Plugins guide. The owner can copy the locally stored tunnel ID only by clicking Copy tunnel ID, open ChatGPT Plugins, and copy an installation-specific identity check prompt. This does not create the custom ChatGPT plugin or bypass its risk warning. If the owner's ChatGPT plan/workspace does not show Add custom MCP server or the selected tunnel, check permissions and workspace association instead of claiming success.
+
 Keep the tunnel running. In ChatGPT, add a custom MCP connection using **Connection: Tunnel**, select the same private tunnel, and choose **No authentication** for this bridge's ChatGPT-facing OAuth setting. This does not turn off the locally authenticated bearer. Follow current account UI and permissions instead of assuming every account is entitled.
 
 Invoke `desksom_status` through the newly connected DeskSom, not through another desktop operator or a direct local HTTP substitute. Match host, instance, version, installationId and sourceFingerprint to the approved installation. Obtain permission for a disposable create/read/delete test in an allowed folder and observe its cleanup. Record exactly which tool connection supplied the evidence. Only then report end-to-end setup complete; no local installer output proves it.

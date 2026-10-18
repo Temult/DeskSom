@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0-rc.12: Guided ChatGPT connection completion
+
+After a successful local tunnel configuration, DeskSom now opens a native account-connection guide instead of leaving the owner to discover ChatGPT custom MCP plugin creation. It opens the ChatGPT Plugins page on request, explains the exact Tunnel and ChatGPT-facing No authentication selections, allows owner-initiated copying of the correct locally stored tunnel identifier and instance-bound verification message, and makes clear that setup is not proven until ChatGPT calls the intended instance. The three-page installer and Control Panel can reopen the guide without repeating an already configured tunnel. The guide never reads an API key or creates a ChatGPT plugin, and keeps all account security confirmations with the owner. Added a native six-step layout/behavior smoke to installer qualification. No installed DeskSom, production tunnel or credentials are modified by this source work.
+
+
 ## 0.2.0-rc.11: Compact owner control panel
 
 Replace the inherited oversized high-DPI control-panel layout with a smaller four-tab arrangement, aligned status fields, a compact statistics dashboard and long-path folder scrolling. Tabs alone handle navigation; refresh stays near the Overview heading. Keep all existing owner-approved folder and service actions, including their restart and consent requirements. Add a guarded, no-install visual preview and a native geometry check that detects clipping and overlapping controls. The rc.10 installation-completion repair remains unchanged. The complete local engineering qualification still runs for this candidate; installation-time optimization is deferred to a separate, measured change.

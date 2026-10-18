@@ -8,6 +8,10 @@ Windows Start contains **DeskSom-<instance> Control Panel**. The tray icon appea
 
 The tray uses bundled Windows PowerShell and WinForms. Once per minute it checks the owned service task and loopback readiness, not a cloud endpoint. These checks show local responsiveness, not ChatGPT's tool exposure or authorization. The Control Panel obtains authenticated, source-bound details on demand.
 
+## Finishing the ChatGPT connection
+
+The Overview tab now has **Finish ChatGPT setup**. It opens the owner-only connection flow if not configured, or a read-only guided ChatGPT Plugins checklist if the local tunnel association is already saved. The UI never creates or authorizes a plugin on the owner's behalf and never reads or copies API keys. The owner's browser review and a genuine ChatGPT tool call remain required.
+
 ## Adding or removing folders
 
 In **Folders**, select Add Folder or Remove Selected. DeskSom prepares the full proposed list, checks the paths and shows an approval dialogue before restarting the owned local service and tunnel.

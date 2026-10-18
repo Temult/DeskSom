@@ -69,6 +69,25 @@ test('control panel tabs handle navigation without duplicate overview buttons',a
  assert.match(panel,/Changes are disabled in visual preview/);
 });
 
+test('beginner ChatGPT connection guide retains owner account decisions',async()=>{
+ const guide=await get('scripts/ChatGPT-Connection-Guide.ps1');
+ const wizard=await get('Start-DeskSom-GUI.ps1');
+ const controller=await get('scripts/Configure-Tunnel.ps1');
+ const host=await get('scripts/lib/windows.mjs');
+ assert.match(guide,/Add custom MCP server/);
+ assert.match(guide,/No authentication/);
+ assert.match(guide,/Copy tunnel ID/);
+ assert.match(guide,/Copy verification message/);
+ assert.match(guide,/https:\/\/chatgpt\.com\/plugins/);
+ assert.match(guide,/association\.installationId -cne \$state\.installationId/);
+ assert.match(guide,/association\.sourceFingerprint -cne \$state\.plan\.sourceFingerprint/);
+ assert.match(guide,/\$StateCheck/);
+ assert.doesNotMatch(guide,/control-plane-api-key\.dpapi|Ds-SaveSecret|Create as a plugin.*Start-Process/);
+ assert.match(wizard,/ChatGPT-Connection-Guide\.ps1/);
+ assert.match(controller,/ChatGPT-Connection-Guide\.ps1/);
+ assert.match(host,/chatgpt-connection-guide-tests/);
+});
+
 test('prerequisites require a user action and use exact official package names',async()=>{
  const wizard=await get('Start-DeskSom-GUI.ps1');
  const prereq=await get('scripts/Install-Prerequisites.ps1');

@@ -53,7 +53,7 @@ Write-Host 'For this bridge, choose No authentication in that dialog; local bear
 Write-Host 'Ask ChatGPT to call desksom_status and verify this machine and instance before any real work.'
 
 if($Graphical) {
-  $message='Your private tunnel is ready locally. ChatGPT still needs a custom MCP connection and a real tool call. Open ChatGPT Plugins now?'
-  $result=[Windows.Forms.MessageBox]::Show($message,'DeskSom: finish connection',[Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Information)
-  if($result -eq [Windows.Forms.DialogResult]::Yes){Start-Process 'https://chatgpt.com/plugins'|Out-Null}
+  # Keep the nondeveloper in a guided local window after the tunnel is ready.
+  # This does not create a ChatGPT plugin or acknowledge its risk warning.
+  & (Join-Path $PSScriptRoot 'ChatGPT-Connection-Guide.ps1') -StateRoot $StateRoot
 }

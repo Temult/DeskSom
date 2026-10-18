@@ -104,6 +104,7 @@ $tunnelValue=Add-Field $statusGroup 'Private tunnel' 60
 $versionValue=Add-Field $statusGroup 'Version' 89
 $revisionValue=Add-Field $statusGroup 'Folder revision' 118
 $startupValue=Add-Field $statusGroup 'Startup' 147
+$btnChatSetup=Add-Button $overview 'Finish ChatGPT setup' 24 315 202
 $foldersPage=$tabs.TabPages['Folders']
 [void](Add-Heading $foldersPage 'Folders ChatGPT can access')
 [void](Add-Label $foldersPage 'These folders are available to file tools; terminal commands are not sandboxed.' 24 53 603 30)
@@ -235,6 +236,21 @@ $btnRemove.Add_Click({
  }catch{Show-Error $_}
 })
 $btnOverview.Add_Click({try{Refresh-Overview}catch{Show-Error $_}})
+$btnChatSetup.Add_Click({
+ try{
+  $association=Join-Path $root 'connection.json'
+  $currentState=Get-Content -LiteralPath (Join-Path $root 'install.json') -Raw -Encoding UTF8|ConvertFrom-Json
+  if($currentState.credentialsConfigured -eq $true -and
+     (Test-Path -LiteralPath $association -PathType Leaf)){
+    $app=Join-Path $state.runtimeRoot 'scripts\ChatGPT-Connection-Guide.ps1'
+    $args=@('-NoProfile','-STA','-File',('"' + $app + '"'),'-StateRoot',('"' + $root + '"'))
+  }else{
+    $app=Join-Path $state.runtimeRoot 'scripts\Configure-Tunnel.ps1'
+    $args=@('-NoProfile','-STA','-File',('"' + $app + '"'),'-StateRoot',('"' + $root + '"'),'-Graphical','-OpenSettings')
+  }
+  Start-Process -FilePath $state.environment.pwsh -ArgumentList $args | Out-Null
+ }catch{Show-Error $_}
+})
 $btnStats.Add_Click({try{Refresh-Statistics}catch{Show-Error $_}})
 $btnStart.Add_Click({
  try{
@@ -287,7 +303,7 @@ if($PreviewOnly -or $LayoutCheck){
  $statsValues['avgElapsedMs'].Text='85 ms'
  $statsValues['lastCompletedAt'].Text='12:34:56'
  $topTools.Text='Top tools: read_file: 24    start_process: 9'
- foreach($button in @($btnOverview,$btnAdd,$btnRemove,$btnRefreshFolders,$btnStats,$btnStart,$btnStop,$btnOpenState)){
+ foreach($button in @($btnOverview,$btnChatSetup,$btnAdd,$btnRemove,$btnRefreshFolders,$btnStats,$btnStart,$btnStop,$btnOpenState)){
    $button.Enabled=$false
  }
 }
