@@ -60,6 +60,13 @@ test('control panel tabs handle navigation without duplicate overview buttons',a
  assert.match(panel,/\$btnOverview\.Add_Click/);
  assert.match(panel,/\$tabs\.TabPages\['Folders'\]/);
  assert.match(panel,/\$tabs\.TabPages\['Statistics'\]/);
+ assert.match(panel,/\$btnAdd=Add-Button/);
+ assert.match(panel,/\$btnRemove=Add-Button/);
+ assert.match(panel,/\$btnStop=Add-Button/);
+ assert.match(panel,/\$btnStart=Add-Button/);
+ assert.match(panel,/\$PreviewOnly -or \$LayoutCheck/);
+ assert.match(panel,/visual preview \(sample data\)/);
+ assert.match(panel,/Changes are disabled in visual preview/);
 });
 
 test('prerequisites require a user action and use exact official package names',async()=>{

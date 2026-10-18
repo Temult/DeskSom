@@ -49,7 +49,7 @@ function Show-Error($exception){
 }
 $form=New-Object Windows.Forms.Form
 $form.AutoScaleMode='None'
-$form.Text='DeskSom  |  '+$state.plan.instance
+$form.Text=if($PreviewOnly -or $LayoutCheck){'DeskSom  |  visual preview (sample data)'}else{'DeskSom  |  '+$state.plan.instance}
 $form.StartPosition='CenterScreen'
 $form.ClientSize=[Drawing.Size]::new(660,385)
 $form.FormBorderStyle='FixedDialog';$form.MaximizeBox=$false
@@ -277,7 +277,7 @@ if($PreviewOnly -or $LayoutCheck){
  $versionValue.Text='0.2.0-layout-preview';$revisionValue.Text='0'
  $startupValue.Text='At Windows sign-in'
  [void]$folderList.Items.Add('C:\Projects\Example\MyProject')
- $folderHint.Text='Folder configuration revision: 0. Changes require your approval.'
+ $folderHint.Text='Sample folder list. Changes are disabled in visual preview.'
  $statsValues['uptime'].Text='775 minutes'
  $statsValues['attempted'].Text='42'
  $statsValues['succeeded'].Text='40'

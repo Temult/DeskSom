@@ -1,6 +1,6 @@
 # Qualification and release boundaries
 
-The public source is a **0.2.0-rc.10 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+The public source is a **0.2.0-rc.11 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
 
 The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
 
@@ -29,6 +29,9 @@ The WinForms setup, tray, control panel, and local private-account dialogs enabl
 The graphical setup reuses the existing release manifest, plan generation, owner approval and installed CLI rather than introducing a second installer backend. Pure tests verify the graphical entry point, CLI fallback, approvals, masked local connection prompts, and prerequisites. Windows PowerShell AST checks cover all new scripts. The actual graphical appearance, first-time user workflow, WinGet prompts on a machine missing dependencies, and a new owner's private ChatGPT tunnel still require a desktop pilot.
 
 ## Owner control qualification
+
+The rc.11 control-panel update is isolated from the service and installer protocol. The native `ControlPanel.ps1 -LayoutCheck` verifies all four scaled pages for control bounds and overlap without accessing installed state; `-PreviewOnly` displays sample data with service actions disabled. The owner visually reviewed the compact panel's initial Overview and Folders layout, then requested removal of redundant navigation buttons. Source regression confirms only the tabs navigate. Actual rc.11 installation, live panel functionality and account connection remain future owner-acceptance steps. The predecessor rc.10 was independently confirmed LOCAL_READY through an owner-run three-page GUI installation; that result does not qualify rc.11 itself.
+
 
 Tests include folder approval digests and rejection cases, explicit startup shortcut ownership, signed-in-user task retry settings, installed folder add/remove/verification, and broker statistics. Actual tray rendering and sign-in behavior need a live human desktop test. Sign-in startup is not a claim of pre-login system-service support.
 

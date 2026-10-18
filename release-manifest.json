@@ -1,6 +1,6 @@
 {
   "schemaVersion": "desksom.release/v1",
-  "version": "0.2.0-rc.10",
+  "version": "0.2.0-rc.11",
   "files": [
     {
       "path": ".gitattributes",
@@ -34,8 +34,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 6710,
-      "sha256": "b6ecc55a59a51ad46a6edd03156a3208a6f80e2cfb5ecf4c2b0b0ede07c264a3"
+      "bytes": 7452,
+      "sha256": "b4fd774f12cabb429eda3b6199ee9d872ae3e12275e798582c39e1b8cc499068"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -64,8 +64,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4837,
-      "sha256": "7e81f92ca261a9235fc65917e33bc1a45444fb8815e388cc7e78bd2b11c708a3"
+      "bytes": 4980,
+      "sha256": "1bc5885b82a247f2ca817b4acf3329545243e400ae5ee7514b024869b00d966c"
     },
     {
       "path": "SECURITY.md",
@@ -105,7 +105,7 @@
     {
       "path": "broker.mjs",
       "bytes": 12629,
-      "sha256": "1354bef675de26c93aba0921c4346317d10984198871822fc8ca5b7e328e549b"
+      "sha256": "6c88be967a86945d5a0dc37f294ce4f07e1f195341cfbda7fa173c654911d9e8"
     },
     {
       "path": "catalog.mjs",
@@ -154,8 +154,8 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 7667,
-      "sha256": "c612a289b543c02a5235fb9482231bf9d0163d9278a30f824f12f5fb0c88d59d"
+      "bytes": 8420,
+      "sha256": "5566f5add4edd711744811538631d2f086dafac5484d7f290d567c448e1ec3b8"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -190,7 +190,7 @@
     {
       "path": "modern.mjs",
       "bytes": 3505,
-      "sha256": "2adb9a7cef2841cf0ba361e683ee4e5b2155f8e81e88a5d360512f9f065d747e"
+      "sha256": "cc07a94a78dc17d3a8195201c3e9439331cbc23dfb7585e2153aed8ced3752f9"
     },
     {
       "path": "modern.test.mjs",
@@ -200,12 +200,12 @@
     {
       "path": "package-lock.json",
       "bytes": 318764,
-      "sha256": "e3ad0711e28df9b3c64825b90d701aaefd2adb2cfd539b448544eff838fe8ab3"
+      "sha256": "60d2c881052298ea1b3611e4745ad1ba07aa50acb1a34486d8e1b34df80ddfb8"
     },
     {
       "path": "package.json",
       "bytes": 994,
-      "sha256": "496599f85269227abe7cb2a3232175e5d87ffc8a629a53cdd2288bbff0c85eac"
+      "sha256": "2bc5cf0a90c97a7d9a9ccc6c197bb8685bb58be94ef3d21a516bb5358fcabe30"
     },
     {
       "path": "release-policy.json",
@@ -229,8 +229,8 @@
     },
     {
       "path": "scripts/ControlPanel.ps1",
-      "bytes": 10447,
-      "sha256": "732dcef98878840cb8d1fc082025c9958ea24f422f25e69f2deac1f2995ebda6"
+      "bytes": 15793,
+      "sha256": "38aa7a0367917873f262d8e2284c6c99f20ddfc0c926fdd2b831883edbdc581e"
     },
     {
       "path": "scripts/Export-Diagnostics.ps1",
@@ -320,7 +320,7 @@
     {
       "path": "scripts/tests/gui-completion.test.ps1",
       "bytes": 3142,
-      "sha256": "115ce84f74f5e8c055f45b3309a821acedfe65daea4311a7d377d7f89d73a65b"
+      "sha256": "8c9c47b1c8edf2272a685b754476c840d90fbdd4ffca04c5d85b1d1d8f929a03"
     },
     {
       "path": "scripts/tests/gui-dpi.test.ps1",
@@ -329,8 +329,8 @@
     },
     {
       "path": "scripts/tests/gui.test.mjs",
-      "bytes": 3002,
-      "sha256": "74136ed4c67ea3b20419612481c28edcd15b6363154b09d5c4bbc5948bc41aa4"
+      "bytes": 3798,
+      "sha256": "8ae549eb6eac0a532d6d5cd1814c1b7c6349716c6af429b2a812dd781fd96dcd"
     },
     {
       "path": "scripts/tests/installer.test.mjs",

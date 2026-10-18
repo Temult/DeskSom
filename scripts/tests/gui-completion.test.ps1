@@ -7,7 +7,7 @@ function Check([string]$name,[bool]$pass) {
  $script:checks++
 }
 $script:checks=0
-$plan=[pscustomobject]@{stateRoot='C:\Users\Owner\AppData\Local\DeskSom\testing';version='0.2.0-rc.10';sourceFingerprint=('a'*64)}
+$plan=[pscustomobject]@{stateRoot='C:\Users\Owner\AppData\Local\DeskSom\testing';version='0.2.0-rc.11';sourceFingerprint=('a'*64)}
 $success=[pscustomobject]@{operationOk=$true;command='install';status='LOCAL_READY';installationId='c6067bbd-262a-4ca1-bcbf-ead8ac51baf2';sourceFingerprint=('a'*64);stateRoot=$plan.stateRoot;setupComplete=$false}
 $status=[pscustomobject]@{operationOk=$true;status='LOCAL_READY';localReady=$true;installationId=$success.installationId;sourceFingerprint=$success.sourceFingerprint;version=$plan.version}
 Check 'successful installation has no error member' (-not(Test-DeskSomField $success 'error'))

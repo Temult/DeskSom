@@ -26,7 +26,7 @@ DeskSom reports which tools its server actually advertises. It cannot determine 
 
 ## Your DeskSom control panel
 
-The installed non-elevated tray icon and Start Menu control panel provide service status, authorized folder management, and per-boot usage statistics. File-tool folders can be added or removed without reinstalling; each change needs explicit approval and a brief restart. Windows Task Scheduler starts the local service **at user sign-in** and attempts restart on failure, while an intentional stop remains stopped.
+The installed non-elevated tray icon and Start Menu control panel provide a compact four-tab view of service status, authorized folder management, per-boot usage statistics and settings. The panel is DPI-aware; the tabs are navigation and the buttons perform actions, not duplicate navigation. File-tool folders can be added or removed without reinstalling; each change needs explicit approval and a brief restart. Windows Task Scheduler starts the local service **at user sign-in** and attempts restart on failure, while an intentional stop remains stopped.
 
 Read the owner-controls documentation for folder approvals, privacy, startup and recovery. File-tool roots are not restrictions on the trusted-local shell.
 
@@ -40,4 +40,4 @@ The final account steps stay with you: create/select your own private tunnel, co
 
 [AI installation](AI_INSTALL.md) · [Human setup](INSTALLATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Security](SECURITY.md) · [Architecture](ARCHITECTURE.md) · [Test and release status](docs/QUALIFICATION.md)
 
-This **0.2.0-rc.10 release candidate** targets Windows x64, PowerShell 7.4+ and Node.js 22+. The engine is pinned to Desktop Commander 0.2.52 and tunnel-client to 0.0.16. It is a source distribution for individual private installations, not a shared public shell or a public ChatGPT plugin-store submission. Each recipient uses their own credentials. The existing 0.1.x installer and task names are not silently migrated.
+This **0.2.0-rc.11 release candidate** targets Windows x64, PowerShell 7.4+ and Node.js 22+. The engine is pinned to Desktop Commander 0.2.52 and tunnel-client to 0.0.16. It is a source distribution for individual private installations, not a shared public shell or a public ChatGPT plugin-store submission. Each recipient uses their own credentials. The existing 0.1.x installer and task names are not silently migrated.

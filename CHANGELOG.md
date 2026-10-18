@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0-rc.11: Compact owner control panel
+
+Replace the inherited oversized high-DPI control-panel layout with a smaller four-tab arrangement, aligned status fields, a compact statistics dashboard and long-path folder scrolling. Tabs alone handle navigation; refresh stays near the Overview heading. Keep all existing owner-approved folder and service actions, including their restart and consent requirements. Add a guarded, no-install visual preview and a native geometry check that detects clipping and overlapping controls. The rc.10 installation-completion repair remains unchanged. The complete local engineering qualification still runs for this candidate; installation-time optimization is deferred to a separate, measured change.
+
+
 ## 0.2.0-rc.10: Verify actual installation completion
 
 The Windows graphical wizard no longer confuses a nullable Start-Process ExitCode with a failed install. A LOCAL_READY installation receipt must be corroborated by a separate authenticated read-only status check matching the exact installation, version and source fingerprint. Optional error fields are inspected safely under StrictMode, and the native completion regression now runs during installer qualification. The fix does not reinstall a successfully running service or change tunnel/permission boundaries.
