@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.10: Verify actual installation completion
+
+The Windows graphical wizard no longer confuses a nullable Start-Process ExitCode with a failed install. A LOCAL_READY installation receipt must be corroborated by a separate authenticated read-only status check matching the exact installation, version and source fingerprint. Optional error fields are inspected safely under StrictMode, and the native completion regression now runs during installer qualification. The fix does not reinstall a successfully running service or change tunnel/permission boundaries.
+
 ## 0.2.0-rc.9: Repair first-run setup initialization
 
 Initialize the per-wizard review summary before Windows PowerShell StrictMode reaches first-run prerequisite checks. Add a native no-window first-launch regression that follows source-check and setup-initialization paths, and include it in the pre-activation installer qualification. No service, tunnel, folder-policy or ownership-boundary change.

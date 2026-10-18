@@ -51,3 +51,15 @@ test('first real launch initializes StrictMode summary before Read-Prerequisites
  assert.match(s,/initialSummaryInitialized=/);
  assert.match(s,/noInstallerStarted=/);
 });
+
+test('GUI completion checks authenticated installation state, not nullable process exit alone',async()=>{
+ const src=await wizard();
+ const helper=await fs.readFile(new URL('../Gui-Install-Result.ps1',import.meta.url),'utf8');
+ assert.match(src,/Test-DeskSomInstallCompletion/);
+ assert.match(src,/Test-DeskSomInstallReceipt/);
+ assert.match(src,/Get-DeskSomInstallIssue/);
+ assert.match(src,/Invoke-DeskSom @\('status','--state'/);
+ assert.doesNotMatch(src,/if\(\$code -ne 0 -or -not \$result/);
+ assert.match(helper,/Status\.sourceFingerprint -ceq \$Plan\.sourceFingerprint/);
+ assert.match(helper,/Receipt\.installationId/);
+});

@@ -8,6 +8,7 @@ $script:uiScale=Enable-DeskSomHighDpi
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
+. (Join-Path $PSScriptRoot 'scripts\Gui-Install-Result.ps1')
 $root=$PSScriptRoot
 $onboarding=Join-Path $env:LOCALAPPDATA 'DeskSom-Onboarding'
 $planFile=Join-Path $onboarding ($Instance+'-plan.json')
@@ -47,8 +48,7 @@ function Invoke-DeskSom([string[]]$argsList) {
  $rc=$LASTEXITCODE
  try{$result=($raw -join [Environment]::NewLine)|ConvertFrom-Json}catch{throw 'DeskSom did not return a valid result.'}
  if($rc -ne 0 -or $result.operationOk -ne $true){
-  if($result.error){throw ($result.error.message+' '+$result.error.nextAction)}
-  throw 'DeskSom reported an unsuccessful operation. Inspect its saved receipts.'
+  throw (Get-DeskSomInstallIssue $result 'DeskSom reported an unsuccessful operation. Inspect its saved receipts.')
  }
  return $result
 }
@@ -321,12 +321,22 @@ $timer.Add_Tick({
   $script:running.Dispose();$script:running=$null
   $result=$null
   try{$result=Get-Content -LiteralPath $script:stdout -Raw -Encoding UTF8|ConvertFrom-Json}catch{}
-  if($code -ne 0 -or -not $result -or $result.operationOk -ne $true){
+  # Windows PowerShell 5.1 may report a null ExitCode from Start-Process
+  # even after HasExited, despite a successful JSON result. Confirm the
+  # authenticated, source-bound installed status; do not replay install.
+  $confirmed=$false;$statusProblem=$null
+  if(Test-DeskSomInstallReceipt $result){
+   $status.Text='Checking that the installed service is healthy...'
+   try{
+    $health=Invoke-DeskSom @('status','--state',$script:plan.stateRoot)
+    $confirmed=Test-DeskSomInstallCompletion $result $health $script:plan
+   }catch{$statusProblem=$_.Exception.Message}
+  }
+  if(-not $confirmed){
    $status.Text='Setup needs attention. Existing receipts were preserved.'
    Show-Page 2
-   $detail=if($result -and $result.error){$result.error.message+' '+$result.error.nextAction}else{
-     'The installer did not report completion. Inspect its private status before trying again.'
-   }
+   $detail=Get-DeskSomInstallIssue $result 'The installation result was not confirmed. Inspect the saved local status before trying again.'
+   if($statusProblem){$detail+=' Read-only service verification: '+$statusProblem}
    Report $detail $true
    return
   }

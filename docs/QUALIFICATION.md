@@ -1,12 +1,16 @@
 # Qualification and release boundaries
 
-The public source is a **0.2.0-rc.9 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+The public source is a **0.2.0-rc.10 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
 
 The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
 
 ## Discovery-specific qualification
 
 Added catalog-schema preservation, capability-reporting, and isolated modern/legacy MCP integration tests including real temporary file edits, shell execution and bearer rejection. The server reports advertised capabilities only; a real ChatGPT visibility comparison on the updated connection remains a separate deployment-time experiment. See [DISCOVERY_R1_INTEGRATION.md](DISCOVERY_R1_INTEGRATION.md).
+
+## Installed-service completion verification
+
+Windows PowerShell 5.1 can return a null ExitCode from a Start-Process -PassThru instance even after HasExited. The graphical wizard now verifies a success envelope against a separate read-only authenticated status call and checks installation ID, source fingerprint, version and private state root. It handles missing optional error fields under StrictMode instead of crashing. A native 11-assertion regression suite checks positive and negative completion receipts and is included in installer pre-activation qualification. No ambiguous install is automatically replayed.
 
 ## First-launch StrictMode qualification
 
