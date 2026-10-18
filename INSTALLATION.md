@@ -8,15 +8,15 @@ Download and extract a prepared DeskSom release from the repository. Keep its so
 
 ## Double-click setup
 
-Open **Start-DeskSom.cmd**. It first asks you to trust the chosen source and verifies its file hashes. Missing PowerShell 7.4+ or Node.js 22+ can be installed using the official WinGet package IDs after you approve. Windows may show its own permission or license prompts; you must decide those yourself. If prerequisite installation completes, close and reopen the launcher to refresh PATH.
+Open **Start-DeskSom.cmd** to display the graphical setup window. It verifies the downloaded source and offers installation of missing PowerShell 7.4+ or Node.js 22+ through official WinGet package IDs after your approval. Windows may still present its own prompts. If prerequisite installation completes, close and reopen DeskSom Setup to refresh PATH.
 
-Paste the full path of an existing project folder. Setup then shows where the service and private state will be stored, the allowed folder, and the local port. Type INSTALL only after reviewing that plan and acknowledging terminal access. The installer runs tests before it starts the local service. Its user-scoped logon tasks require that Windows user to be signed in; this is not an unattended boot service while logged out. It may take several minutes and writes progress receipts; closing the window is not a rollback.
+Use **Browse** to select an existing project folder. Click **Install DeskSom**, review the selected folder and full Windows-user terminal access, then approve. DeskSom creates and checks the same exact source/host/user-bound plan as the advanced installer. No terminal commands or approval words are required. The installer runs tests before it starts the local service. Its user-scoped logon tasks require that Windows user to be signed in; this is not an unattended boot service while logged out. It may take several minutes and writes progress receipts; closing the window is not a rollback.
 
 If setup is interrupted, open the same launcher again. It uses the existing plan and inspects progress. It does not regenerate keys or overwrite another installation. An uncertain subprocess or changed source stops for inspection; ask your AI to read the reported condition instead of deleting files until it runs.
 
 ## Connect your own account
 
-After LOCAL_READY, choose CONNECT to continue. Create or select your own private tunnel, confirm the intended organization and ChatGPT workspace, and enter the API key only in the masked local prompt. Do not paste a key into ChatGPT, an email or GitHub. The key is encrypted using Windows DPAPI for your login.
+After the local installation succeeds, choose **Connect ChatGPT**. A local window guides you to create/select your private tunnel, paste its ID, and enter a restricted runtime key in a masked field. You can skip this step and return later without uninstalling DeskSom. Do not paste a key into ChatGPT, an email or GitHub. The key is encrypted using Windows DPAPI for your login.
 
 In ChatGPT, add a custom MCP connection, choose Tunnel, select this tunnel, and use No authentication for this bridge's ChatGPT-facing OAuth setting. DeskSom's local bearer remains enabled. The current [OpenAI guide](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels) covers the account settings and permissions.
 

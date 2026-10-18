@@ -1,6 +1,6 @@
 # AI-directed installation
 
-Use this runbook when the owner has authorized terminal access to their Windows computer. Without that access, direct them to extract a trusted release and double-click **Start-DeskSom.cmd**. Do not pretend browser chat alone can install local software.
+Use this runbook when the owner has authorized terminal access to their Windows computer. Most non-developer owners should instead double-click Start-DeskSom.cmd for the graphical installation and account-connection assistant. An advanced console fallback remains at Start-DeskSom-CLI.cmd. Without that access, direct them to extract a trusted release and double-click **Start-DeskSom.cmd**. Do not pretend browser chat alone can install local software.
 
 ## 1. Inspect before changing anything
 

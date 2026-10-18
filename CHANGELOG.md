@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.5: Beginner-friendly Windows setup
+
+The default double-click launcher now opens a graphical folder-picker and three-step install/connection assistant. It uses the same sealed source validation, approved installation plan and per-user service setup as the original CLI, with asynchronous installation and a responsive progress indication. The owner-only connection assistant has masked Windows credential dialogs and direct links to the necessary OpenAI account pages. No new runtime dependencies or per-user background agents were added; the previous console workflow remains available as Start-DeskSom-CLI.cmd. Owner authorization, Platform tunnel setup and the ChatGPT custom connection still require explicit account actions.
+
 ## 0.2.0-rc.4: Owner controls and resilience
 
 Added revisioned, approved file-tool folder changes without mutating the original plan; a Windows tray and control panel with installation-owned Startup and Start Menu shortcuts; per-boot in-memory usage counters without a database; and up to 20 one-minute Task Scheduler restart attempts after unsuccessful exits. Active work and ambiguous outcomes remain protected against blind restart/replay. The original v0.2 discovery and tunnel authority boundaries remain.

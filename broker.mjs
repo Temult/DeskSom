@@ -31,7 +31,7 @@ if (mode === 'http' && (!httpToken || httpToken.length < 32)) throw new Error('A
 const env = childEnvironment(process.env);
 env.DESKSOM_STATE_DIR = path.join(privateState, 'dc');
 const child = new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'engine.mjs')], cwd: cfg.workDir, env, stderr: 'pipe' });
-const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.4' }, { capabilities: {} });
+const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.5' }, { capabilities: {} });
 let ready = false, closing = false, completed = 0, active = 0;
 // In-memory per-boot counters only. No command arguments, file paths or contents.
 const metrics={attempted:0,succeeded:0,rejected:0,uncertain:0,elapsedMs:0,lastCompletedAt:null};
@@ -59,7 +59,7 @@ client.onclose = () => {
   if (!closing) { audit({ event: 'upstream_lost', replay: false }); process.stderr.write('DeskSom engine disconnected. No tool call will be replayed.\n'); }
 };
 function status() {
-  return { name: 'DeskSom', version: '0.2.0-rc.4', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready, mode,
+  return { name: 'DeskSom', version: '0.2.0-rc.5', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready, mode,
     upstreamVersion: '0.2.52', enginePid: child.pid ?? null, tools: catalog.length, catalogSha256: catalogHash,
     advertisedToolCount: advertisedCapabilities.toolCount, advertisedCapabilities,
     activeCalls: active, completedCalls: completed, allowedFileRoots: cfg.allowedDirectories,
@@ -102,7 +102,7 @@ async function dispatchTool(params) {
 }
 
 function makeServer() {
-  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.4' }, { capabilities: { tools: {} },
+  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.5' }, { capabilities: { tools: {} },
     instructions: 'DeskSom runs on the explicitly named Windows host. Preserve project authority boundaries. A terminal has the Windows account permissions, not a sandbox. Never reuse a consumed grant or infer production authorization. No automatic retries of writes after ambiguous errors. Check desksom_status after reconnect. Its advertisedToolCount and advertisedCapabilities describe the SERVER catalog, not the tool subset visible or permitted in this ChatGPT conversation. If a tool is unavailable here, report client tool exposure/permission separately from Windows authorization; never bypass a genuine denial.' });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: [identityTool, ...catalog] }));
   server.setRequestHandler(CallToolRequestSchema, async request => dispatchTool(request.params));

@@ -8,7 +8,7 @@ DeskSom combines the open-source Desktop Commander engine with your own OpenAI S
 
 ## The easy way
 
-Download a prepared release ZIP from this repository, extract it to a folder you will keep, then double-click **Start-DeskSom.cmd**. The guided setup checks its source, explains permissions, offers official WinGet prerequisites when needed, asks which project folder to expose, and shows an installation plan before changing anything. Run as your normal Windows user, not as administrator.
+Download the prepared release ZIP, extract it, and double-click **Start-DeskSom.cmd**. A Windows setup window guides the owner through a folder picker, installation, and an optional ChatGPT connection assistant. No command-line knowledge is needed. It validates its source, explains the full Windows-user terminal permissions, and can offer official WinGet prerequisites with confirmation. The original command-line setup remains available as **Start-DeskSom-CLI.cmd**. Run as your normal Windows user, not as administrator.
 
 **This is powerful access, not a sandbox.** File-tool folder restrictions do not limit the terminal tools. A connected AI can run commands with your Windows account's permissions. Keep the connection private and approve only work you intend.
 
@@ -40,4 +40,4 @@ The final account steps stay with you: create/select your own private tunnel, co
 
 [AI installation](AI_INSTALL.md) · [Human setup](INSTALLATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Security](SECURITY.md) · [Architecture](ARCHITECTURE.md) · [Test and release status](docs/QUALIFICATION.md)
 
-This **0.2.0-rc.4 release candidate** targets Windows x64, PowerShell 7.4+ and Node.js 22+. The engine is pinned to Desktop Commander 0.2.52 and tunnel-client to 0.0.16. It is a source distribution for individual private installations, not a shared public shell or a public ChatGPT plugin-store submission. Each recipient uses their own credentials. The existing 0.1.x installer and task names are not silently migrated.
+This **0.2.0-rc.5 release candidate** targets Windows x64, PowerShell 7.4+ and Node.js 22+. The engine is pinned to Desktop Commander 0.2.52 and tunnel-client to 0.0.16. It is a source distribution for individual private installations, not a shared public shell or a public ChatGPT plugin-store submission. Each recipient uses their own credentials. The existing 0.1.x installer and task names are not silently migrated.
