@@ -134,6 +134,7 @@ export class WindowsPlatform {
     await this.native(state,'unit-tests',state.environment.node,['--test','--test-concurrency=1','security.test.mjs','modern.test.mjs','catalog.test.mjs','discovery.integration.test.mjs','scripts/tests/installer.test.mjs','scripts/tests/roots.test.mjs','scripts/tests/gui.test.mjs','scripts/tests/wizard.test.mjs'],{timeout:240000});
     await this.native(state,'windows-helper-tests',state.environment.pwsh,['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/windows-helper.test.ps1')],{timeout:60000});
     await this.native(state,'high-dpi-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/gui-dpi.test.ps1')],{timeout:30000});
+    await this.native(state,'wizard-first-start-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/wizard-startup.test.ps1')],{timeout:45000});
     const target=path.join(state.runtimeRoot,'ACCEPTANCE.json');
     if(await exists(target))await fs.rename(target,path.join(state.plan.stateRoot,'logs','previous-acceptance-'+Date.now()+'.json'));
     const started=now();

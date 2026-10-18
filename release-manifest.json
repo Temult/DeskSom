@@ -1,6 +1,6 @@
 {
   "schemaVersion": "desksom.release/v1",
-  "version": "0.2.0-rc.8",
+  "version": "0.2.0-rc.9",
   "files": [
     {
       "path": ".gitattributes",
@@ -34,8 +34,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 5737,
-      "sha256": "f02e98f47cc391b396b90b8b186b38f7079f256d1f04f16c541be06be81a6f95"
+      "bytes": 6140,
+      "sha256": "2131a217958321b9e6f8f31ea2705a42801b18db5fe0a321a0364c23d0f4ed8e"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -65,7 +65,7 @@
     {
       "path": "README.md",
       "bytes": 4836,
-      "sha256": "5e897c6ff965bffbf4777e22d8d113a102d2fc1178f75d708d5ed2e3eda64a6d"
+      "sha256": "9490492aa2c5e01e622673c606debd7bdd717674977a640c716cf5f1fef3119a"
     },
     {
       "path": "SECURITY.md",
@@ -79,8 +79,8 @@
     },
     {
       "path": "Start-DeskSom-GUI.ps1",
-      "bytes": 21097,
-      "sha256": "da42b574d72d7c6ac60c85f769511f4cb94e7fb8bd479e57b1d03c9a958fd874"
+      "bytes": 21915,
+      "sha256": "3c19de25bd5c47ddf7818ffdbf74a4fffcbeb92e1841eeba6bf3daed148084b8"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -105,7 +105,7 @@
     {
       "path": "broker.mjs",
       "bytes": 12626,
-      "sha256": "133360e810e4a0e51c3be3b3a914c24daa051d6c8952dad4140575eb378512d4"
+      "sha256": "1529abafceb02988b8a857fe3c5790c990259a34d2699810eea3ad516af98d20"
     },
     {
       "path": "catalog.mjs",
@@ -154,8 +154,8 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 6378,
-      "sha256": "4e735844090caa9951dc0897f952867455ff2ba8a8a79a55e9c9ebad482a4f6f"
+      "bytes": 7045,
+      "sha256": "c500b038d34db7161d1a88af8e3bfc4afce25cea08534427de6f02b85ae1eb19"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -190,7 +190,7 @@
     {
       "path": "modern.mjs",
       "bytes": 3504,
-      "sha256": "e578c440fc4be927e8d2f40eacb7c74ec0ba60abef9c9cb1be26f797f5538bb6"
+      "sha256": "0fb0c00329c68edd746b73196bb1d4b070d71cbbe9cfa15db00c8eb3c3238ba5"
     },
     {
       "path": "modern.test.mjs",
@@ -200,12 +200,12 @@
     {
       "path": "package-lock.json",
       "bytes": 318762,
-      "sha256": "4e2224888e2527bfb1c81cafc574e5d276a060ff22e665329dc3ca7a9b076131"
+      "sha256": "1f4b348ea346dab36de8f188ddbf334a720b10881b848cb852f30e1a833b9aa4"
     },
     {
       "path": "package.json",
       "bytes": 993,
-      "sha256": "2e43dc80d7128e709244e104d8bc6d456ab3b9af77b04d1dcd992d29a831fba4"
+      "sha256": "18c6cba4519dd4228f897e096ca18499276cef1a56ccec97cb47f8a51287468d"
     },
     {
       "path": "release-policy.json",
@@ -309,8 +309,8 @@
     },
     {
       "path": "scripts/lib/windows.mjs",
-      "bytes": 11909,
-      "sha256": "fde380b11ec0c37193375c02558f889d8bf02ba20420f884cf3199222d38d689"
+      "bytes": 12117,
+      "sha256": "09645b8dc3e8d4e234b8c4ba5f0538ffbe2a6c9aa8497415de3d1cf0f9193e45"
     },
     {
       "path": "scripts/tests/gui-dpi.test.ps1",
@@ -338,9 +338,14 @@
       "sha256": "b96edf03778c4ec9a301493d1288c9e87100b3edf717cad11c390ec1bdd8737f"
     },
     {
+      "path": "scripts/tests/wizard-startup.test.ps1",
+      "bytes": 1536,
+      "sha256": "07540d9ce5dab6671e6a5269e09970806332559ff4674f9ae2ba77b317760440"
+    },
+    {
       "path": "scripts/tests/wizard.test.mjs",
-      "bytes": 2038,
-      "sha256": "894f61cbef5958a5eeaa9429d20e68b8454c0cb3b4b9aa435c73c5d837cc650a"
+      "bytes": 2394,
+      "sha256": "63e6c5085ff941fed8072cbde2ad117ea80999c4ac7f0fa98907dc53c5ed3746"
     },
     {
       "path": "security.mjs",

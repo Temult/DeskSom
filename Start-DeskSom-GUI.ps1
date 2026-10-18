@@ -1,6 +1,6 @@
 #requires -Version 5.1
 [CmdletBinding()]
-param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789,[switch]$LayoutCheck,[switch]$PreviewOnly,[string]$PreviewFolder='')
+param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789,[switch]$LayoutCheck,[switch]$PreviewOnly,[string]$PreviewFolder='',[switch]$StartupCheck)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'scripts\WinForms-Dpi.ps1')
@@ -14,6 +14,7 @@ $planFile=Join-Path $onboarding ($Instance+'-plan.json')
 $script:node=$null;$script:pwsh=$null;$script:ready=$false
 $script:installed=$false;$script:plan=$null;$script:running=$null
 $script:stdout=$null;$script:stderr=$null
+$script:reviewSummary=''
 
 function Find-Exe([string]$name,[string[]]$known) {
  foreach($p in $known){if($p -and (Test-Path -LiteralPath $p -PathType Leaf)){return $p}}
@@ -397,7 +398,19 @@ $form.Add_FormClosing({
  }
 })
 if($script:uiScale -ne 1.0){$form.Scale([Drawing.SizeF]::new($script:uiScale,$script:uiScale))}
-if($LayoutCheck){
+if($StartupCheck){
+  # Exercise exactly the first-run initialization route that fires on Form.Shown.
+  # Does not show a window, plan files, install any service, or open an account connection.
+  Check-Release
+  Load-ExistingPlan
+  if(-not $script:checksReady -or $script:page -ne 1 -or $script:installed){
+    throw 'Startup failed the expected fresh-install state. Inspect the chosen instance and existing state before retrying.'
+  }
+  [ordered]@{schemaVersion='desksom.gui-startup/v1';result='PASS';instance=$Instance;page=$script:page;
+    allowedToProceed=$btnNext.Enabled;initialSummaryInitialized=($null -ne $script:reviewSummary);
+    noInstallerStarted=(-not $script:running);noInstallationPerformed=$true;sourceVerified=$true
+  } | ConvertTo-Json -Compress
+}elseif($LayoutCheck){
   $controls=@($brand,$stepIndicator,$divider,$pageTitle,$footer,$btnBack,$btnNext,$btnClose)+@($pages)
   $within=@($controls|Where-Object {$_.Left -lt 0 -or $_.Top -lt 0 -or $_.Right -gt $form.ClientSize.Width -or $_.Bottom -gt $form.ClientSize.Height})
   $badChildren=0

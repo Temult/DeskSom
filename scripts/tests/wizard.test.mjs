@@ -42,3 +42,12 @@ test('visual preview explores all pages without installing software or configuri
  assert.match(s,/if\(\$PreviewOnly\)\{/);
  assert.match(s,/if\(\$LayoutCheck\)/);
 });
+
+test('first real launch initializes StrictMode summary before Read-Prerequisites runs',async()=>{
+ const s=await wizard();
+ assert.match(s,/\$script:reviewSummary=''/);
+ assert.match(s,/if\(\$StartupCheck\)/);
+ assert.match(s,/Check-Release\s+Load-ExistingPlan/);
+ assert.match(s,/initialSummaryInitialized=/);
+ assert.match(s,/noInstallerStarted=/);
+});

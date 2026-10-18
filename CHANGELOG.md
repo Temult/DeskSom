@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.9: Repair first-run setup initialization
+
+Initialize the per-wizard review summary before Windows PowerShell StrictMode reaches first-run prerequisite checks. Add a native no-window first-launch regression that follows source-check and setup-initialization paths, and include it in the pre-activation installer qualification. No service, tunnel, folder-policy or ownership-boundary change.
+
 ## 0.2.0-rc.8: Wizard readability polish
 
 The second page now describes automatic sign-in startup in plain language while retaining the essential Windows-user terminal permission warning. The final page offers only one Finish button, with Back alongside it, rather than two finish actions. The visual-only preview explains disabled connection and control-panel buttons and preserves the same installation and account authority controls.

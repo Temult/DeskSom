@@ -1,12 +1,16 @@
 # Qualification and release boundaries
 
-The public source is a **0.2.0-rc.8 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+The public source is a **0.2.0-rc.9 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
 
 The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
 
 ## Discovery-specific qualification
 
 Added catalog-schema preservation, capability-reporting, and isolated modern/legacy MCP integration tests including real temporary file edits, shell execution and bearer rejection. The server reports advertised capabilities only; a real ChatGPT visibility comparison on the updated connection remains a separate deployment-time experiment. See [DISCOVERY_R1_INTEGRATION.md](DISCOVERY_R1_INTEGRATION.md).
+
+## First-launch StrictMode qualification
+
+The Windows PowerShell setup now initializes its review summary before the first actual Show event. The prior rc.8 wizard raised an unset-variable error on first launch in PowerShell StrictMode, even though visual preview and layout checks passed. An explicit -StartupCheck replays the source validation and the Load-ExistingPlan initialization route using a unique new instance without showing a UI or creating an installation plan. The installer runs this smoke test natively before registering any service task. The test rejects missing source integrity, lost first-page navigation, and unexpected installation activity.
 
 ## Wizard layout qualification
 
