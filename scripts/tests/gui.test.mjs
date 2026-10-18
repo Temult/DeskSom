@@ -53,6 +53,15 @@ test('all Windows graphical surfaces opt into crisp high-DPI rendering',async()=
  assert.doesNotMatch(wizard,/Choose a folder for ChatGPT file tools/);
 });
 
+test('control panel tabs handle navigation without duplicate overview buttons',async()=>{
+ const panel=await get('scripts/ControlPanel.ps1');
+ assert.doesNotMatch(panel,/\$btnOpenFolders|\$btnOpenStats/);
+ assert.match(panel,/\$btnOverview=Add-Button \$overview 'Refresh'/);
+ assert.match(panel,/\$btnOverview\.Add_Click/);
+ assert.match(panel,/\$tabs\.TabPages\['Folders'\]/);
+ assert.match(panel,/\$tabs\.TabPages\['Statistics'\]/);
+});
+
 test('prerequisites require a user action and use exact official package names',async()=>{
  const wizard=await get('Start-DeskSom-GUI.ps1');
  const prereq=await get('scripts/Install-Prerequisites.ps1');

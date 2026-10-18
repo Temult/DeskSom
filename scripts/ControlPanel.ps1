@@ -91,7 +91,9 @@ function Add-Field($parent,[string]$name,[int]$y,[int]$x=18,[int]$labelWidth=150
  return $value
 }
 $overview=$tabs.TabPages['Overview']
-[void](Add-Heading $overview 'Connection overview')
+$overviewHeading=Add-Heading $overview 'Connection overview'
+$overviewHeading.Width=440
+$btnOverview=Add-Button $overview 'Refresh' 507 16 126
 [void](Add-Label $overview 'Local readiness is separate from a working ChatGPT connection.' 24 54 600 28)
 $statusGroup=New-Object Windows.Forms.GroupBox
 $statusGroup.Text='Status';$statusGroup.Location=[Drawing.Point]::new(24,89)
@@ -102,12 +104,6 @@ $tunnelValue=Add-Field $statusGroup 'Private tunnel' 60
 $versionValue=Add-Field $statusGroup 'Version' 89
 $revisionValue=Add-Field $statusGroup 'Folder revision' 118
 $startupValue=Add-Field $statusGroup 'Startup' 147
-$btnOverview=Add-Button $overview 'Refresh status' 24 315 135
-$btnOpenFolders=Add-Button $overview 'Manage folders' 174 315 145
-$btnOpenStats=Add-Button $overview 'Statistics' 334 315 120
-$btnOpenFolders.Add_Click({$tabs.SelectTab('Folders')})
-$btnOpenStats.Add_Click({$tabs.SelectTab('Statistics')})
-
 $foldersPage=$tabs.TabPages['Folders']
 [void](Add-Heading $foldersPage 'Folders ChatGPT can access')
 [void](Add-Label $foldersPage 'These folders are available to file tools; terminal commands are not sandboxed.' 24 53 603 30)
