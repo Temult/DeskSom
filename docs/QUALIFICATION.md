@@ -10,7 +10,7 @@ Added catalog-schema preservation, capability-reporting, and isolated modern/leg
 
 ## Wizard layout qualification
 
-The default graphical setup now uses three distinct, non-overlapping pages and a shared Back/Next footer. A -LayoutCheck pass builds the actual WinForms controls without showing the window or installing anything. It visits all three pages, checks geometry against the live DPI-aware screen, and rejects any clipped button or page content. These checks supplement the existing PowerShell AST, MCP and native installer tests, but do not replace the owner's final visual pilot.
+The default graphical setup now uses three distinct, non-overlapping pages and a shared Back/Next footer. A -LayoutCheck pass builds the actual WinForms controls without showing the window or installing anything. The dedicated -PreviewOnly mode allows a human to view and navigate all three pages without installing a local service, configuring a tunnel or changing private state. It visits all three pages, checks geometry against the live DPI-aware screen, and rejects any clipped button or page content. These checks supplement the existing PowerShell AST, MCP and native installer tests, but do not replace the owner's final visual pilot.
 
 ## High-DPI graphical qualification
 

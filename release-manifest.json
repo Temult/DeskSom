@@ -34,8 +34,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 5209,
-      "sha256": "76d5e5b4037b09edcf46103fd176c67594d4e7e87d3215b682ef95f78869fc74"
+      "bytes": 5299,
+      "sha256": "3c89f33af2014dc85436c692de291afa5aad505cd27c46524f45979ec2b6aaf5"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -79,8 +79,8 @@
     },
     {
       "path": "Start-DeskSom-GUI.ps1",
-      "bytes": 19931,
-      "sha256": "1e5cd7e0f928844a811ea6c0555943550369392159560acfc47a5547ad3f5cdd"
+      "bytes": 20536,
+      "sha256": "8cf6caeb45c6770c7d0c05611098b7c66b10d286f7c84584234b45fbe855d440"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -154,8 +154,8 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 6210,
-      "sha256": "c750d4c98305a857797d1f191d31d93326e3024f7f501513a42caa96b0bcb1d9"
+      "bytes": 6378,
+      "sha256": "a675def6f5358446011a903a1f2428a662157d619df9df454527bb2c05a33b2f"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -339,8 +339,8 @@
     },
     {
       "path": "scripts/tests/wizard.test.mjs",
-      "bytes": 1613,
-      "sha256": "86c4afc72c340712dd21becee7854eff3bb65a23d3b434f8457d9a2bd78d5cc7"
+      "bytes": 1962,
+      "sha256": "1c903085b78132826c4c3f1f16838e7b770b92d34b56af2ac4274b9a7841f3a4"
     },
     {
       "path": "security.mjs",

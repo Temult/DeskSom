@@ -1,6 +1,6 @@
 #requires -Version 5.1
 [CmdletBinding()]
-param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789,[switch]$LayoutCheck)
+param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789,[switch]$LayoutCheck,[switch]$PreviewOnly,[string]$PreviewFolder='')
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'scripts\WinForms-Dpi.ps1')
@@ -59,7 +59,7 @@ function Report([string]$message,[bool]$warning=$false){
 
 $form=New-Object Windows.Forms.Form
 $form.AutoScaleMode='None'
-$form.Text='DeskSom Setup'
+$form.Text=if($PreviewOnly){'DeskSom Setup (visual preview only)'}else{'DeskSom Setup'}
 $form.ClientSize=[Drawing.Size]::new(650,400)
 $form.FormBorderStyle='FixedDialog';$form.MaximizeBox=$false
 $form.StartPosition='CenterScreen';$form.BackColor=[Drawing.Color]::White
@@ -156,7 +156,8 @@ function Show-Page([int]$number) {
  }else{'Finish'}
  $btnNext.Enabled=(-not $script:running -and $script:checksReady)
  if($number -eq 3){$btnNext.Enabled=$true}
- if($number -eq 2 -and -not $script:installed -and -not $script:ready){
+ if($number -eq 2 -and $PreviewOnly){$btnNext.Text='Next >';$btnNext.Enabled=$true}
+ if($number -eq 2 -and -not $PreviewOnly -and -not $script:installed -and -not $script:ready){
   $btnNext.Enabled=$false
  }
  $btnConnect.Enabled=$script:installed
@@ -252,11 +253,12 @@ $btnNext.Add_Click({
      'Service: private Windows sign-in task, local port '+$Port+[Environment]::NewLine+
      'Terminal tools retain full Windows-user permissions.'
    $overview.Text=$script:reviewSummary
-   [void](Review-Prerequisites)
+   if($PreviewOnly){$status.Text='Visual preview only; no software will be installed.';$prereq.Visible=$false}else{[void](Review-Prerequisites)}
    Show-Page 2
    return
   }
   if($script:page -eq 3){$form.Close();return}
+  if($PreviewOnly){$statusConnect.Text='Visual preview only. No service or ChatGPT connection was created.';Show-Page 3;return}
   if($script:installed){Show-Page 3;return}
   if(-not(Check-Prerequisites)){
    [void](Review-Prerequisites)
@@ -364,6 +366,12 @@ $btnControl.Add_Click({
 $form.Add_Shown({
  try{
   Check-Release
+  if($PreviewOnly){
+   $script:checksReady=$true;$script:ready=$true
+   if($PreviewFolder){$folder.Text=$PreviewFolder}
+   Show-Page 1
+   return
+  }
   Load-ExistingPlan
  }catch{
   $script:checksReady=$false

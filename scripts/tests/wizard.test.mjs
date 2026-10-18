@@ -32,3 +32,12 @@ test('account configuration is optional and does not collect secrets in the wiza
  assert.match(s,/scripts\\ControlPanel\.ps1/);
  assert.doesNotMatch(s,/--api-key|--secret-key|Write-Host \$key/);
 });
+
+test('visual preview explores all pages without installing software or configuring OpenAI',async()=>{
+ const s=await wizard();
+ assert.match(s,/\[switch\]\$PreviewOnly/);
+ assert.match(s,/\$PreviewOnly\)\{.*Show-Page 3/);
+ assert.match(s,/Visual preview only/);
+ assert.match(s,/if\(\$PreviewOnly\)\{/);
+ assert.match(s,/if\(\$LayoutCheck\)/);
+});
