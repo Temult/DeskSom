@@ -1,5 +1,1 @@
 * text eol=lf
-
-# Release downloads must retain exact byte identity.
-downloads/**/*.exe -text
-downloads/**/*.zip -text

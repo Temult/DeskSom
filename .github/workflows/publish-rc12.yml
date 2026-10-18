@@ -4,8 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'downloads/v0.2.0-rc.12/**'
-      - '.github/workflows/publish-rc12.yml'
+      - 'downloads/v0.2.0-rc.12/*.exe'
+      - 'downloads/v0.2.0-rc.12/*.zip'
+      - 'downloads/v0.2.0-rc.12/*-SHA256.txt'
   workflow_dispatch:
 
 permissions:

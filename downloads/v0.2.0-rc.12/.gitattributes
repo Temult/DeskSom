@@ -1,0 +1,3 @@
+# Preserve exact bytes of distributed artifacts.
+*.exe -text
+*.zip -text
