@@ -1,12 +1,16 @@
 # Qualification and release boundaries
 
-The public source is a **0.2.0-rc.5 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+The public source is a **0.2.0-rc.6 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
 
 The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
 
 ## Discovery-specific qualification
 
 Added catalog-schema preservation, capability-reporting, and isolated modern/legacy MCP integration tests including real temporary file edits, shell execution and bearer rejection. The server reports advertised capabilities only; a real ChatGPT visibility comparison on the updated connection remains a separate deployment-time experiment. See [DISCOVERY_R1_INTEGRATION.md](DISCOVERY_R1_INTEGRATION.md).
+
+## High-DPI graphical qualification
+
+The WinForms setup, tray, control panel, and local private-account dialogs enable DPI awareness before constructing windows. The supported Windows display reports its physical system DPI, not the virtual 96 DPI of a bitmap-stretched legacy window. Layout bounds are scaled separately from font rasterization. Automated smoke tests exercise WinForms in a no-window child under both Windows PowerShell 5.1 and PowerShell 7, and the native installer now runs the Windows PowerShell DPI check. A human screenshot still determines visual presentation and legibility on the target screen.
 
 ## Graphical installer qualification
 

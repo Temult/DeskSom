@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.6: Native high-DPI clarity and plain-language folder choice
+
+Fixed Windows PowerShell's DPI-unaware WinForms rendering on high-density displays. All graphical setup, control-panel, tray and local account windows now enable per-monitor DPI awareness before creating controls, then scale their pixel layout to the monitor's effective system DPI without bitmap stretching or enlarged fonts. The initial folder prompt now reads "Choose a folder ChatGPT can access", followed by "You can add or remove folders later". Added a native no-window scaling regression test under both Windows PowerShell and PowerShell 7. No service/tunnel semantics or security gates changed.
+
 ## 0.2.0-rc.5: Beginner-friendly Windows setup
 
 The default double-click launcher now opens a graphical folder-picker and three-step install/connection assistant. It uses the same sealed source validation, approved installation plan and per-user service setup as the original CLI, with asynchronous installation and a responsive progress indication. The owner-only connection assistant has masked Windows credential dialogs and direct links to the necessary OpenAI account pages. No new runtime dependencies or per-user background agents were added; the previous console workflow remains available as Start-DeskSom-CLI.cmd. Owner authorization, Platform tunnel setup and the ChatGPT custom connection still require explicit account actions.

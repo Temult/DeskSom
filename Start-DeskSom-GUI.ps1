@@ -3,6 +3,8 @@
 param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
+. (Join-Path $PSScriptRoot 'scripts\WinForms-Dpi.ps1')
+$script:uiScale=Enable-DeskSomHighDpi
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
@@ -55,6 +57,7 @@ function Report([string]$message,[bool]$warning=$false){
 }
 
 $form=New-Object Windows.Forms.Form
+$form.AutoScaleMode='None'
 $form.Text='DeskSom Setup'
 $form.Size=[Drawing.Size]::new(700,505)
 $form.FormBorderStyle='FixedDialog';$form.MaximizeBox=$false
@@ -72,23 +75,24 @@ function New-Button([string]$content,[int]$x,[int]$y,[int]$width=160){
 }
 $heading=New-Label 'DeskSom: connect ChatGPT to this PC' 18 45
 $heading.Font=New-Object Drawing.Font('Segoe UI',15,[Drawing.FontStyle]::Bold)
-[void](New-Label 'Step 1 of 3: Choose a folder for ChatGPT file tools' 85)
+[void](New-Label 'Step 1 of 3: Choose a folder ChatGPT can access' 84)
+[void](New-Label 'You can add or remove folders later.' 111 27)
 $folder=New-Object Windows.Forms.TextBox
-$folder.Location=[Drawing.Point]::new(23,123);$folder.Size=[Drawing.Size]::new(495,28)
+$folder.Location=[Drawing.Point]::new(23,143);$folder.Size=[Drawing.Size]::new(495,28)
 $form.Controls.Add($folder)
-$browse=New-Button 'Browse...' 530 120 130
-[void](New-Label 'Step 2 of 3: Install a private background service' 176)
-$install=New-Button 'Install DeskSom' 23 212 185
-$prereq=New-Button 'Install prerequisites' 218 212 190
+$browse=New-Button 'Browse...' 530 140 130
+[void](New-Label 'Step 2 of 3: Install DeskSom on this computer' 189)
+$install=New-Button 'Install DeskSom' 23 225 185
+$prereq=New-Button 'Install prerequisites' 218 225 190
 $prereq.Visible=$false
 $bar=New-Object Windows.Forms.ProgressBar
-$bar.Location=[Drawing.Point]::new(23,266);$bar.Size=[Drawing.Size]::new(637,15)
+$bar.Location=[Drawing.Point]::new(23,279);$bar.Size=[Drawing.Size]::new(637,15)
 $form.Controls.Add($bar)
-$status=New-Label 'Checking this release and your Windows computer...' 299 55
-[void](New-Label 'Step 3 of 3: Connect ChatGPT when you are ready' 363)
-$connect=New-Button 'Connect ChatGPT' 23 398 180
-$panel=New-Button 'Open control panel' 218 398 175
-$skip=New-Button 'Finish for now' 408 398 180
+$status=New-Label 'Checking this release and your Windows computer...' 308 53
+[void](New-Label 'Step 3 of 3: Connect ChatGPT when you are ready' 369)
+$connect=New-Button 'Connect ChatGPT' 23 407 180
+$panel=New-Button 'Open control panel' 218 407 175
+$skip=New-Button 'Finish for now' 408 407 180
 $install.Enabled=$false;$browse.Enabled=$false
 $connect.Enabled=$false;$panel.Enabled=$false
 $timer=New-Object Windows.Forms.Timer
@@ -257,5 +261,6 @@ $form.Add_FormClosing({
   if([Windows.Forms.MessageBox]::Show($form,$message,'DeskSom setup running','YesNo','Warning') -ne 'Yes'){$_.Cancel=$true}
  }
 })
+if($script:uiScale -ne 1.0){$form.Scale([Drawing.SizeF]::new($script:uiScale,$script:uiScale))}
 [void]$form.ShowDialog()
 $timer.Stop();$timer.Dispose();$form.Dispose()

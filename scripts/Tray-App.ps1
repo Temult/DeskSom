@@ -3,6 +3,8 @@
 param([Parameter(Mandatory)][string]$StateFile)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
+. (Join-Path $PSScriptRoot 'WinForms-Dpi.ps1')
+$script:uiScale=Enable-DeskSomHighDpi
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()

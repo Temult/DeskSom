@@ -34,6 +34,25 @@ test('graphical account prompt preserves local masked key and install identity c
  assert.match(dialog,/ConvertTo-SecureString/);
  assert.doesNotMatch(dialog,/Out-File|Write-Host.*\$entry\.Text|Set-Clipboard/);
 });
+test('all Windows graphical surfaces opt into crisp high-DPI rendering',async()=>{
+ const dpi=await get('scripts/WinForms-Dpi.ps1');
+ assert.match(dpi,/SetProcessDpiAwarenessContext/);
+ assert.match(dpi,/GetDpiForSystem/);
+ for(const file of ['Start-DeskSom-GUI.ps1','scripts/ControlPanel.ps1','scripts/Connection-Prompts.ps1','scripts/Tray-App.ps1']){
+  const source=await get(file);
+  assert.match(source,/Enable-DeskSomHighDpi/);
+ }
+ for(const file of ['Start-DeskSom-GUI.ps1','scripts/ControlPanel.ps1','scripts/Connection-Prompts.ps1']){
+  const source=await get(file);
+  assert.match(source,/\.Scale\(/);
+  assert.match(source,/AutoScaleMode='None'/);
+ }
+ const wizard=await get('Start-DeskSom-GUI.ps1');
+ assert.match(wizard,/Choose a folder ChatGPT can access/);
+ assert.match(wizard,/You can add or remove folders later/);
+ assert.doesNotMatch(wizard,/Choose a folder for ChatGPT file tools/);
+});
+
 test('prerequisites require a user action and use exact official package names',async()=>{
  const wizard=await get('Start-DeskSom-GUI.ps1');
  const prereq=await get('scripts/Install-Prerequisites.ps1');

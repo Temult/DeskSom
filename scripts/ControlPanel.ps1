@@ -6,6 +6,8 @@ param(
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
+. (Join-Path $PSScriptRoot 'WinForms-Dpi.ps1')
+$script:uiScale=Enable-DeskSomHighDpi
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
@@ -33,6 +35,7 @@ function Show-Error($exception){
   [void][Windows.Forms.MessageBox]::Show([string]$exception.Exception.Message,'DeskSom',[Windows.Forms.MessageBoxButtons]::OK,[Windows.Forms.MessageBoxIcon]::Warning)
 }
 $form=New-Object Windows.Forms.Form
+$form.AutoScaleMode='None'
 $form.Text='DeskSom  |  '+$state.plan.instance
 $form.StartPosition='CenterScreen';$form.Size=[Drawing.Size]::new(730,525)
 $form.MinimumSize=[Drawing.Size]::new(650,470);$form.Font=New-Object Drawing.Font('Segoe UI',9)
@@ -208,5 +211,6 @@ $form.Add_Shown({
   }
  }catch{Show-Error $_}
 })
+if($script:uiScale -ne 1.0){$form.Scale([Drawing.SizeF]::new($script:uiScale,$script:uiScale))}
 [void]$form.ShowDialog()
 $form.Dispose()

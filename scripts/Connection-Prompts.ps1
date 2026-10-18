@@ -1,11 +1,14 @@
 #requires -Version 7.4
 # Owner-only local WinForms prompts; caller never passes a secret as a command argument.
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'WinForms-Dpi.ps1')
+$script:uiScale=Enable-DeskSomHighDpi
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 function Ds-TunnelIdPrompt {
  $form=New-Object Windows.Forms.Form
+ $form.AutoScaleMode='None'
  $form.Text='DeskSom | Connect your ChatGPT account'
  $form.Size=[Drawing.Size]::new(615,295)
  $form.FormBorderStyle='FixedDialog';$form.MaximizeBox=$false
@@ -36,6 +39,7 @@ function Ds-TunnelIdPrompt {
  })
  $form.Controls.Add($ok);$form.Controls.Add($cancel);$form.CancelButton=$cancel
  try{
+  if($script:uiScale -ne 1.0){$form.Scale([Drawing.SizeF]::new($script:uiScale,$script:uiScale))}
   if($form.ShowDialog() -ne [Windows.Forms.DialogResult]::OK){throw 'Owner cancelled tunnel setup; no new association was saved.'}
   return $entry.Text.Trim()
  }finally{$form.Dispose()}
@@ -43,6 +47,7 @@ function Ds-TunnelIdPrompt {
 
 function Ds-RestrictedKeyPrompt {
  $form=New-Object Windows.Forms.Form
+ $form.AutoScaleMode='None'
  $form.Text='DeskSom | Restricted tunnel runtime key'
  $form.Size=[Drawing.Size]::new(615,310)
  $form.FormBorderStyle='FixedDialog';$form.MaximizeBox=$false
@@ -74,6 +79,7 @@ function Ds-RestrictedKeyPrompt {
  })
  $form.Controls.Add($ok);$form.Controls.Add($cancel);$form.CancelButton=$cancel
  try{
+  if($script:uiScale -ne 1.0){$form.Scale([Drawing.SizeF]::new($script:uiScale,$script:uiScale))}
   if($form.ShowDialog() -ne [Windows.Forms.DialogResult]::OK){throw 'Owner cancelled restricted-key entry.'}
   $secret=ConvertTo-SecureString $entry.Text -AsPlainText -Force
   $entry.Clear()
