@@ -116,8 +116,8 @@ $startPage.Controls.Add($folder)
 $browse=New-WizardButton $startPage 'Browse...' 476 57 122 36
 [void](New-WizardLabel $startPage 'You can add or remove folders later in the DeskSom control panel.' 0 118 595 50 9)
 
-[void](New-WizardLabel $summaryPage 'DeskSom runs privately under your Windows account.' 0 0 594 32 10)
-$overview=New-WizardLabel $summaryPage 'Review your folder and local service settings.' 0 35 595 73 9
+[void](New-WizardLabel $summaryPage 'DeskSom will run privately when you sign in to Windows.' 0 0 594 32 10)
+$overview=New-WizardLabel $summaryPage 'Review the folder and access permissions before installing.' 0 35 595 73 9
 $overview.ForeColor=[Drawing.Color]::FromArgb(65,72,80)
 $progress=New-Object Windows.Forms.ProgressBar
 $progress.Location=[Drawing.Point]::new(0,119)
@@ -125,10 +125,10 @@ $progress.Size=[Drawing.Size]::new(595,15)
 $summaryPage.Controls.Add($progress)
 $status=New-WizardLabel $summaryPage 'Checking this computer...' 0 143 590 36 9
 
-$statusConnect=New-WizardLabel $connectPage 'DeskSom is installed on this computer.' 0 0 595 52 10
+$statusConnect=New-WizardLabel $connectPage 'DeskSom is ready on this computer.' 0 0 595 52 10
 $btnConnect=New-WizardButton $connectPage 'Connect ChatGPT' 0 66 190 38
 $btnControl=New-WizardButton $connectPage 'Open control panel' 205 66 190 38
-[void](New-WizardLabel $connectPage 'You can finish now and connect ChatGPT later from the control panel. Your files and local installation remain available.' 0 119 590 55 9)
+$connectHint=New-WizardLabel $connectPage 'Connect ChatGPT now, or select Finish and return later. You can also manage DeskSom from the Start menu or tray icon.' 0 119 590 55 9
 
 $footer=New-Object Windows.Forms.Label
 $footer.BorderStyle='Fixed3D'
@@ -150,7 +150,10 @@ function Show-Page([int]$number) {
  $stepIndicator.Text='Step '+$number+' of 3'
  $pageTitle.Text=@('Choose a folder ChatGPT can access','Review and install DeskSom','Connect ChatGPT')[$number-1]
  $btnBack.Enabled=($number -gt 1 -and -not $script:running -and -not $script:installed)
- $btnClose.Text=if($number -eq 3){'Finish for now'}else{'Cancel'}
+ $btnBack.Location=if($number -eq 3){[Drawing.Point]::new(383,347)}else{[Drawing.Point]::new(265,347)}
+ $btnNext.Visible=($number -ne 3)
+ $btnClose.Text=if($number -eq 3){'Finish'}else{'Cancel'}
+ $form.AcceptButton=if($number -eq 3){$btnClose}else{$btnNext}
  $btnNext.Text=if($number -eq 1){'Next >'}elseif($number -eq 2){
    if($script:installed){'Next >'}else{'Install DeskSom'}
  }else{'Finish'}
@@ -162,6 +165,11 @@ function Show-Page([int]$number) {
  }
  $btnConnect.Enabled=$script:installed
  $btnControl.Enabled=$script:installed
+ if($PreviewOnly){
+  $connectHint.Text='These actions become available after installation. This preview creates no service or ChatGPT connection.'
+ }else{
+  $connectHint.Text='Connect ChatGPT now, or select Finish and return later. You can manage DeskSom from the Start menu or tray icon.'
+ }
 }
 function Review-Prerequisites {
  $script:ready=Check-Prerequisites
@@ -249,16 +257,16 @@ $btnNext.Add_Click({
   if($script:page -eq 1){
    $picked=$folder.Text.Trim().Trim('"')
    if(-not(Test-Path -LiteralPath $picked -PathType Container)){throw 'Choose an existing folder before continuing.'}
-   $script:reviewSummary='Folder: '+$picked+[Environment]::NewLine+
-     'Service: private Windows sign-in task, local port '+$Port+[Environment]::NewLine+
-     'Terminal tools retain full Windows-user permissions.'
+   $script:reviewSummary='Chosen folder: '+$picked+[Environment]::NewLine+
+     'Starts automatically when you sign in to Windows.'+[Environment]::NewLine+
+     'Important: Terminal commands have your Windows-account permissions.'
    $overview.Text=$script:reviewSummary
    if($PreviewOnly){$status.Text='Visual preview only; no software will be installed.';$prereq.Visible=$false}else{[void](Review-Prerequisites)}
    Show-Page 2
    return
   }
   if($script:page -eq 3){$form.Close();return}
-  if($PreviewOnly){$statusConnect.Text='Visual preview only. No service or ChatGPT connection was created.';Show-Page 3;return}
+  if($PreviewOnly){$statusConnect.Text='In the real installer, DeskSom will be ready to connect to ChatGPT.';Show-Page 3;return}
   if($script:installed){Show-Page 3;return}
   if(-not(Check-Prerequisites)){
    [void](Review-Prerequisites)
@@ -322,7 +330,7 @@ $timer.Add_Tick({
    return
   }
   $script:installed=$true
-  $statusConnect.Text='DeskSom is installed and locally verified. Its background service starts at Windows sign-in.'
+  $statusConnect.Text='DeskSom is installed and locally verified. It starts when you sign in to Windows.'
   Show-Page 3
   try{[void](Invoke-DeskSom @('tray','--action','launch','--state',$script:plan.stateRoot))}catch{}
  }catch{$timer.Stop();$progress.Style='Blocks';Report $_.Exception.Message $true}
@@ -401,7 +409,7 @@ if($LayoutCheck){
   $titles=@()
   foreach($n in @(1,2,3)){
     Show-Page $n
-    $titles+=@{number=$n;title=$pageTitle.Text;nextButton=$btnNext.Text;activePage=$script:page}
+    $titles+=@{number=$n;title=$pageTitle.Text;nextButton=if($n -eq 3){'HIDDEN'}else{$btnNext.Text};closeButton=$btnClose.Text;activePage=$script:page}
   }
   Show-Page 1
   $screen=[Windows.Forms.Screen]::PrimaryScreen.WorkingArea

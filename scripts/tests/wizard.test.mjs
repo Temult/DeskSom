@@ -28,7 +28,8 @@ test('wizard preserves permissions, source check, consent and explicitly approve
 test('account configuration is optional and does not collect secrets in the wizard',async()=>{
  const s=await wizard();
  assert.match(s,/scripts\\Configure-Tunnel\.ps1/);
- assert.match(s,/Finish for now/);
+ assert.match(s,/\$btnClose.Text=if\(\$number -eq 3\)\{'Finish'\}/);
+ assert.doesNotMatch(s,/Finish for now/);
  assert.match(s,/scripts\\ControlPanel\.ps1/);
  assert.doesNotMatch(s,/--api-key|--secret-key|Write-Host \$key/);
 });

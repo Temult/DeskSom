@@ -1,6 +1,6 @@
 {
   "schemaVersion": "desksom.release/v1",
-  "version": "0.2.0-rc.7",
+  "version": "0.2.0-rc.8",
   "files": [
     {
       "path": ".gitattributes",
@@ -34,8 +34,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 5299,
-      "sha256": "3c89f33af2014dc85436c692de291afa5aad505cd27c46524f45979ec2b6aaf5"
+      "bytes": 5737,
+      "sha256": "f02e98f47cc391b396b90b8b186b38f7079f256d1f04f16c541be06be81a6f95"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -65,7 +65,7 @@
     {
       "path": "README.md",
       "bytes": 4836,
-      "sha256": "51b8b1023e5c8814bda2e5301b55894ece83d28a8ec60a8de3503b11b2a2c12a"
+      "sha256": "5e897c6ff965bffbf4777e22d8d113a102d2fc1178f75d708d5ed2e3eda64a6d"
     },
     {
       "path": "SECURITY.md",
@@ -79,8 +79,8 @@
     },
     {
       "path": "Start-DeskSom-GUI.ps1",
-      "bytes": 20536,
-      "sha256": "8cf6caeb45c6770c7d0c05611098b7c66b10d286f7c84584234b45fbe855d440"
+      "bytes": 21097,
+      "sha256": "da42b574d72d7c6ac60c85f769511f4cb94e7fb8bd479e57b1d03c9a958fd874"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -105,7 +105,7 @@
     {
       "path": "broker.mjs",
       "bytes": 12626,
-      "sha256": "6ec57f8047ee16ead2b54c00a86618c5442279c2ddf7b04c45f8331e38d985ec"
+      "sha256": "133360e810e4a0e51c3be3b3a914c24daa051d6c8952dad4140575eb378512d4"
     },
     {
       "path": "catalog.mjs",
@@ -155,7 +155,7 @@
     {
       "path": "docs/QUALIFICATION.md",
       "bytes": 6378,
-      "sha256": "a675def6f5358446011a903a1f2428a662157d619df9df454527bb2c05a33b2f"
+      "sha256": "4e735844090caa9951dc0897f952867455ff2ba8a8a79a55e9c9ebad482a4f6f"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -190,7 +190,7 @@
     {
       "path": "modern.mjs",
       "bytes": 3504,
-      "sha256": "6db09b0a18649448824e41a12039ad192b56ebf7f71cff52916b352df7b9a992"
+      "sha256": "e578c440fc4be927e8d2f40eacb7c74ec0ba60abef9c9cb1be26f797f5538bb6"
     },
     {
       "path": "modern.test.mjs",
@@ -200,12 +200,12 @@
     {
       "path": "package-lock.json",
       "bytes": 318762,
-      "sha256": "b855f3f18d6884ddbb0e6c18b1b53361b93aa3dc5e9cfdfc03de5df45df4304a"
+      "sha256": "4e2224888e2527bfb1c81cafc574e5d276a060ff22e665329dc3ca7a9b076131"
     },
     {
       "path": "package.json",
       "bytes": 993,
-      "sha256": "771837bbedece6ab3c66eac9d9d349516184d20f05c22f34c2372ab4555691ad"
+      "sha256": "2e43dc80d7128e709244e104d8bc6d456ab3b9af77b04d1dcd992d29a831fba4"
     },
     {
       "path": "release-policy.json",
@@ -339,8 +339,8 @@
     },
     {
       "path": "scripts/tests/wizard.test.mjs",
-      "bytes": 1962,
-      "sha256": "1c903085b78132826c4c3f1f16838e7b770b92d34b56af2ac4274b9a7841f3a4"
+      "bytes": 2038,
+      "sha256": "894f61cbef5958a5eeaa9429d20e68b8454c0cb3b4b9aa435c73c5d837cc650a"
     },
     {
       "path": "security.mjs",

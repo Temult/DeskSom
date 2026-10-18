@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.8: Wizard readability polish
+
+The second page now describes automatic sign-in startup in plain language while retaining the essential Windows-user terminal permission warning. The final page offers only one Finish button, with Back alongside it, rather than two finish actions. The visual-only preview explains disabled connection and control-panel buttons and preserves the same installation and account authority controls.
+
 ## 0.2.0-rc.7: A real three-page installation wizard
 
 The default Windows graphical installation now has a dedicated page for choosing an initial folder, a separate page to review and approve the installation, and a final page to connect ChatGPT or finish for now. Back/Next/Finish navigation lives in a consistent footer, replacing the crowded, vertically stacked controls. The fixed-size layout is checked at the host's actual DPI to catch clipped navigation or content before launch. A read-only visual preview lets reviewers navigate the pages without installing anything. The same immutable plan, source verification, local account permissions and runtime checks continue to govern installation. The GUI does not obtain or authorize an OpenAI tunnel without the owner's action.
