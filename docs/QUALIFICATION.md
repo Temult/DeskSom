@@ -1,12 +1,16 @@
 # Qualification and release boundaries
 
-The public source is a **0.2.0-rc.6 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+The public source is a **0.2.0-rc.7 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
 
 The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
 
 ## Discovery-specific qualification
 
 Added catalog-schema preservation, capability-reporting, and isolated modern/legacy MCP integration tests including real temporary file edits, shell execution and bearer rejection. The server reports advertised capabilities only; a real ChatGPT visibility comparison on the updated connection remains a separate deployment-time experiment. See [DISCOVERY_R1_INTEGRATION.md](DISCOVERY_R1_INTEGRATION.md).
+
+## Wizard layout qualification
+
+The default graphical setup now uses three distinct, non-overlapping pages and a shared Back/Next footer. A -LayoutCheck pass builds the actual WinForms controls without showing the window or installing anything. It visits all three pages, checks geometry against the live DPI-aware screen, and rejects any clipped button or page content. These checks supplement the existing PowerShell AST, MCP and native installer tests, but do not replace the owner's final visual pilot.
 
 ## High-DPI graphical qualification
 

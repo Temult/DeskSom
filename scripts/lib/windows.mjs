@@ -131,7 +131,7 @@ export class WindowsPlatform {
   }
   prepareTunnel(state,policy){return this.helper('prepare-tunnel',{stateFile:path.join(state.plan.stateRoot,'install.json'),policy},180000);}
   async qualify(state) {
-    await this.native(state,'unit-tests',state.environment.node,['--test','--test-concurrency=1','security.test.mjs','modern.test.mjs','catalog.test.mjs','discovery.integration.test.mjs','scripts/tests/installer.test.mjs','scripts/tests/roots.test.mjs','scripts/tests/gui.test.mjs'],{timeout:240000});
+    await this.native(state,'unit-tests',state.environment.node,['--test','--test-concurrency=1','security.test.mjs','modern.test.mjs','catalog.test.mjs','discovery.integration.test.mjs','scripts/tests/installer.test.mjs','scripts/tests/roots.test.mjs','scripts/tests/gui.test.mjs','scripts/tests/wizard.test.mjs'],{timeout:240000});
     await this.native(state,'windows-helper-tests',state.environment.pwsh,['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/windows-helper.test.ps1')],{timeout:60000});
     await this.native(state,'high-dpi-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/gui-dpi.test.ps1')],{timeout:30000});
     const target=path.join(state.runtimeRoot,'ACCEPTANCE.json');

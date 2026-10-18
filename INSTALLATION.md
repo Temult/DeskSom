@@ -8,7 +8,7 @@ Download and extract a prepared DeskSom release from the repository. Keep its so
 
 ## Double-click setup
 
-Open **Start-DeskSom.cmd** to display the graphical setup window. It verifies the downloaded source and offers installation of missing PowerShell 7.4+ or Node.js 22+ through official WinGet package IDs after your approval. Windows may still present its own prompts. If prerequisite installation completes, close and reopen DeskSom Setup to refresh PATH.
+Open **Start-DeskSom.cmd** to display the three-page graphical setup wizard with Back and Next navigation. It verifies the downloaded source and offers installation of missing PowerShell 7.4+ or Node.js 22+ through official WinGet package IDs after your approval. Windows may still present its own prompts. If prerequisite installation completes, close and reopen DeskSom Setup to refresh PATH.
 
 Under **Choose a folder ChatGPT can access**, use **Browse** to select an existing project folder. You can add or remove folders afterward. Click **Install DeskSom**, review the selected folder and full Windows-user terminal access, then approve. DeskSom creates and checks the same exact source/host/user-bound plan as the advanced installer. No terminal commands or approval words are required. The installer runs tests before it starts the local service. Its user-scoped logon tasks require that Windows user to be signed in; this is not an unattended boot service while logged out. It may take several minutes and writes progress receipts; closing the window is not a rollback.
 

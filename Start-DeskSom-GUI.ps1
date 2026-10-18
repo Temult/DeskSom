@@ -1,6 +1,6 @@
 #requires -Version 5.1
 [CmdletBinding()]
-param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789)
+param([ValidatePattern('^[a-z][a-z0-9-]{0,23}$')][string]$Instance='default',[ValidateRange(1024,65535)][int]$Port=18789,[switch]$LayoutCheck)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'scripts\WinForms-Dpi.ps1')
@@ -56,211 +56,353 @@ function Report([string]$message,[bool]$warning=$false){
  [void][Windows.Forms.MessageBox]::Show($form,$message,'DeskSom Setup',[Windows.Forms.MessageBoxButtons]::OK,$ico)
 }
 
+
 $form=New-Object Windows.Forms.Form
 $form.AutoScaleMode='None'
 $form.Text='DeskSom Setup'
-$form.Size=[Drawing.Size]::new(700,505)
+$form.ClientSize=[Drawing.Size]::new(650,400)
 $form.FormBorderStyle='FixedDialog';$form.MaximizeBox=$false
 $form.StartPosition='CenterScreen';$form.BackColor=[Drawing.Color]::White
 $form.Font=New-Object Drawing.Font('Segoe UI',10)
-function New-Label([string]$content,[int]$y,[int]$height=32){
- $l=New-Object Windows.Forms.Label
- $l.Text=$content;$l.Location=[Drawing.Point]::new(23,$y)
- $l.Size=[Drawing.Size]::new(635,$height);$form.Controls.Add($l);return $l
+$script:page=1
+$script:checksReady=$false
+
+function New-WizardLabel($parent,[string]$message,[int]$x,[int]$y,[int]$w,[int]$h,[int]$fontSize=10,[bool]$bold=$false) {
+ $control=New-Object Windows.Forms.Label
+ $control.Text=$message
+ $control.Location=[Drawing.Point]::new($x,$y)
+ $control.Size=[Drawing.Size]::new($w,$h)
+ $style=if($bold){[Drawing.FontStyle]::Bold}else{[Drawing.FontStyle]::Regular}
+ $control.Font=New-Object Drawing.Font('Segoe UI',$fontSize,$style)
+ $parent.Controls.Add($control)
+ return $control
 }
-function New-Button([string]$content,[int]$x,[int]$y,[int]$width=160){
- $b=New-Object Windows.Forms.Button
- $b.Text=$content;$b.Location=[Drawing.Point]::new($x,$y)
- $b.Size=[Drawing.Size]::new($width,36);$form.Controls.Add($b);return $b
+function New-WizardButton($parent,[string]$title,[int]$x,[int]$y,[int]$w=110,[int]$h=33) {
+ $control=New-Object Windows.Forms.Button
+ $control.Text=$title
+ $control.Location=[Drawing.Point]::new($x,$y)
+ $control.Size=[Drawing.Size]::new($w,$h)
+ $parent.Controls.Add($control)
+ return $control
 }
-$heading=New-Label 'DeskSom: connect ChatGPT to this PC' 18 45
-$heading.Font=New-Object Drawing.Font('Segoe UI',15,[Drawing.FontStyle]::Bold)
-[void](New-Label 'Step 1 of 3: Choose a folder ChatGPT can access' 84)
-[void](New-Label 'You can add or remove folders later.' 111 27)
+$brand=New-WizardLabel $form 'DeskSom Setup' 24 15 380 40 17 $true
+$stepIndicator=New-WizardLabel $form 'Step 1 of 3' 478 26 145 27 9
+$divider=New-Object Windows.Forms.Label
+$divider.BorderStyle='Fixed3D'
+$divider.Location=[Drawing.Point]::new(24,73)
+$divider.Size=[Drawing.Size]::new(600,2)
+$form.Controls.Add($divider)
+$pageTitle=New-WizardLabel $form 'Choose a folder ChatGPT can access' 24 92 595 38 14 $true
+
+$pages=@()
+for($n=0;$n -lt 3;$n++) {
+ $panel=New-Object Windows.Forms.Panel
+ $panel.Location=[Drawing.Point]::new(24,140)
+ $panel.Size=[Drawing.Size]::new(600,180)
+ $panel.Visible=($n -eq 0)
+ $form.Controls.Add($panel)
+ $pages+=,$panel
+}
+$startPage=$pages[0]
+$summaryPage=$pages[1]
+$connectPage=$pages[2]
+
+[void](New-WizardLabel $startPage 'Choose an existing folder. ChatGPT can work with its files.' 0 4 595 43 10)
 $folder=New-Object Windows.Forms.TextBox
-$folder.Location=[Drawing.Point]::new(23,143);$folder.Size=[Drawing.Size]::new(495,28)
-$form.Controls.Add($folder)
-$browse=New-Button 'Browse...' 530 140 130
-[void](New-Label 'Step 2 of 3: Install DeskSom on this computer' 189)
-$install=New-Button 'Install DeskSom' 23 225 185
-$prereq=New-Button 'Install prerequisites' 218 225 190
-$prereq.Visible=$false
-$bar=New-Object Windows.Forms.ProgressBar
-$bar.Location=[Drawing.Point]::new(23,279);$bar.Size=[Drawing.Size]::new(637,15)
-$form.Controls.Add($bar)
-$status=New-Label 'Checking this release and your Windows computer...' 308 53
-[void](New-Label 'Step 3 of 3: Connect ChatGPT when you are ready' 369)
-$connect=New-Button 'Connect ChatGPT' 23 407 180
-$panel=New-Button 'Open control panel' 218 407 175
-$skip=New-Button 'Finish for now' 408 407 180
-$install.Enabled=$false;$browse.Enabled=$false
-$connect.Enabled=$false;$panel.Enabled=$false
-$timer=New-Object Windows.Forms.Timer
-$timer.Interval=750
-function Refresh-Setup {
- if(-not(Check-Prerequisites)){
-  $install.Enabled=$false;$prereq.Visible=$true
-  $missing=@()
-  if(-not $script:nodeOK){$missing+='Node.js 22+'}
-  if(-not $script:pwshOK){$missing+='PowerShell 7.4+'}
-  $status.Text='Missing: '+($missing -join ', ')+'. Install prerequisites, then return to setup.'
-  return
+$folder.Location=[Drawing.Point]::new(0,59)
+$folder.Size=[Drawing.Size]::new(463,31)
+$folder.AccessibleName='Folder ChatGPT can access'
+$startPage.Controls.Add($folder)
+$browse=New-WizardButton $startPage 'Browse...' 476 57 122 36
+[void](New-WizardLabel $startPage 'You can add or remove folders later in the DeskSom control panel.' 0 118 595 50 9)
+
+[void](New-WizardLabel $summaryPage 'DeskSom runs privately under your Windows account.' 0 0 594 32 10)
+$overview=New-WizardLabel $summaryPage 'Review your folder and local service settings.' 0 35 595 73 9
+$overview.ForeColor=[Drawing.Color]::FromArgb(65,72,80)
+$progress=New-Object Windows.Forms.ProgressBar
+$progress.Location=[Drawing.Point]::new(0,119)
+$progress.Size=[Drawing.Size]::new(595,15)
+$summaryPage.Controls.Add($progress)
+$status=New-WizardLabel $summaryPage 'Checking this computer...' 0 143 590 36 9
+
+$statusConnect=New-WizardLabel $connectPage 'DeskSom is installed on this computer.' 0 0 595 52 10
+$btnConnect=New-WizardButton $connectPage 'Connect ChatGPT' 0 66 190 38
+$btnControl=New-WizardButton $connectPage 'Open control panel' 205 66 190 38
+[void](New-WizardLabel $connectPage 'You can finish now and connect ChatGPT later from the control panel. Your files and local installation remain available.' 0 119 590 55 9)
+
+$footer=New-Object Windows.Forms.Label
+$footer.BorderStyle='Fixed3D'
+$footer.Location=[Drawing.Point]::new(24,329)
+$footer.Size=[Drawing.Size]::new(600,2)
+$form.Controls.Add($footer)
+$btnBack=New-WizardButton $form '< Back' 265 347 105 34
+$btnNext=New-WizardButton $form 'Next >' 383 347 113 34
+$btnClose=New-WizardButton $form 'Cancel' 509 347 115 34
+$form.AcceptButton=$btnNext
+$form.CancelButton=$btnClose
+$btnConnect.Enabled=$false
+$btnControl.Enabled=$false
+
+function Show-Page([int]$number) {
+ if($number -lt 1 -or $number -gt 3){throw 'Invalid setup page.'}
+ $script:page=$number
+ for($i=0;$i -lt $pages.Count;$i++){$pages[$i].Visible=($i -eq ($number-1))}
+ $stepIndicator.Text='Step '+$number+' of 3'
+ $pageTitle.Text=@('Choose a folder ChatGPT can access','Review and install DeskSom','Connect ChatGPT')[$number-1]
+ $btnBack.Enabled=($number -gt 1 -and -not $script:running -and -not $script:installed)
+ $btnClose.Text=if($number -eq 3){'Finish for now'}else{'Cancel'}
+ $btnNext.Text=if($number -eq 1){'Next >'}elseif($number -eq 2){
+   if($script:installed){'Next >'}else{'Install DeskSom'}
+ }else{'Finish'}
+ $btnNext.Enabled=(-not $script:running -and $script:checksReady)
+ if($number -eq 3){$btnNext.Enabled=$true}
+ if($number -eq 2 -and -not $script:installed -and -not $script:ready){
+  $btnNext.Enabled=$false
  }
- $prereq.Visible=$false;$install.Enabled=$true;$browse.Enabled=$true
+ $btnConnect.Enabled=$script:installed
+ $btnControl.Enabled=$script:installed
+}
+function Review-Prerequisites {
+ $script:ready=Check-Prerequisites
+ if(-not $script:ready){
+  $overview.Text='DeskSom needs a few Windows components before installation.'
+  $missing=@()
+  if(-not $script:pwshOK){$missing+='PowerShell 7.4+'}
+  if(-not $script:nodeOK){$missing+='Node.js 22+'}
+  $status.Text='Missing: '+($missing -join ' and ')+'. Use the prerequisite button below.'
+  $prereq.Visible=$true
+ }else{
+  $prereq.Visible=$false
+  if($script:reviewSummary){$overview.Text=$script:reviewSummary}
+  if(-not $script:installed){$status.Text='Ready to install. Your folder and permissions will be confirmed first.'}
+ }
+ return $script:ready
+}
+$prereq=New-WizardButton $summaryPage 'Install prerequisites' 350 71 235 36
+$prereq.Visible=$false
+function Load-ExistingPlan {
+ $script:checksReady=$true
+ [void](Review-Prerequisites)
  if(Test-Path -LiteralPath $planFile){
   $script:plan=Get-Content -LiteralPath $planFile -Raw -Encoding UTF8|ConvertFrom-Json
-  if($script:plan.instance -cne $Instance -or $script:plan.port -ne $Port){throw 'A saved plan belongs to another instance or port.'}
+  if($script:plan.instance -cne $Instance -or $script:plan.port -ne $Port){
+   throw 'An existing setup plan belongs to a different instance or port. It was not changed.'
+  }
   $folder.Text=$script:plan.allowedDirectories[0]
-  $folder.ReadOnly=$true;$browse.Enabled=$false
-  $browse.Text='Change folder...'
-  $state=Join-Path $script:plan.stateRoot 'install.json'
-  if(Test-Path -LiteralPath $state){
-   $saved=Get-Content -LiteralPath $state -Raw -Encoding UTF8|ConvertFrom-Json
+  $folder.ReadOnly=$true;$browse.Text='Change folder...'
+  $stateFile=Join-Path $script:plan.stateRoot 'install.json'
+  if(Test-Path -LiteralPath $stateFile){
+   $saved=Get-Content -LiteralPath $stateFile -Raw -Encoding UTF8|ConvertFrom-Json
    if($saved.phase -in @('LOCAL_READY','TUNNEL_READY','STOPPED')){
-    $script:installed=$true;$connect.Enabled=$true;$panel.Enabled=$true
-    $install.Text='Check / resume setup'
-    $status.Text='DeskSom is already installed. Open the control panel or finish connecting ChatGPT.'
+    $script:installed=$true
+    $statusConnect.Text=if($saved.phase -eq 'STOPPED'){
+      'DeskSom was installed and deliberately stopped. You can manage it in the control panel.'
+    }else{'DeskSom is installed. You can connect ChatGPT now or finish later.'}
+    Show-Page 3
     return
    }
-  }
-  if(-not(Test-Path -LiteralPath $state)){$browse.Enabled=$true}
-  $status.Text='Saved setup plan found. You can change its folder before installation or safely resume it.'
- }else{
-  $status.Text='Choose an existing folder, then install. You can add or remove folders later.'
+   $status.Text='Existing installation activity found. DeskSom will inspect its receipts before continuing.'
+  }else{$browse.Enabled=$true}
  }
+ Show-Page 1
 }
-
 $browse.Add_Click({
  try{
   $dialog=New-Object Windows.Forms.FolderBrowserDialog
-  $dialog.Description='Choose a folder that DeskSom file tools may access'
+  $dialog.Description='Select a folder that ChatGPT can access'
   $dialog.ShowNewFolderButton=$false
-  if($dialog.ShowDialog($form) -eq 'OK'){
+  try{
+   if($dialog.ShowDialog($form) -ne [Windows.Forms.DialogResult]::OK){return}
    $picked=$dialog.SelectedPath
    if($script:plan){
-    $state=Join-Path $script:plan.stateRoot 'install.json'
-    if(Test-Path -LiteralPath $state){throw 'An installation already exists. Manage folders from the DeskSom control panel.'}
-    if($script:plan.sourceRoot -ine $root){throw 'The saved plan came from a different release. It cannot be reset here.'}
+    $stateFile=Join-Path $script:plan.stateRoot 'install.json'
+    if(Test-Path -LiteralPath $stateFile){throw 'DeskSom is already installed. Use the control panel to change folders.'}
+    if($script:plan.sourceRoot -ine $root){throw 'The saved plan belongs to another release. It was preserved.'}
     foreach($name in @($script:plan.tasks.local,$script:plan.tasks.tunnel)){
-     if(Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue){throw 'An existing service task needs inspection. The saved plan was kept.'}
+     if(Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue){throw 'An owned service task exists. The saved plan was not changed.'}
     }
     foreach($location in @($script:plan.installRoot,$script:plan.stateRoot)){
      if((Test-Path -LiteralPath $location) -and @(Get-ChildItem -LiteralPath $location -Force).Count){
-      throw 'An installation directory already contains data. The saved plan was kept.'
+      throw 'The installation directory is not empty. The saved plan was preserved.'
      }
     }
-    $message='You have not installed this instance yet. Discard its unused setup plan and choose the new folder? No project files will be removed.'
-    if([Windows.Forms.MessageBox]::Show($form,$message,'Change setup folder','YesNo','Question') -ne 'Yes'){return}
+    if([Windows.Forms.MessageBox]::Show($form,
+      'Discard the unused setup plan and choose another folder? Your files will remain untouched.',
+      'Change initial folder','YesNo','Question') -ne [Windows.Forms.DialogResult]::Yes){return}
     Remove-Item -LiteralPath $planFile -Force -ErrorAction Stop
     $script:plan=$null
    }
    $folder.ReadOnly=$false;$folder.Text=$picked
-  }
-  $dialog.Dispose()
+  }finally{$dialog.Dispose()}
  }catch{Report $_.Exception.Message $true}
 })
-$prereq.Add_Click({
- try{
-  if(Check-Prerequisites){Refresh-Setup;return}
-  $winget=Get-Command winget.exe -ErrorAction SilentlyContinue
-  if(-not $winget){throw 'Windows Package Manager is unavailable. Follow docs/PREREQUISITES.md.'}
-  $missing=@()
-  if(-not $script:pwshOK){$missing+='Microsoft.PowerShell'}
-  if(-not $script:nodeOK){$missing+='OpenJS.NodeJS.LTS'}
-  $message='Install the following official Windows programs?' + [Environment]::NewLine + ($missing -join ', ')+
-   [Environment]::NewLine + 'Windows may ask you to approve the installation.'
-  if([Windows.Forms.MessageBox]::Show($form,$message,'DeskSom prerequisites','YesNo','Question') -ne 'Yes'){return}
-  $runner=Join-Path $root 'scripts\Install-Prerequisites.ps1'
-  Start-Process -FilePath 'powershell.exe' -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-NoExit','-File',('"'+$runner+'"'))|Out-Null
-  $status.Text='Install prerequisites in the separate window. When finished, close and reopen DeskSom Setup.'
- }catch{Report $_.Exception.Message $true}
+$btnBack.Add_Click({
+ if($script:running -or $script:installed){return}
+ if($script:page -gt 1){Show-Page ($script:page-1)}
 })
-$install.Add_Click({
+$btnClose.Add_Click({$form.Close()})
+
+$btnNext.Add_Click({
  try{
   if($script:running){return}
-  if(-not(Check-Prerequisites)){throw 'Required components are not available. Install prerequisites first.'}
+  if($script:page -eq 1){
+   $picked=$folder.Text.Trim().Trim('"')
+   if(-not(Test-Path -LiteralPath $picked -PathType Container)){throw 'Choose an existing folder before continuing.'}
+   $script:reviewSummary='Folder: '+$picked+[Environment]::NewLine+
+     'Service: private Windows sign-in task, local port '+$Port+[Environment]::NewLine+
+     'Terminal tools retain full Windows-user permissions.'
+   $overview.Text=$script:reviewSummary
+   [void](Review-Prerequisites)
+   Show-Page 2
+   return
+  }
+  if($script:page -eq 3){$form.Close();return}
+  if($script:installed){Show-Page 3;return}
+  if(-not(Check-Prerequisites)){
+   [void](Review-Prerequisites)
+   throw 'Install the missing prerequisites first, then reopen this setup window.'
+  }
   [void][IO.Directory]::CreateDirectory($onboarding)
   if(-not $script:plan){
-   $picked=$folder.Text.Trim().Trim('"')
-   if(-not(Test-Path -LiteralPath $picked -PathType Container)){throw 'Select an existing folder first.'}
-   $req=Join-Path $onboarding ($Instance+'-request-'+[Guid]::NewGuid().ToString('N')+'.json')
-   @{instance=$Instance;allowedDirectories=@([IO.Path]::GetFullPath($picked));port=$Port}|
-    ConvertTo-Json -Depth 5|Set-Content -LiteralPath $req -Encoding UTF8
-   $planned=Invoke-DeskSom @('plan','--spec',$req,'--out',$planFile)
-   $script:plan=$planned.plan
+   $selected=$folder.Text.Trim().Trim('"')
+   if(-not(Test-Path -LiteralPath $selected -PathType Container)){throw 'The selected folder no longer exists.'}
+   $request=Join-Path $onboarding ($Instance+'-request-'+[Guid]::NewGuid().ToString('N')+'.json')
+   @{instance=$Instance;allowedDirectories=@([IO.Path]::GetFullPath($selected));port=$Port}|
+     ConvertTo-Json -Depth 5|Set-Content -LiteralPath $request -Encoding UTF8
+   $preflight=Invoke-DeskSom @('plan','--spec',$request,'--out',$planFile)
+   $script:plan=$preflight.plan
   }
   $p=$script:plan
-  $message='DeskSom can execute terminal commands using your full Windows-user permissions.'+
-   [Environment]::NewLine+[Environment]::NewLine+
-   'Work folder: '+($p.allowedDirectories -join '; ')+[Environment]::NewLine+
-   'Private state: '+$p.stateRoot+[Environment]::NewLine+
-   'Local port: '+$p.port+[Environment]::NewLine+[Environment]::NewLine+
-   'File-tool folders do NOT limit terminal commands. The connection must remain private.'+
-   [Environment]::NewLine+[Environment]::NewLine+'Install and authorize this Windows-user access?'
-  if([Windows.Forms.MessageBox]::Show($form,$message,'Approve DeskSom permissions','YesNo','Warning') -ne 'Yes'){return}
+  $warning='DeskSom can execute terminal commands with your full Windows-user permissions.'+
+    [Environment]::NewLine+[Environment]::NewLine+
+    'Folder: '+($p.allowedDirectories -join '; ')+[Environment]::NewLine+
+    'Private state: '+$p.stateRoot+[Environment]::NewLine+
+    'Local port: '+$p.port+[Environment]::NewLine+
+    [Environment]::NewLine+
+    'The folder list limits file tools, not terminal commands. Keep the connection private.'+
+    [Environment]::NewLine+[Environment]::NewLine+'Install DeskSom with this access?'
+  $approval=[Windows.Forms.MessageBox]::Show($form,$warning,'Approve DeskSom installation',
+    [Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Warning)
+  if($approval -ne [Windows.Forms.DialogResult]::Yes){return}
   $nonce=[Guid]::NewGuid().ToString('N')
   $script:stdout=Join-Path $onboarding ($Instance+'-install-'+$nonce+'.json')
   $script:stderr=Join-Path $onboarding ($Instance+'-install-'+$nonce+'.stderr')
-  $exe=Join-Path $root 'scripts\cli.mjs'
-  $arguments=@(('"'+$exe+'"'),'install','--plan',('"'+$planFile+'"'),'--approve',$p.planSha256,'--accept-shell-access','--json')
+  $cli=Join-Path $root 'scripts\cli.mjs'
+  $arguments=@(('"' + $cli + '"'),'install','--plan',('"' + $planFile + '"'),
+    '--approve',$p.planSha256,'--accept-shell-access','--json')
   $script:running=Start-Process -FilePath $script:node -ArgumentList $arguments -PassThru -WindowStyle Hidden -RedirectStandardOutput $script:stdout -RedirectStandardError $script:stderr
-  $install.Enabled=$false;$browse.Enabled=$false;$connect.Enabled=$false
-  $status.Text='Installing and running local tests. This can take several minutes. Your computer stays usable.'
-  $bar.Style='Marquee';$timer.Start()
+  $status.Text='Installing verified dependencies and testing DeskSom. This can take several minutes.'
+  $progress.Style='Marquee'
+  $btnBack.Enabled=$false;$btnNext.Enabled=$false;$btnClose.Text='Close setup'
+  $folder.ReadOnly=$true;$browse.Enabled=$false
+  $timer.Start()
  }catch{Report $_.Exception.Message $true}
 })
-
+$timer=New-Object Windows.Forms.Timer
+$timer.Interval=750
 $timer.Add_Tick({
  try{
   if(-not $script:running){$timer.Stop();return}
   $script:running.Refresh()
   if(-not $script:running.HasExited){return}
-  $timer.Stop();$bar.Style='Blocks'
-  $code=$script:running.ExitCode;$script:running.Dispose();$script:running=$null
+  $timer.Stop();$progress.Style='Blocks'
+  $code=$script:running.ExitCode
+  $script:running.Dispose();$script:running=$null
   $result=$null
   try{$result=Get-Content -LiteralPath $script:stdout -Raw -Encoding UTF8|ConvertFrom-Json}catch{}
   if($code -ne 0 -or -not $result -or $result.operationOk -ne $true){
-   $status.Text='Setup needs attention. The saved plan and receipts are preserved.'
-   $install.Enabled=$true
-   $detail=if($result.error){$result.error.message+' '+$result.error.nextAction}else{'The installer did not report completion.'}
-   Report $detail $true;return
+   $status.Text='Setup needs attention. Existing receipts were preserved.'
+   Show-Page 2
+   $detail=if($result -and $result.error){$result.error.message+' '+$result.error.nextAction}else{
+     'The installer did not report completion. Inspect its private status before trying again.'
+   }
+   Report $detail $true
+   return
   }
   $script:installed=$true
-  $install.Enabled=$true;$connect.Enabled=$true;$panel.Enabled=$true
-  $install.Text='Check / resume setup'
-  $status.Text='Installed and locally verified. DeskSom will start when you sign in.'
+  $statusConnect.Text='DeskSom is installed and locally verified. Its background service starts at Windows sign-in.'
+  Show-Page 3
   try{[void](Invoke-DeskSom @('tray','--action','launch','--state',$script:plan.stateRoot))}catch{}
-  Report 'DeskSom is ready on this computer. You may connect ChatGPT now or finish later.'
- }catch{$timer.Stop();$bar.Style='Blocks';Report $_.Exception.Message $true}
+ }catch{$timer.Stop();$progress.Style='Blocks';Report $_.Exception.Message $true}
 })
-$connect.Add_Click({
+
+$prereq.Add_Click({
  try{
-  if(-not $script:installed){throw 'Install DeskSom first.'}
+  if(Check-Prerequisites){[void](Review-Prerequisites);Show-Page 2;return}
+  $winget=Get-Command winget.exe -ErrorAction SilentlyContinue
+  if(-not $winget){throw 'Windows Package Manager is unavailable. Use docs/PREREQUISITES.md.'}
+  $needed=@()
+  if(-not $script:pwshOK){$needed+='Microsoft.PowerShell'}
+  if(-not $script:nodeOK){$needed+='OpenJS.NodeJS.LTS'}
+  $message='Install these official Windows components?'+[Environment]::NewLine+($needed -join ', ')+
+    [Environment]::NewLine+'Windows may request your approval.'
+  if([Windows.Forms.MessageBox]::Show($form,$message,'Install requirements','YesNo','Question') -ne [Windows.Forms.DialogResult]::Yes){return}
+  $installer=Join-Path $root 'scripts\Install-Prerequisites.ps1'
+  Start-Process -FilePath 'powershell.exe' -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-NoExit','-File',('"' + $installer + '"'))|Out-Null
+  $status.Text='Finish installing the prerequisites, then reopen DeskSom setup to refresh Windows PATH.'
+ }catch{Report $_.Exception.Message $true}
+})
+$btnConnect.Add_Click({
+ try{
+  if(-not $script:installed){throw 'Complete the local installation first.'}
   $config=Join-Path $root 'scripts\Configure-Tunnel.ps1'
-  $args=@('-NoProfile','-STA','-File',('"'+$config+'"'),'-StateRoot',('"'+$script:plan.stateRoot+'"'),'-Graphical','-OpenSettings')
-  Start-Process -FilePath $script:pwsh -ArgumentList $args|Out-Null
-  $status.Text='The private connection assistant is open. You can skip it and return later.'
+  $arguments=@('-NoProfile','-STA','-File',('"' + $config + '"'),'-StateRoot',
+    ('"' + $script:plan.stateRoot + '"'),'-Graphical','-OpenSettings')
+  Start-Process -FilePath $script:pwsh -ArgumentList $arguments|Out-Null
+  $statusConnect.Text='The private connection assistant opened. You can finish it later without reinstalling.'
  }catch{Report $_.Exception.Message $true}
 })
-$panel.Add_Click({
+$btnControl.Add_Click({
  try{
-  if(-not $script:installed){throw 'Install DeskSom first.'}
-  $path=Join-Path $root 'scripts\ControlPanel.ps1'
+  if(-not $script:installed){throw 'Complete the local installation first.'}
+  $p=Join-Path $root 'scripts\ControlPanel.ps1'
   $state=Join-Path $script:plan.stateRoot 'install.json'
-  $args=@('-NoProfile','-STA','-File',('"'+$path+'"'),'-StateFile',('"'+$state+'"'))
-  Start-Process -FilePath 'powershell.exe' -ArgumentList $args|Out-Null
+  Start-Process -FilePath 'powershell.exe' -ArgumentList @('-NoProfile','-STA','-File',('"' + $p + '"'),
+    '-StateFile',('"' + $state + '"'))|Out-Null
  }catch{Report $_.Exception.Message $true}
 })
-$skip.Add_Click({$form.Close()})
 $form.Add_Shown({
- try{Check-Release;Refresh-Setup}catch{$install.Enabled=$false;$status.Text='Installer source needs attention.';Report $_.Exception.Message $true}
+ try{
+  Check-Release
+  Load-ExistingPlan
+ }catch{
+  $script:checksReady=$false
+  $btnNext.Enabled=$false
+  Report $_.Exception.Message $true
+ }
 })
 $form.Add_FormClosing({
  if($script:running){
-  $message='Setup is still running. Closing this window does not stop or undo its work. Close anyway?'
-  if([Windows.Forms.MessageBox]::Show($form,$message,'DeskSom setup running','YesNo','Warning') -ne 'Yes'){$_.Cancel=$true}
+  $message='Installation is still running. Closing the wizard will not stop or undo it. Close anyway?'
+  if([Windows.Forms.MessageBox]::Show($form,$message,'DeskSom installation in progress',
+    [Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Warning) -ne [Windows.Forms.DialogResult]::Yes){
+   $_.Cancel=$true
+  }
  }
 })
 if($script:uiScale -ne 1.0){$form.Scale([Drawing.SizeF]::new($script:uiScale,$script:uiScale))}
-[void]$form.ShowDialog()
+if($LayoutCheck){
+  $controls=@($brand,$stepIndicator,$divider,$pageTitle,$footer,$btnBack,$btnNext,$btnClose)+@($pages)
+  $within=@($controls|Where-Object {$_.Left -lt 0 -or $_.Top -lt 0 -or $_.Right -gt $form.ClientSize.Width -or $_.Bottom -gt $form.ClientSize.Height})
+  $badChildren=0
+  foreach($page in $pages){
+    foreach($control in $page.Controls){
+      if($control.Left -lt 0 -or $control.Top -lt 0 -or $control.Right -gt $page.ClientSize.Width -or $control.Bottom -gt $page.ClientSize.Height){$badChildren++}
+    }
+  }
+  $titles=@()
+  foreach($n in @(1,2,3)){
+    Show-Page $n
+    $titles+=@{number=$n;title=$pageTitle.Text;nextButton=$btnNext.Text;activePage=$script:page}
+  }
+  Show-Page 1
+  $screen=[Windows.Forms.Screen]::PrimaryScreen.WorkingArea
+  $bounds=[ordered]@{windowWidth=$form.Width;windowHeight=$form.Height;availableWidth=$screen.Width;availableHeight=$screen.Height;
+    footerButtonsEnd=$btnClose.Bottom;clientHeight=$form.ClientSize.Height;pageCount=$pages.Count;
+    offscreenControls=$within.Count;offscreenPageControls=$badChildren;pages=$titles}
+  if($within.Count -or $badChildren -or $form.Width -gt $screen.Width -or $form.Height -gt $screen.Height){throw ('Layout does not fit current display: '+($bounds|ConvertTo-Json -Compress -Depth 6))}
+  $bounds|ConvertTo-Json -Compress -Depth 6
+}else{
+  [void]$form.ShowDialog()
+}
 $timer.Stop();$timer.Dispose();$form.Dispose()

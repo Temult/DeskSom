@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.7: A real three-page installation wizard
+
+The default Windows graphical installation now has a dedicated page for choosing an initial folder, a separate page to review and approve the installation, and a final page to connect ChatGPT or finish for now. Back/Next/Finish navigation lives in a consistent footer, replacing the crowded, vertically stacked controls. The fixed-size layout is checked at the host's actual DPI to catch clipped navigation or content before launch. The same immutable plan, source verification, local account permissions and runtime checks continue to govern installation. The GUI does not obtain or authorize an OpenAI tunnel without the owner's action.
+
 ## 0.2.0-rc.6: Native high-DPI clarity and plain-language folder choice
 
 Fixed Windows PowerShell's DPI-unaware WinForms rendering on high-density displays. All graphical setup, control-panel, tray and local account windows now enable per-monitor DPI awareness before creating controls, then scale their pixel layout to the monitor's effective system DPI without bitmap stretching or enlarged fonts. The initial folder prompt now reads "Choose a folder ChatGPT can access", followed by "You can add or remove folders later". Added a native no-window scaling regression test under both Windows PowerShell and PowerShell 7. No service/tunnel semantics or security gates changed.
