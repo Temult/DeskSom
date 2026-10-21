@@ -1,4 +1,4 @@
-> This branch is the rc.15 development candidate, not a new downloadable installer release. Use qualified release artifacts for installation. The wizard's Node 22.12+ requirement covers ordinary tools; optional filename indexing needs Node 25+. Do not infer that an installed index is ready merely because the core service reconnects.
+> DeskSom rc.15 is available as a portable prerelease and as a single-file, unsigned Windows setup EXE. Both use the same exact qualified source. The EXE is for new installations, not for overwriting a running service. The wizard's Node 22.12+ requirement covers ordinary tools; optional filename indexing needs Node 25+. Do not infer that an installed index is ready merely because the core service reconnects.
 
 # Set up DeskSom without being a developer
 
@@ -6,11 +6,13 @@
 
 Choose a Windows x64 computer you control and an ordinary Windows login. DeskSom is not currently qualified for ARM, Linux or macOS. You also need an OpenAI account/workspace allowed to create a private Secure MCP Tunnel and a custom MCP connection in ChatGPT. The installer cannot grant those account permissions or promise zero service charges.
 
-Download and extract a prepared DeskSom release from the repository. Keep its source folder in place because the approved plan binds to it. Do not run the ZIP's contents without extraction, and do not run the setup as administrator.
+From the [current GitHub release](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15), choose **DeskSom-Setup-v0.2.0-rc.15.exe** for the easiest new-user setup, or the portable ZIP if you prefer extracting the files yourself. Verify the SHA-256 checksum before running a downloaded program. The EXE is not code-signed, so Windows may report an unknown publisher. Do not run DeskSom Setup as administrator.
+
+The EXE checks the embedded source and unpacks it under your Windows user profile before opening the existing setup wizard. It includes no account credentials. The portable ZIP instead requires manual extraction to a folder you intend to keep, followed by `Start-DeskSom.cmd`. Keep either source folder in place because the approved install plan binds to its exact path and source bytes. **Neither method is an in-place upgrade for an existing installation.**
 
 ## Double-click setup
 
-Open **Start-DeskSom.cmd** to display the three-page graphical setup wizard with Back and Next navigation. It verifies the downloaded source and offers installation of missing PowerShell 7.4+ or Node.js 22.12+ through official WinGet package IDs after your approval. Windows may still present its own prompts. If prerequisite installation completes, close and reopen DeskSom Setup to refresh PATH.
+The EXE opens the same three-page graphical wizard that **Start-DeskSom.cmd** opens from the portable ZIP, with Back and Next navigation. It verifies the downloaded source and offers installation of missing PowerShell 7.4+ or Node.js 22.12+ through official WinGet package IDs after your approval. Windows may still present its own prompts. If prerequisite installation completes, close and reopen DeskSom Setup to refresh PATH.
 
 Under **Choose a folder ChatGPT can access**, use **Browse** to select an existing project folder. You can add or remove folders afterward. Click **Install DeskSom**, review the selected folder and full Windows-user terminal access, then approve. DeskSom creates and checks the same exact source/host/user-bound plan as the advanced installer. No terminal commands or approval words are required. The installer runs tests before it starts the local service. Its user-scoped logon tasks require that Windows user to be signed in; this is not an unattended boot service while logged out. It may take several minutes and writes progress receipts; closing the window is not a rollback.
 

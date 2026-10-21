@@ -1,0 +1,109 @@
+name: Attach DeskSom v0.2.0-rc.15 Windows setup EXE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'downloads/v0.2.0-rc.15/DeskSom-Setup-v0.2.0-rc.15.exe'
+      - 'downloads/v0.2.0-rc.15/DeskSom-v0.2.0-rc.15-EXE-SHA256.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  qualify-and-attach:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout publication and immutable source tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify EXE, tagged source and clean Windows extraction
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $base='downloads/v0.2.0-rc.15'
+          $exe=(Resolve-Path "$base/DeskSom-Setup-v0.2.0-rc.15.exe").Path
+          $expected='b645f4b6c857f350cd0dec8119b881d1d8926721291a3d43acefb86398b2dda5'
+          if((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant() -cne $expected){
+            throw 'Published EXE source bytes changed'
+          }
+          $tag=(git rev-parse 'v0.2.0-rc.15^{}').Trim()
+          if($LASTEXITCODE -ne 0 -or $tag -cne 'de10011818bb8345929b05df411377db1e418b8d'){throw 'Frozen tag changed'}
+          $zip="$base/DeskSom-v0.2.0-rc.15-portable.zip"
+          if((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() -cne 'efde6022692f7ae593236ee286bac2fe3b864e5bb611379449e27a89250476a0'){throw 'Portable ZIP differs'}
+          foreach($line in (Get-Content "$base/DeskSom-v0.2.0-rc.15-EXE-SHA256.txt")){
+            if($line -notmatch '^([0-9a-f]{64})\s+\*?([A-Za-z0-9._-]+)$'){throw 'Invalid checksum entry'}
+            if((Get-FileHash (Join-Path $base $Matches[2]) -Algorithm SHA256).Hash.ToLowerInvariant() -cne $Matches[1]){throw 'Asset checksum mismatch'}
+          }
+          $first=Join-Path $env:RUNNER_TEMP 'embedded-verify.json'
+          $p=Start-Process -FilePath $exe -ArgumentList @('--verify','--receipt',$first) -Wait -PassThru
+          if($p.ExitCode -ne 0){throw 'Embedded source self-verification failed'}
+          $v=Get-Content $first -Raw|ConvertFrom-Json
+          if($v.status -cne 'VERIFIED' -or $v.sourceFiles -ne 161){throw 'Embedded source receipt mismatch'}
+          $target=Join-Path $env:RUNNER_TEMP 'friend-extraction'
+          $receipt=Join-Path $env:RUNNER_TEMP 'extracted.json'
+          $p=Start-Process -FilePath $exe -ArgumentList @('--extract-test',$target,'--receipt',$receipt) -Wait -PassThru
+          if($p.ExitCode -ne 0){throw 'Installer EXE extraction failed'}
+          if((Get-Content $receipt -Raw|ConvertFrom-Json).status -cne 'EXTRACTED_VERIFIED'){throw 'Extraction receipt invalid'}
+          $manifest=Get-Content (Join-Path $target 'release-manifest.json') -Raw|ConvertFrom-Json
+          if($manifest.files.Count -ne 161 -or @(Get-ChildItem $target -Recurse -File).Count -ne 162){throw 'Extracted inventory changed'}
+          foreach($entry in $manifest.files){
+            $file=Join-Path $target $entry.path
+            if((Get-Item -LiteralPath $file).Length -ne $entry.bytes -or
+              (Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant() -cne $entry.sha256){throw ('Extracted source mismatch: '+$entry.path)}
+          }
+          & node (Join-Path $target 'scripts/Check-Release.mjs')
+          if($LASTEXITCODE -ne 0){throw 'Extracted source manifest verification failed'}
+          & powershell.exe -NoProfile -NonInteractive -STA -File (Join-Path $target 'Start-DeskSom-GUI.ps1') -Instance friendwinci -Port 19875 -StartupCheck
+          if($LASTEXITCODE -ne 0){throw 'Fresh-instance wizard startup failed'}
+          $duplicate=Join-Path $env:RUNNER_TEMP 'duplicate.json'
+          $p=Start-Process -FilePath $exe -ArgumentList @('--extract-test',$target,'--receipt',$duplicate) -Wait -PassThru
+          if($p.ExitCode -ne 24 -or (Test-Path $duplicate)){throw 'Overwrite refusal failed'}
+          if((Get-AuthenticodeSignature $exe).Status -ne 'NotSigned'){throw 'Unexpected signing status'}
+          Write-Output 'EXE_QUALIFIED_ON_FRESH_WINDOWS_RUNNER'
+
+      - name: Attach new assets to existing prerelease without replacing old assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          $ErrorActionPreference='Stop'
+          $tag='v0.2.0-rc.15'
+          $base='downloads/v0.2.0-rc.15'
+          $names=@('DeskSom-Setup-v0.2.0-rc.15.exe',
+            'DeskSom-v0.2.0-rc.15-EXE-SHA256.txt',
+            'DeskSom-v0.2.0-rc.15-EXE-QUALIFICATION.json',
+            'DeskSom-v0.2.0-rc.15-EXE-NOTES.md')
+          $before=(& gh release view $tag --repo $env:GH_REPO --json assets,body,isPrerelease | ConvertFrom-Json)
+          if($LASTEXITCODE -ne 0 -or $before.isPrerelease -ne $true){throw 'Original prerelease unavailable'}
+          $present=@($before.assets|ForEach-Object name)
+          foreach($n in $names){if($n -in $present){throw ('Asset exists; never clobber: '+$n)}}
+          if('DeskSom-v0.2.0-rc.15-portable.zip' -notin $present){throw 'Original release files absent'}
+          $paths=@($names|ForEach-Object {Join-Path $base $_})
+          & gh release upload $tag @paths --repo $env:GH_REPO
+          if($LASTEXITCODE -ne 0){throw 'Upload uncertain; inspect remote before any retry'}
+          $after=(& gh api "repos/$env:GH_REPO/releases/tags/$tag" | ConvertFrom-Json)
+          if($LASTEXITCODE -ne 0){throw 'Remote readback failed'}
+          foreach($n in $names){
+            $matches=@($after.assets|Where-Object name -eq $n)
+            if($matches.Count -ne 1){throw ('Uploaded asset not found: '+$n)}
+            $hash=(Get-FileHash (Join-Path $base $n) -Algorithm SHA256).Hash.ToLowerInvariant()
+            if($matches[0].digest -and $matches[0].digest -cne ('sha256:'+$hash)){throw ('Remote asset digest differs: '+$n)}
+          }
+          $old='There is **no newly built EXE** in this release.'
+          if(-not $before.body.Contains($old)){throw 'Release notes changed; inspect before editing'}
+          $new='An optional **unsigned rc.15 setup EXE** is now attached for new Windows users. It verifies the exact tagged source and launches the existing setup wizard. The original portable ZIP is unchanged.'
+          $notes=$before.body.Replace($old,$new)
+          $notes+=[Environment]::NewLine+[Environment]::NewLine+'### Verified EXE add-on'+[Environment]::NewLine+
+           'Installer SHA-256: b645f4b6c857f350cd0dec8119b881d1d8926721291a3d43acefb86398b2dda5. '+
+           'Windows runner verified embedded release, source extraction and safe overwrite refusal. '+
+           'This unsigned EXE is for new installations, not upgrades. See EXE-NOTES and the accompanying checksum and qualification files.'
+          $noteFile=Join-Path $env:RUNNER_TEMP 'rc15-release-notes-revised.txt'
+          [IO.File]::WriteAllText($noteFile,$notes,[Text.UTF8Encoding]::new($false))
+          & gh release edit $tag --repo $env:GH_REPO --notes-file $noteFile
+          if($LASTEXITCODE -ne 0){throw 'Assets uploaded, but notes update uncertain; do not reupload'}
+          Write-Output 'RC15_EXE_ADDON_PUBLISHED_AND_VERIFIED'

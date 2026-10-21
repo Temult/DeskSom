@@ -31,8 +31,8 @@ Both are off by default. Enable them from the DeskSom Control Panel when you wan
 
 DeskSom currently targets **Windows x64**. You will need PowerShell **7.4+**, Node.js **22.12+**, and a normal Windows user account. Optional fast filename indexing requires **Node.js 25+**. Connecting to ChatGPT also requires an account and workspace with access to custom MCP connections and OpenAI Secure MCP Tunnels; availability and charges depend on your account.
 
-1. **Download** the [current release](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15). The rc.15 download is a portable ZIP, not an installer EXE. Check its SHA-256 against the checksum file provided with the release.
-2. **Extract** the ZIP to a folder you intend to keep. Double-click `Start-DeskSom.cmd`. The setup wizard checks prerequisites, asks which folders to make available to file tools, and explains the access being granted.
+1. **Download** the [current release](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15). For a new installation, choose **DeskSom-Setup-v0.2.0-rc.15.exe**; the portable ZIP is also available. Verify the download against its SHA-256 checksum. The EXE is unsigned and may show a Windows unknown-publisher warning.
+2. **Start setup.** Double-click the EXE as your normal Windows user. It verifies and extracts the qualified source into your profile, then opens the same three-page wizard as `Start-DeskSom.cmd` in the manually extracted ZIP. The wizard checks prerequisites, asks which folders to make available to file tools, and explains the access being granted.
 3. **Connect your account.** The local setup assistant walks you through your own private tunnel and ChatGPT connection. Enter the restricted tunnel key in DeskSom's *local, masked* dialog, never in a chat message or GitHub issue.
 4. **Try it in ChatGPT.** Ask the connected DeskSom to report its status, then approve a small disposable file test. A successful local installation alone does not prove the ChatGPT connection works.
 

@@ -4,7 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'downloads/v0.2.0-rc.15/**'
+      # Immutable portable-release source assets only. Add-on installers are
+      # published by a separate workflow, without recreating this release.
+      - 'downloads/v0.2.0-rc.15/DeskSom-v0.2.0-rc.15-portable.zip'
+      - 'downloads/v0.2.0-rc.15/DeskSom-v0.2.0-rc.15-QUALIFICATION.json'
+      - 'downloads/v0.2.0-rc.15/DeskSom-v0.2.0-rc.15-RELEASE-NOTES.md'
+      - 'downloads/v0.2.0-rc.15/DeskSom-v0.2.0-rc.15-SHA256.txt'
   workflow_dispatch:
 
 permissions:

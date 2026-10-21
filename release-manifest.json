@@ -13,9 +13,14 @@
       "sha256": "094b5c309fad9bfd4cecc374c01f078c097a3434d44e6f951612a8ec501d610e"
     },
     {
+      "path": ".github/workflows/publish-rc15-installer.yml",
+      "bytes": 7169,
+      "sha256": "085f56ee9a92febe948ea4f4601d84e58351992543797c9e9e3d256f5043b7e4"
+    },
+    {
       "path": ".github/workflows/publish-rc15.yml",
-      "bytes": 2670,
-      "sha256": "0b84263c6e0b74403c21939265995840faafd1f83d52b974c29b649cccdd3226"
+      "bytes": 3062,
+      "sha256": "fcb17fe6d8465359de69f5474b4f24e5be405b724b9a1e28b1a82aa0037d2287"
     },
     {
       "path": ".github/workflows/windows.yml",
@@ -59,8 +64,8 @@
     },
     {
       "path": "INSTALLATION.md",
-      "bytes": 4682,
-      "sha256": "72f3d50fefd4c3d8e31bbd261adcab777bc40468fec14a651d1a36eb15066c79"
+      "bytes": 5433,
+      "sha256": "6b9cc4b7548108527fb4d9b269485da77aebea3b3fcf938cff5d5e4a837893c9"
     },
     {
       "path": "Install-DeskSom.ps1",
@@ -79,8 +84,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7362,
-      "sha256": "c1fd5ec8f976df0b25d24e7f0af9aced2ff0bcd9b65847a0c2e0c8877493113b"
+      "bytes": 7586,
+      "sha256": "4efdee696b71c44021f8bbcab5cf8bd8f02bb23ce567fba5466eaf18baed7a25"
     },
     {
       "path": "SECURITY.md",
@@ -376,6 +381,21 @@
       "path": "package.json",
       "bytes": 1169,
       "sha256": "8be631e57dacef98ae1d8c9b7ff503bb595f13d0354c573931ced7322847ed56"
+    },
+    {
+      "path": "packaging/Build-DeskSomSetup.ps1",
+      "bytes": 1854,
+      "sha256": "018f48bcf5f47a5846816e1d54ef965e9deba5dca6210af6f95aedb89c674fae"
+    },
+    {
+      "path": "packaging/DeskSomSetup.cs",
+      "bytes": 12385,
+      "sha256": "ccfa1b1ddbba98c512b2733cba709cfe1c6bf0cf4ae2f6d058f44aa10d8558fd"
+    },
+    {
+      "path": "packaging/README.md",
+      "bytes": 1983,
+      "sha256": "1fad6aef6c536e4b00136036269395f7ebc90da64a25244bdd65c133da7db1f3"
     },
     {
       "path": "pdf-font-overlay.mjs",
