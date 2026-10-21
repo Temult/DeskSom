@@ -1,3 +1,17 @@
+## rc.14 audit refresh: October 20, 2026 local / October 21 UTC
+
+A fresh read-only npm audit of the candidate lockfile at 2026-10-21T01:01:25Z reported **12 affected-package findings: 6 high, 6 moderate, 0 critical**. npm exited 1 because advisories were present, not because the lookup failed. The lockfile SHA-256 was 2990533fcc3585006a2cf89200d395fed95b922f79c5ea93f643f8e7a8b5d41f. No dependency version was changed and no audit-fix command was run.
+
+Compared with the October 17 snapshot below, markdown-it is additionally reported as high severity at the package level. The reviewed advisories are GHSA-vfgh-jcmw-g37q (inline HTML parsing, requiring HTML-enabled input) and GHSA-gfr2-rv44-r23c (multi-line reference parsing with default options). Their affected 14.x ranges are patched in 14.3.3; these are denial-of-service findings, not proof of an exposed DeskSom remote-code-execution path. The package count includes propagated parent findings and must not be described as twelve demonstrated independent exploits.
+
+Primary references refreshed October 20:
+https://github.com/advisories/GHSA-vfgh-jcmw-g37q
+https://github.com/advisories/GHSA-gfr2-rv44-r23c
+
+Remediation remains a separate compatible dependency-refresh work item. Keep the exact pinned engine while qualifying this index-lifecycle repair; then map actual parser/image input paths, evaluate patched leaves and test any engine upgrade separately. Do not dismiss the findings or silently suppress the audit. This disclosure does not introduce an extra owner approval gate for ordinary installation.
+
+## Historical October 17 dependency snapshot
+
 # Dependency security review: disclosed advisories
 
 **The pinned upstream dependencies contain disclosed advisories; this document is not an additional human approval gate.** Functional installation tests passed, but an October 17, 2026 read-only npm audit of the pinned production dependency tree reported **11 affected-package findings: 5 high and 6 moderate, with no critical finding reported**. Propagated dependency findings are included in that count; it is not a count of 11 independently demonstrated exploits.

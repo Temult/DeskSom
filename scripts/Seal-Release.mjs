@@ -14,7 +14,9 @@ const names=[...new Set(execFileSync('git',['ls-files','--cached','--others','--
 const forbidden=/(^|\/)(node_modules|bin|logs|download-cache|npm-cache|\.git)(\/|$)|(^|\/)(settings|connection|install|dependencies)\.json$|\.(dpapi|pem|pfx|key|log|zip|xml)$/i;
 const files=[];const seen=new Set();
 for(const name of names.sort()){
-  if(name==='release-manifest.json')continue;
+  // Previously published binary downloads have their own immutable hash receipts.
+  // Preserve them in Git but never mix them into this release's source manifest.
+  if(name==='release-manifest.json'||name.startsWith('downloads/'))continue;
   safeRelative(name);
   if(forbidden.test(name)||seen.has(name.toLowerCase()))throw new Error('Unsafe or duplicate public source path: '+name);
   seen.add(name.toLowerCase());

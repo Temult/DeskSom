@@ -23,7 +23,14 @@ function Ds-Probe($State){return $script:Expected}
 function Ds-Rpc($State,[string]$Method,$Parameters=@{},[switch]$NoAuth){
   if($NoAuth){return @{status=401;body=@{error=@{code=-1}}}}
   if($Method -eq 'server/discover'){return Reply @{resultType='complete';ttlMs=0;cacheScope='private'}}
-  if($Method -eq 'tools/list'){return Reply @{tools=@(1..25|ForEach-Object {@{name='tool'+$_}})}}
+  if($Method -eq 'tools/list'){
+    # Match the independently qualified baseline, not 25 invented names.
+    $qualified=@('desksom_status','get_config','read_file','read_multiple_files','write_file','write_pdf',
+      'create_directory','list_directory','move_file','start_search','get_more_search_results','stop_search',
+      'list_searches','get_file_info','edit_block','start_process','read_process_output','interact_with_process',
+      'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls','get_prompts')
+    return Reply @{tools=@($qualified|ForEach-Object {@{name=$_}})}
+  }
   if($Parameters.name -eq 'write_file'){[IO.File]::WriteAllText($Parameters.arguments.path,$Parameters.arguments.content,[Text.UTF8Encoding]::new($false));return Reply @{content=@(@{type='text';text='written'})}}
   if($Parameters.name -eq 'read_file'){return Reply @{content=@(@{type='text';text=[IO.File]::ReadAllText($Parameters.arguments.path)})}}
   throw 'Unexpected synthetic tool request'

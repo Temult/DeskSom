@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0-rc.14: Optional-index resilience (development candidate)
+
+Separate core service readiness from optional index health. The endpoint starts without waiting for all initial scans; authenticated status exposes truthful per-root progress and errors. Healthy-root search and ordinary file, terminal and inspection tools remain usable when another index fails. Searches of unready roots are explicitly refused.
+
+Add cooperative cancellation checkpoints during full walks, rollback on interrupted traversal, and resource cleanup after failed worker initialization. Preserve incompatible/corrupt databases and foreign or crash-held leases. Explicit stop still requires the exact acknowledgment, clean exit and current lease absence. No forced worker termination, lock stealing or automatic application-write replay is added.
+
+Run index plan/apply/rollback through a responsive owner progress dialog, retain exact native command exit codes, and distinguish saved settings from completed scans. Forward optional health through the Windows helper and show it in the control panel. Attach engine stderr before the MCP handshake so early diagnostics are drained.
+
+Add startup/cancellation/root-isolation regressions, a real degraded-index broker test, native UI-command and status-probe checks, portable temporary fixtures and one version-aware test inventory. Node 22 qualifies the ordinary feature set without claiming SQLite-index qualification; Node 25+ selects index tests. Preserve prior public binary downloads outside new source manifests. Documentation now distinguishes development source, installed state, observed tests and public release acceptance.
+
+This entry does not claim a new binary release, live upgrade, second-machine pilot, visual owner acceptance or independent external review.
+
+## 0.2.0-rc.13: Native filename index and project inspection (maintainer lineage)
+
+Integrated optional selected-root SQLite filename indexing and bounded read-only Git/project inspection into one broker and engine. Added best-effort watcher repair, acknowledged-write hints, explicit miss reconciliation, private writer ownership and strict shutdown proof. R2 repaired filename-less notification recovery; R3 separated authenticated idle-owner checks from temporarily stale optional index health. A later owner multi-root startup incident was recovered without resetting databases or rotating the tunnel; its original trigger remains unproven. The rc.14 changes address reproduced startup failure classes rather than retroactively declaring that incident fully diagnosed.
+
 ## 0.2.0-rc.12: Guided ChatGPT connection completion
 
 After a successful local tunnel configuration, DeskSom now opens a native account-connection guide instead of leaving the owner to discover ChatGPT custom MCP plugin creation. It opens the ChatGPT Plugins page on request, explains the exact Tunnel and ChatGPT-facing No authentication selections, allows owner-initiated copying of the correct locally stored tunnel identifier and instance-bound verification message, and makes clear that setup is not proven until ChatGPT calls the intended instance. The three-page installer and Control Panel can reopen the guide without repeating an already configured tunnel. The guide never reads an API key or creates a ChatGPT plugin, and keeps all account security confirmations with the owner. Added a native six-step layout/behavior smoke to installer qualification. No installed DeskSom, production tunnel or credentials are modified by this source work.

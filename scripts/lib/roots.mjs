@@ -4,6 +4,11 @@ import {hashObject,canonical,keysOnly,fail,normalizeWin,assertNoLinks,atomicJson
 import {makePlan,loadOwned,readState,effectiveRoots,rootsRevision,taskDefinition,taskMatches,startOwned,settings,phaseAfterVerifiedStart,identityMatches} from './install-core.mjs';
 
 const ROOTS_SCHEMA='desksom.roots-change/v1';
+export function stripDisabledIndex(state){
+ const next={...state};
+ if(next.indexProfile?.enabled===false)delete next.indexProfile;
+ return next;
+}
 export function makeRootsChange(state,request) {
   if (!request || typeof request!=='object' || Array.isArray(request)) fail('ROOTS_REQUEST_INVALID','Provide a JSON object with addDirectories and/or removeDirectories.',undefined,20);
   keysOnly(request,['addDirectories','removeDirectories'],'folder change request');
@@ -16,6 +21,9 @@ export function makeRootsChange(state,request) {
   const removed=[...new Set(remove.map(normalizeWin).map(x=>x.toLowerCase()))].sort();
   if([...added,...removed].some(x=>x.length<4))
     fail('SENSITIVE_ROOT','Whole drives cannot be exposed as a file-tool folder.',undefined,20);
+  if(state.indexProfile?.enabled===true)
+    fail('INDEX_DISABLE_BEFORE_ROOT_CHANGE','Turn off indexed filename search before changing the approved folder list.',
+      'Disable fast search in the Control Panel, change folders, then re-enable it.',20);
   const current=effectiveRoots(state);
   for(const r of added) if(current.includes(r)) fail('ROOT_ALREADY_ALLOWED','This folder is already in the allowed list.',undefined,10);
   for(const r of removed) if(!current.includes(r)) fail('ROOT_NOT_ALLOWED','This folder is not in the allowed list.',undefined,10);
@@ -92,12 +100,13 @@ export async function applyRoots(sourceRoot,stateRoot,proposal,approve,confirmed
     if(!wasStopped)for(const kind of [...kinds].reverse())await platform.stopService(state,kind);
     if((await platform.runtimeProcesses(state)).count || await platform.portOwner(state.plan.port))
       fail('STOP_UNCONFIRMED','Could not confirm the service stopped; preserve intent and inspect processes.',undefined,25);
-    const revised={...state,activeAllowedDirectories:next.nextDirectories,rootsRevision:rootsRevision(state)+1};
+    const revised=stripDisabledIndex({...state,activeAllowedDirectories:next.nextDirectories,rootsRevision:rootsRevision(state)+1});
     const updatedSettings=await settings(revised);
     await atomicJson(configPath,{...config,allowedDirectories:next.nextDirectories});
     await atomicJson(path.join(state.plan.stateRoot,'settings.json'),updatedSettings);
     state.activeAllowedDirectories=next.nextDirectories;
     state.rootsRevision=rootsRevision(state)+1;
+    if(state.indexProfile?.enabled===false)delete state.indexProfile;
     state.pendingRootsChange=null;
     state.phase='STOPPED';
     await atomicJson(path.join(state.plan.stateRoot,'install.json'),state);

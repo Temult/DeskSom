@@ -1,3 +1,9 @@
+## rc.14 candidate changes
+
+Fast search plan/apply/rollback now use a responsive progress window rather than blocking the control-panel UI. Saving a configuration and finishing an index scan are separate outcomes. Overview shows ready-root counts; reopen Fast search for current per-root state, observed scan work and error codes. Core tools remain usable while optional indexing initializes or needs attention. No command is automatically replayed, and a timed-out operation requires receipt inspection. See READINESS_AND_RECOVERY.md.
+
+The older feature-introduction notes below explain inherited behavior. They do not mean this candidate has been owner-installed or publicly packaged.
+
 # DeskSom owner controls
 
 DeskSom 0.2.0-rc.4 adds supported, owner-approved management of file-tool folders, lightweight statistics, a Windows tray and control panel, and improved task restart settings. The original installation plan remains immutable.

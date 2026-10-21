@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {profileToBrokerSettings} from './index-profile.mjs';
 import {DeskSomError, fail, canonical, hashObject, hashFile, exists, readJson, atomicJson, createJson,
   keysOnly, instanceName, normalizeWin, insideWin, overlapWin, assertNoLinks, loadRelease, now, envelope} from './common.mjs';
 
@@ -158,7 +159,12 @@ export async function settings(state) {
   const p=state.plan, roots=effectiveRoots(state);
   return {expectedHost:p.binding.host,port:p.port,stateDir:p.stateRoot,workDir:roots[0],
     allowedDirectories:roots,rootsRevision:rootsRevision(state),
-    instance:p.instance,installationId:state.installationId,sourceFingerprint:p.sourceFingerprint};
+    instance:p.instance,installationId:state.installationId,sourceFingerprint:p.sourceFingerprint,
+    // Strict default-off inspection flag. Preserve independently from the index profile.
+    enableProjectInspect:state.projectInspectEnabled===true,
+    ...(state.projectInspectEnabled===true && typeof state.projectInspectGitExecutable==='string'
+      ? {projectInspectGitExecutable:state.projectInspectGitExecutable} : {}),
+    ...(state.indexProfile ? {fastFilenameIndex:profileToBrokerSettings(state,state.indexProfile)} : {})};
 }
 async function sealDependencies(runtime) {
   const files=[];
@@ -292,6 +298,7 @@ export async function loadOwned(sourceRoot,stateRoot,platform,deep=false) {
   if (canonical(expectedPlan)!==canonical(state.plan)) fail('PLAN_STALE','Management source, host, user or policy differs from the installed plan.',undefined,21);
   await assertOwnership(state.plan,state);
   if (state.pendingRootsChange) fail('ROOTS_CHANGE_UNCERTAIN','An interrupted folder update must be inspected before further management commands.', 'Preserve state and pending change receipt; do not blindly replay.',25);
+  if (state.pendingIndexChange) fail('INDEX_CHANGE_UNCERTAIN','An interrupted indexed-search configuration change must be inspected before other management commands.','Use the guarded index status and rollback path after verifying service state.',25);
   const runtimeRelease=await loadRelease(state.runtimeRoot);
   if (runtimeRelease.fingerprint!==state.plan.sourceFingerprint || await hashFile(path.join(state.runtimeRoot,'release-manifest.json'))!==state.releaseManifestSha256)
     fail('RUNTIME_SOURCE_DRIFT','The deployed source no longer matches the installation record.',undefined,21);
@@ -344,6 +351,9 @@ export async function status(sourceRoot,stateRoot,platform,{deep=false,exercise=
     readyForChatGPTVerification:localReady && verification?.passed===true && tunnel?.ready===true && tunnel.controlPlane==='ok',
     tasks,local,tunnel,verification,operatorStopped:state.operatorStopped,
     allowedDirectories:effectiveRoots(state),rootsRevision:rootsRevision(state),statistics:local?.statistics??null,
+    indexWorkerReady:localReady?(local?.indexWorkerReady??null):null,
+    indexStatus:localReady?(local?.indexStatus??null):null,
+    allFeaturesReady:localReady?(local?.allFeaturesReady??null):false,
     nextAction:'Local checks cannot prove ChatGPT connectivity. The owner or agent must make a real tool call in ChatGPT.'});
 }
 export async function repair(sourceRoot,stateRoot,platform,{apply=false,operation}={}) {

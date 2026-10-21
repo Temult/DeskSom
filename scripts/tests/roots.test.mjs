@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {makeRootsChange} from '../lib/roots.mjs';
+import {makeRootsChange,stripDisabledIndex} from '../lib/roots.mjs';
 import {hashObject,DeskSomError} from '../lib/common.mjs';
 
 const baseline={
@@ -40,4 +40,13 @@ test('folder updates reject unsafe paths and unknown specification keys',()=>{
   assert.throws(()=>makeRootsChange(baseline,{addDirectories:[x]}));
  assert.throws(()=>makeRootsChange(baseline,{replaceDirectories:['C:\\Work']}),code('INVALID_INPUT'));
  assert.throws(()=>makeRootsChange(baseline,{addDirectories:[4]}),code('ROOTS_REQUEST_INVALID'));
+});
+
+test('a disabled index profile is cleared when folder policy changes',()=>{
+ const disabled={...baseline,indexProfile:{enabled:false,rootsRevision:0}};
+ const revised=stripDisabledIndex({...disabled,rootsRevision:1});
+ assert.equal(revised.indexProfile,undefined);
+ const active={...baseline,indexProfile:{enabled:true,rootsRevision:0}};
+ assert.equal(stripDisabledIndex(active).indexProfile.enabled,true);
+ assert.equal(makeRootsChange(disabled,{addDirectories:['E:\\New']} ).schemaVersion,'desksom.roots-change/v1');
 });

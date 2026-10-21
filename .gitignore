@@ -48,3 +48,11 @@ qa-request-*.json
 
 # Isolated discovery protocol fixtures
 probe-fixture-*/
+
+# Preserved failure-injection fixtures are evidence, not public source.
+/scripts/tests/stop-proof-fixture-*/
+/scripts/tests/stop-proof-live-*/
+/retained-lease-fixture-*/
+/quiesce-fixture-*/
+/disabled-stop-fixture-*/
+/fast-broker-*/

@@ -1,61 +1,41 @@
-# Qualification and release boundaries
+# Qualification and release status
 
-The public source is a **0.2.0-rc.12 release candidate**. The production 0.1.3 service is a separate installation and is not upgraded by developing or testing this candidate. Do not confuse evidence from that older service with an end-to-end test of a newly installed instance.
+## Candidate, not a deployment claim
 
-The final source includes the open dependency-audit findings in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). Functional correctness and dependency vulnerability disclosure are separate considerations; the installer does not require a separate human approval gate for the disclosed advisories. The release qualification report distinguishes the exact native-tested implementation from subsequent documentation-only additions.
+This is the **0.2.0-rc.14 development candidate**. It combines the rc.13 R3 source lineage with the existing public rc.12 publication changes, then repairs optional-index startup isolation, failed-initialization cleanup, cooperative scan cancellation and owner-facing progress. No development test authorizes replacing a running service or reusing another installation's credentials.
 
-## Discovery-specific qualification
+The current test effort is maintainer verification, not an independent external audit. Earlier unresolved independent dynamic reviews remain historical evidence gaps, not retroactive passes. Public rc.12 downloads retain their original hashes; no rc.14 binary installer has been qualified by this document.
 
-Added catalog-schema preservation, capability-reporting, and isolated modern/legacy MCP integration tests including real temporary file edits, shell execution and bearer rejection. The server reports advertised capabilities only; a real ChatGPT visibility comparison on the updated connection remains a separate deployment-time experiment. See [DISCOVERY_R1_INTEGRATION.md](DISCOVERY_R1_INTEGRATION.md).
+## Evidence categories
 
-## Installed-service completion verification
+| Check | Scope and status |
+| --- | --- |
+| Pre-fix failure reproduction | A disposable corrupt SQLite file reproduced `INDEX_WORKER_NOT_READY`, unconfirmed stop and retained lease in the predecessor. This is not a proven diagnosis of the separate real-world multi-root incident. |
+| Focused index regression | The initial repair passed 24 tests covering new initialization/cancellation/root-isolation cases and inherited health, writer ownership and strict stop-proof cases. |
+| Real degraded-index broker | An isolated broker with one corrupt index and one healthy root passed actual read, write, PowerShell, inspection, healthy-root search, bad-root refusal and authenticated quiesce checks. |
+| Native UI command helper | 17 assertions passed under PowerShell 7 and 17 under Windows PowerShell 5.1, including argument quoting, Unicode, large stderr, exact exit codes and no command replay. |
+| Control-panel layout | Native no-window layout check passed at the observed 200% DPI with four pages and no reported clipping or overlap. This is not visual owner acceptance of the new progress dialog. |
+| Full Node candidate regression | The complete 31-file selection passed: 132 tests, 131 passed, 0 failed, 1 skipped because Windows file-symlink creation was denied. All four exact 25/26/26/27 tool catalogs passed. These are maintainer source tests, not a fresh installed-owner acceptance. |
+| Native owner-status bridge | Nine synthetic checks passed for propagation of optional health, preserved core identity validation, rejected unauthenticated responses and excluded unapproved fields. |
 
-Windows PowerShell 5.1 can return a null ExitCode from a Start-Process -PassThru instance even after HasExited. The graphical wizard now verifies a success envelope against a separate read-only authenticated status call and checks installation ID, source fingerprint, version and private state root. It handles missing optional error fields under StrictMode instead of crashing. A native 11-assertion regression suite checks positive and negative completion receipts and is included in installer pre-activation qualification. No ambiguous install is automatically replayed.
+Private execution logs retain failed attempts and their corrections. The first extracted native run exposed an inherited stop-barrier fixture that omitted the identity fields required since R3. Its mock was corrected to provide the complete synthetic identity; the actual stop check was not relaxed. Additional negative cases now exercise foreign identities and missing fields. In particular, an initial broker fixture was missing its engine-overlay receipt, and another used a Windows short-name temporary path rejected by the existing file policy. Corrected fixtures did not weaken runtime permissions. Sanitized summaries may be published; raw host paths, process logs and credentials must not be.
 
-## First-launch StrictMode qualification
+## Reproducible test selection
 
-The Windows PowerShell setup now initializes its review summary before the first actual Show event. The prior rc.8 wizard raised an unset-variable error on first launch in PowerShell StrictMode, even though visual preview and layout checks passed. An explicit -StartupCheck replays the source validation and the Load-ExistingPlan initialization route using a unique new instance without showing a UI or creating an installation plan. The installer runs this smoke test natively before registering any service task. The test rejects missing source integrity, lost first-page navigation, and unexpected installation activity.
+`npm test` invokes `scripts/Run-Tests.mjs`. It prints the runtime version and selected inventory. Node 22 runs core tests without claiming optional-index qualification; Node 25+ additionally selects index tests. `npm run test:core`, `npm run test:index` and `npm run test:all` select explicit scopes. Index-only and all-feature runs reject Node versions below 25. The candidate has been exercised locally on Node 25.2.1; runtime availability above the gate is not a blanket compatibility certification.
 
-## Wizard layout qualification
+The same inventory is used by installer qualification. Optional SQLite tests must not make an ordinary Node-22 installation fail merely because indexing is disabled. Native installer checks include Windows ownership/ACL helpers, stop admission, catalog accounting, DPI/startup/completion/connection-guide checks and the responsive-command helper. Genuine installed lifecycle checks remain separate from source tests and synthetic helper objects.
 
-The default graphical setup now uses three distinct, non-overlapping pages and a shared Back/Next footer. A -LayoutCheck pass builds the actual WinForms controls without showing the window or installing anything. The dedicated -PreviewOnly mode allows a human to view and navigate all three pages without installing a local service, configuring a tunnel or changing private state. It visits all three pages, checks geometry against the live DPI-aware screen, and rejects any clipped button or page content. These checks supplement the existing PowerShell AST, MCP and native installer tests, but do not replace the owner's final visual pilot.
+Mutable test fixtures use temporary directories rather than the maintainer's project tree. Failure fixtures whose lease or outcome is unresolved are retained and excluded from source packaging. Existing experiments and manually invoked benchmarks are not part of the ordinary automated suite.
 
-## High-DPI graphical qualification
+## Source and artifact identity
 
-The WinForms setup, tray, control panel, and local private-account dialogs enable DPI awareness before constructing windows. The supported Windows display reports its physical system DPI, not the virtual 96 DPI of a bitmap-stretched legacy window. Layout bounds are scaled separately from font rasterization. Automated smoke tests exercise WinForms in a no-window child under both Windows PowerShell 5.1 and PowerShell 7, and the native installer now runs the Windows PowerShell DPI check. A human screenshot still determines visual presentation and legibility on the target screen.
+A new maintainer source manifest binds every included path, size and SHA-256. The manifest is not a publisher signature. The maintained `downloads/` subtree contains historically published binary artifacts with separate hash receipts and is deliberately excluded from new source manifests and source archives. It must not be repackaged as the current version.
 
-## Graphical installer qualification
+Release preparation must inspect the exact public file set, verify a clean extracted source archive, and bind results to the candidate commit and artifact hashes. Do not regenerate an installed user's manifest to conceal drift. No fixture logs, private state, ownership receipts, dependencies, keys or task exports belong in the public archive.
 
-The graphical setup reuses the existing release manifest, plan generation, owner approval and installed CLI rather than introducing a second installer backend. Pure tests verify the graphical entry point, CLI fallback, approvals, masked local connection prompts, and prerequisites. Windows PowerShell AST checks cover all new scripts. The actual graphical appearance, first-time user workflow, WinGet prompts on a machine missing dependencies, and a new owner's private ChatGPT tunnel still require a desktop pilot.
+## Remaining acceptance work
 
-## Guided ChatGPT account connection qualification
+Before a new downloadable release: qualify a fresh normal-user installation using its exact source package; exercise owner index changes, long/failed initial crawls, stop/start and retained-state recovery; visually accept the responsive progress UI; and verify the genuine account/ChatGPT connection. A second Windows computer must exercise prerequisite discovery, path differences, security software and first-user behavior. General owner-facing activation of project inspection remains an explicit product gap.
 
-A source-only native ChatGPT connection guide follows successful private tunnel setup and can be reopened from the installer or Control Panel. The owner must select the tunnel in ChatGPT, choose the appropriate ChatGPT-facing authentication, review the risk warning and install the plugin. No API key is read by the guide; it copies only the owner-approved tunnel identifier or a version/installation-bound identity test prompt on direct clicks. The guide does not create a plugin or claim ChatGPT integration was verified. Native source/layout tests run under Windows PowerShell 5.1, with an optional non-mutating local association identity check. True browser account selection and plugin registration still require human review.
-
-## Owner control qualification
-
-The rc.11 control-panel update is isolated from the service and installer protocol. The native `ControlPanel.ps1 -LayoutCheck` verifies all four scaled pages for control bounds and overlap without accessing installed state; `-PreviewOnly` displays sample data with service actions disabled. The owner visually reviewed the compact panel's initial Overview and Folders layout, then requested removal of redundant navigation buttons. Source regression confirms only the tabs navigate. Actual rc.11 installation, live panel functionality and account connection remain future owner-acceptance steps. The predecessor rc.10 was independently confirmed LOCAL_READY through an owner-run three-page GUI installation; that result does not qualify rc.11 itself.
-
-
-Tests include folder approval digests and rejection cases, explicit startup shortcut ownership, signed-in-user task retry settings, installed folder add/remove/verification, and broker statistics. Actual tray rendering and sign-in behavior need a live human desktop test. Sign-in startup is not a claim of pre-login system-service support.
-
-## Automated suites
-
-- `scripts/tests/installer.test.mjs`: plan/digest semantics, path restrictions, input validation, consent ordering, task ownership, readiness identity, safe result envelopes and source-manifest failures.
-- `scripts/tests/windows-helper.test.ps1`: native normal-user DACL behavior, optional MCP isError handling, successful disposable verification, uncertain-receipt blocking and no false ChatGPT completion claims. Replies are synthetic; no cloud key or real task is needed for this suite.
-- `security.test.mjs` and `modern.test.mjs`: bearer/origin checks, credential environment boundaries, malformed protocol handling, live isolated modern/legacy transport and absence of unserved UI references.
-- `acceptance.mjs`: 26 engine checks covering file read/write/hash/edit, search, PowerShell, process output, concurrency, restart identity and stdio/HTTP behavior.
-
-The installer runs the security, modern, discovery and installer suites plus native Windows helper checks before service registration, records qualification against the approved source fingerprint, and seals the dependency tree. A repeated installation validates its existing receipt rather than blindly repeating successful preparation. Read the separate release qualification report for results bound to the final source archive and test instance.
-
-## What still requires real-world verification
-
-A clean second Windows computer may differ in prerequisite installation, security software, Store aliases, permission policy or network access. Windows UAC/WinGet prompts, the owner's actual OpenAI tunnel key/association, the current ChatGPT UI, and a genuine ChatGPT-selected tool call through the new instance must be checked in the pilot installation. Local mocks or a healthy loopback response are not substitutes.
-
-The release does not claim an independent external security audit, complete crash/power-loss recovery, universal dependency safety, or uninterrupted multi-hour workloads. It intentionally blocks ambiguous states rather than inventing a guarantee of exactly-once execution. Stopping a service can interrupt work and requires explicit confirmation.
-
-## Development verification
-
-Run the Node unit tests from a clean source checkout. For a complete native rehearsal, create a new reviewed plan using a unique instance, separate source/runtime/state/work directories and unused port; install with `-PrepareOnly`, then activate that same plan and exercise lifecycle controls. Use no production credentials and never repoint another service's tasks. Preserve original failed receipts, record reconciliation, remove only verified test-owned tasks, and retain the fixture's private state for review.
-
-GitHub Actions performs reproducible source syntax and pure unit checks. It is not a claim that the full normal-user installation lifecycle passed on a hosted runner, which may run under a privileged account. The native Windows qualification is a separate release gate.
+No result here establishes complete power-loss recovery, pre-login operation, atomic protection against adversarial filesystem replacement, unlimited concurrent workloads, or vulnerability-free dependencies. See the dependency disclosure and readiness/recovery contract for separate limitations.

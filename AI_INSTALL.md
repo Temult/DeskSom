@@ -1,3 +1,5 @@
+> rc.14 development status: do not deploy this checkout as a qualified release. Ordinary DeskSom retains the Node 22+ baseline; optional filename indexing requires Node 25+ and separate owner selection. Read docs/READINESS_AND_RECOVERY.md: core ready does not mean every optional index is ready.
+
 # AI-directed installation
 
 Use this runbook when the owner has authorized terminal access to their Windows computer. Most non-developer owners should instead double-click Start-DeskSom.cmd for the graphical installation and account-connection assistant. An advanced console fallback remains at Start-DeskSom-CLI.cmd. Without that access, direct them to extract a trusted release and double-click **Start-DeskSom.cmd**. Do not pretend browser chat alone can install local software.

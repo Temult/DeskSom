@@ -1,3 +1,7 @@
+## rc.14 readiness distinction
+
+In broker status, ready describes core admission. indexWorkerReady and allFeaturesReady report optional-feature health, with per-root detail in authenticated indexStatus. An INDEX_UPDATED response means the approved configuration was saved and core identity was verified; indexReady may still be false. Never turn that response into a claim that every root finished scanning. The public readyz endpoint contains no root paths. See READINESS_AND_RECOVERY.md.
+
 # Machine-readable result contract
 
 The CLI emits one JSON result envelope to stdout. Ordinary commands do not print keys, raw subprocess logs or arbitrary underlying exception messages. Detailed setup logs remain in private state. Never interpret an exit code alone.

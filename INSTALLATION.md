@@ -1,3 +1,5 @@
+> This branch is the rc.14 development candidate, not a new downloadable installer release. Use qualified release artifacts for installation. The wizard's Node 22+ requirement covers ordinary tools; optional filename indexing needs Node 25+. Do not infer that an installed index is ready merely because the core service reconnects.
+
 # Set up DeskSom without being a developer
 
 ## Before starting

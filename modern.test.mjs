@@ -55,7 +55,7 @@ test('live disposable broker accepts modern and legacy protocols', {timeout:1500
   const child=spawn(process.execPath,[path.join(root,'broker.mjs'),'--config',path.join(tmp,'settings.json'),'--port',String(port),'--status-file',path.join(tmp,'broker-ready.json')],{
     cwd:root,env:{...process.env,DESKSOM_HTTP_TOKEN:localToken,DESKTOP_COMMANDER_DISABLE_TELEMETRY:'1'},stdio:['ignore','pipe','pipe']});
   let stdout='',stderr='';child.stdout.on('data',b=>{stdout+=b.toString().slice(0,500)});child.stderr.on('data',b=>{stderr+=b.toString().slice(0,1500)});
-  t.after(async ()=>{child.kill();await Promise.race([new Promise(resolve=>child.once('exit',resolve)),new Promise(resolve=>setTimeout(resolve,2500))]);await fs.rm(tmp,{recursive:true,force:true})});
+  t.after(async ()=>{child.kill();await Promise.race([new Promise(resolve=>child.once('exit',resolve)),new Promise(resolve=>setTimeout(resolve,2500))]);await fs.rm(tmp,{recursive:true,force:true,maxRetries:20,retryDelay:150})});
   let ready=false;
   for(let i=0;i<600;i++){if(child.exitCode!==null)throw Error('fixture exited: '+stderr.slice(0,300));
     try{const receipt=JSON.parse(await fs.readFile(path.join(tmp,'broker-ready.json'),'utf8'));port=new URL(receipt.address).port;const r=await fetch('http://127.0.0.1:'+port+'/readyz',{signal:AbortSignal.timeout(800)});if(r.status===200){ready=true;break}}catch{}

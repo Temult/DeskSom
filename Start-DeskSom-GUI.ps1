@@ -38,7 +38,15 @@ function Check-Release {
   if($f.path -match '(^/|\\|(^|/)\.\.(/|$)|:)'){throw 'Unsafe path in source manifest.'}
   $fp=Join-Path $root $f.path
   if(-not(Test-Path -LiteralPath $fp -PathType Leaf)){throw 'A release file is missing. Obtain a fresh ZIP.'}
-  if((Get-FileHash -LiteralPath $fp -Algorithm SHA256).Hash.ToLowerInvariant() -cne $f.sha256){
+  # Use framework-native SHA-256. Windows PowerShell 5.1 may intermittently fail
+  # to autoload Get-FileHash during first GUI startup. Streaming avoids memory spikes.
+  $hasher=[Security.Cryptography.SHA256]::Create()
+  try {
+   $stream=[IO.File]::OpenRead($fp)
+   try {$actual=[BitConverter]::ToString($hasher.ComputeHash($stream)).Replace('-','').ToLowerInvariant()}
+   finally {$stream.Dispose()}
+  }finally {$hasher.Dispose()}
+  if($actual -cne $f.sha256){
    throw 'Source files differ from the reviewed release. Download a fresh copy.'
   }
  }
