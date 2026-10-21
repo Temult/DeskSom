@@ -1,0 +1,29 @@
+{
+  "schema": "desksom.friend-exe-public-qualification/v1",
+  "status": "QUALIFIED_LIMITED",
+  "version": "0.2.0-rc.15",
+  "taggedSourceCommit": "de10011818bb8345929b05df411377db1e418b8d",
+  "sourceZipSha256": "efde6022692f7ae593236ee286bac2fe3b864e5bb611379449e27a89250476a0",
+  "installerName": "DeskSom-Setup-v0.2.0-rc.15.exe",
+  "installerSha256": "b645f4b6c857f350cd0dec8119b881d1d8926721291a3d43acefb86398b2dda5",
+  "installerBytes": 450048,
+  "codeSigning": "unsigned",
+  "runtimeRequirements": "Windows x64 and .NET Framework 4.5+ for launcher; PowerShell 7.4+ and Node.js 22.12+ for DeskSom; optional filename index requires Node 25+",
+  "checks": {
+    "embeddedArchiveSha": true,
+    "manifestAndAll161SourceFiles": true,
+    "extractionIntoFreshDirectory": true,
+    "refusesOverwriteOfExistingExtraction": true,
+    "freshInstanceWizardStartup": true,
+    "sourceManifestVerifier": true,
+    "knownPrivateHostIdentifiersNotPresent": true
+  },
+  "limitations": [
+    "No external friend's PC installation test",
+    "No code-signing certificate; SmartScreen may warn",
+    "No full-laptop power cycle tested",
+    "The EXE is a launcher for the existing three-page setup wizard, not an in-place upgrade",
+    "Existing release files and tag are not replaced"
+  ],
+  "scope": "Only frozen tagged portable source is embedded; no source runtime, credentials, host identity, or private tunnel keys from maintainer were included."
+}
