@@ -10,7 +10,7 @@ if(-not $pwsh){$needed+='Microsoft.PowerShell'}else{
  try{$v=(& $pwsh.Source -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'|Select-Object -Last 1);if([version]$v -lt [version]'7.4'){$needed+='Microsoft.PowerShell'}}catch{$needed+='Microsoft.PowerShell'}
 }
 if(-not $node){$needed+='OpenJS.NodeJS.LTS'}else{
- try{$v=(& $node.Source --version).TrimStart('v').Split('.')[0];if([int]$v -lt 22){$needed+='OpenJS.NodeJS.LTS'}}catch{$needed+='OpenJS.NodeJS.LTS'}
+ try{$v=(& $node.Source --version).TrimStart('v');if([version]$v -lt [version]'22.12.0'){$needed+='OpenJS.NodeJS.LTS'}}catch{$needed+='OpenJS.NodeJS.LTS'}
 }
 if(-not $needed.Count){Write-Host 'All prerequisites are installed. Close this window and reopen DeskSom Setup.';return}
 foreach($id in $needed){

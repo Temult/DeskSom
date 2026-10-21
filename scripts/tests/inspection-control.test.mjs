@@ -8,7 +8,7 @@ import {parseArgs} from '../cli.mjs';
 async function fixture({stopped=false}={}){
  const base=await fs.mkdtemp(fixturePrefix('inspection-control-')),stateRoot=path.join(base,'state'),allowed=path.join(base,'allowed');
  await fs.mkdir(stateRoot);await fs.mkdir(allowed);
- const core={schemaVersion:'desksom.plan/v1',sourceRoot:path.join(base,'source'),sourceFingerprint:'a'.repeat(64),version:'0.2.0-rc.14',
+ const core={schemaVersion:'desksom.plan/v1',sourceRoot:path.join(base,'source'),sourceFingerprint:'a'.repeat(64),version:'0.2.0-rc.15',
   instance:'fixture',installRoot:path.join(base,'install'),stateRoot,allowedDirectories:[allowed],port:19989,
   binding:{host:'QA-HOST',sid:'S-1-5-21-111-222-333-1001',architecture:'x64'},tasks:{local:'DeskSom-fixture-Local',tunnel:'DeskSom-fixture-Tunnel'},
   permissions:{shell:'FULL_WINDOWS_USER_PERMISSIONS_NOT_A_SANDBOX',elevated:false,publicInboundPort:false},downloads:{},externalRequirements:[]};

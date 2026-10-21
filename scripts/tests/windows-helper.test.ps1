@@ -28,7 +28,7 @@ function Ds-Rpc($State,[string]$Method,$Parameters=@{},[switch]$NoAuth){
     $qualified=@('desksom_status','get_config','read_file','read_multiple_files','write_file','write_pdf',
       'create_directory','list_directory','move_file','start_search','get_more_search_results','stop_search',
       'list_searches','get_file_info','edit_block','start_process','read_process_output','interact_with_process',
-      'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls','get_prompts')
+      'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls')
     return Reply @{tools=@($qualified|ForEach-Object {@{name=$_}})}
   }
   if($Parameters.name -eq 'write_file'){[IO.File]::WriteAllText($Parameters.arguments.path,$Parameters.arguments.content,[Text.UTF8Encoding]::new($false));return Reply @{content=@(@{type='text';text='written'})}}

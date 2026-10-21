@@ -23,8 +23,7 @@ const descriptions = {
   list_processes: 'List running Windows processes, including PID and resource use.',
   kill_process: 'Terminate a Windows process by PID. Destructive; verify identity first.',
   get_usage_stats: 'Read aggregate usage, success rates, and tool counts.',
-  get_recent_tool_calls: 'Read recent bounded DeskSom call history, filtered by time/tool. May contain sensitive project paths and contents.',
-  get_prompts: 'Retrieve one of the built-in Desktop Commander onboarding prompts by promptId.'
+  get_recent_tool_calls: 'Read recent bounded DeskSom call history, filtered by time/tool. May contain sensitive project paths and contents.'
 };
 export const FILE_MUTATIONS = Object.freeze(['create_directory','edit_block','move_file','write_file','write_pdf']);
 export const EXECUTION_MUTATIONS = Object.freeze(['start_process','interact_with_process','force_terminate','kill_process']);

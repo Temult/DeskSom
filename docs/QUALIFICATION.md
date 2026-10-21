@@ -1,4 +1,16 @@
-# Qualification and release status
+# rc.15 qualification and release status
+
+## Current upstream integration candidate
+
+This source is DeskSom 0.2.0-rc.15 with pinned Desktop Commander 0.3.0, SDK 1.32.1, a Node.js 22.12 baseline and optional Node 25+ indexing. It is developed separately from the deployed rc.14 reliability baseline. The exact final source archive and its own test receipts govern promotion; previous rc.14 results are preserved below as history, not substituted for rc.15 evidence.
+
+Initial integrated tests exposed two actual compatibility issues: Windows Store PowerShell aliases were not accepted by upstream's new PATH-only executable resolution, and a text-bearing PDF failed because pdf2md expected font.name metadata no longer exported by default. Both have narrow, reviewed adaptations and regression coverage. The document roundtrip test checks extracted text, not just an isError flag; the upstream PDF handler can return an error message without marking the tool result as an error.
+
+The integrated source suite, exact catalogs, native owner checks, 26-case engine acceptance, document roundtrips and locked dependency audit are recorded separately. A normal-user rc.15 task-based installation, new client metadata exposure and a true whole-machine reboot must not be inferred from source or loopback tests.
+
+See UPSTREAM_030_INTEGRATION.md for the dependency overrides, PDF overlay custody and Windows shell handling. No independent external audit or second-machine owner acceptance is claimed.
+
+## Historical rc.14 qualification record
 
 ## Candidate, not a deployment claim
 

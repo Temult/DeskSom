@@ -36,7 +36,7 @@ The folders command supports list, plan and apply. ROOTS_LISTED and ROOTS_PLAN_R
 
 ## DeskSom MCP identity capability extension
 
-The MCP `desksom_status` tool also provides `advertisedToolCount`, `advertisedCapabilities` and `catalogSha256`. The 24 upstream tools are counted in `tools` for backward compatibility; `advertisedToolCount` includes the identity tool itself, totaling 25. The capability summary lists advertised file-mutation and host-execution names plus server-only discovery limits. It cannot see what actions ChatGPT exposed in the current conversation and does not prove authorization. Use `docs/CHAT_DISCOVERY_DIAGNOSTIC.md` to distinguish a client-side omitted tool from an actual server or Windows access error.
+The MCP `desksom_status` tool also provides `advertisedToolCount`, `advertisedCapabilities` and `catalogSha256`. The 23 exposed upstream tools are counted in `tools`; `advertisedToolCount` also includes the identity tool, totaling 24 before optional tools. The retired get_prompts tool is not advertised. The capability summary lists advertised file-mutation and host-execution names plus server-only discovery limits. It cannot see what actions ChatGPT exposed in the current conversation and does not prove authorization. Use `docs/CHAT_DISCOVERY_DIAGNOSTIC.md` to distinguish a client-side omitted tool from an actual server or Windows access error.
 
 ## Inspection owner controls and optional failures
 

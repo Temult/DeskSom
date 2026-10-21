@@ -73,7 +73,7 @@ test('live disposable broker accepts modern and legacy protocols', {timeout:1500
   const disco=await invoke('server/discover');assert.equal(disco.status,200);assert.equal(disco.json.result.resultType,'complete');
   const list=await invoke('tools/list');assert.equal(list.status,200);assert.equal(list.json.result.resultType,'complete');
   assert.ok(list.json.result.tools.some(x=>x.name==='desksom_status'));assert.ok(list.json.result.tools.some(x=>x.name==='read_file'));
-  assert.equal(list.json.result.tools.length,25);
+  assert.equal(list.json.result.tools.length,24);
   assert.ok(list.json.result.tools.every(x => !JSON.stringify(x).includes('ui://desktop-commander/')),'unserved UI URI in catalog');
   assert.ok(list.json.result.tools.every(x => !x._meta?.['openai/outputTemplate'] && !x._meta?.['ui/resourceUri'] && !x._meta?.ui),'unserved UI hint in catalog');
   const status=await invoke('tools/call',{name:'desksom_status',arguments:{}});assert.equal(status.status,200);

@@ -45,6 +45,6 @@ If configured Git later becomes unavailable, projectInspection reports ready=fal
 
 ## Catalog and health
 
-The original catalog contains 25 tools. Each optional feature adds one; both enabled give 27. Server-advertised capabilities do not prove which actions a particular ChatGPT conversation exposes or permits. Refreshing connection metadata is separate from restarting a Windows service.
+The rc.15 base catalog contains 24 tools because upstream 0.3.0 removed get_prompts. Each optional feature adds one; both enabled give 26. Server-advertised capabilities do not prove which actions a particular ChatGPT conversation exposes or permits. Refreshing connection metadata is separate from restarting a Windows service.
 
 Use the [readiness contract](READINESS_AND_RECOVERY.md) to distinguish core availability, aggregate index health and a particular root's readiness. A selected index's progress or saved configuration is not a completed scan.

@@ -2,11 +2,11 @@
 
 Give ChatGPT a private connection to your Windows files and terminal through your own OpenAI Secure MCP Tunnel. DeskSom uses the pinned open-source Desktop Commander engine; it does not use Desktop Commander's paid hosted relay.
 
-**Development candidate: 0.2.0-rc.14.** This branch adds resilient optional filename indexing and bounded project inspection. It is not a claim that rc.14 has passed a new-owner installation or been released as an installer. Existing rc.12 downloads and their exact hashes remain preserved under `downloads/v0.2.0-rc.12/`.
+**Development candidate: 0.2.0-rc.15.** This branch adds resilient optional filename indexing and bounded project inspection. It is not a claim that rc.15 has passed a new-owner installation or been released as an installer. Existing rc.12 downloads and their exact hashes remain preserved under `downloads/v0.2.0-rc.12/`.
 
 ## What it does
 
-The base installation exposes 25 tools for file access, content/path search, terminal execution, process sessions, configuration and diagnostics. Two optional tools extend that catalog to 26 or 27 tools:
+The base installation exposes 24 tools for file access, content/path search, terminal execution, process sessions, configuration and diagnostics. Upstream 0.3.0 retired the legacy get_prompts tool. Two optional tools extend that catalog to 25 or 26 tools:
 
 - `find_files_fast`: selected-root, case-insensitive filename-substring search using a private SQLite index. Filesystem watching, acknowledged-write hints and periodic full reconciliation keep derived data current. It does not search file contents, and a missing result is never proof of absence.
 - `inspect_project`: a bounded, read-only project/Git snapshot with branch, commit, working-tree counts, tracked languages and script names. It does not run project scripts, install dependencies, recurse into child repositories, or write Git state.
@@ -15,15 +15,23 @@ Both optional features are off by default and have owner-approved control-panel 
 
 ## Index trouble no longer means a dead connection
 
-In rc.14, the core endpoint can serve ordinary tools while selected indices initialize or need attention. `desksom_status.ready` describes the core service; `indexWorkerReady`, `allFeaturesReady` and authenticated per-root `indexStatus` report optional-feature health separately. A failed or missing selected root does not disable a healthy root's search. An unavailable optional Git executable likewise does not disable the core connection. An unready root rejects fast searches with an explicit status rather than serving a stale snapshot as current.
+In rc.15, the core endpoint can serve ordinary tools while selected indices initialize or need attention. `desksom_status.ready` describes the core service; `indexWorkerReady`, `allFeaturesReady` and authenticated per-root `indexStatus` report optional-feature health separately. A failed or missing selected root does not disable a healthy root's search. An unavailable optional Git executable likewise does not disable the core connection. An unready root rejects fast searches with an explicit status rather than serving a stale snapshot as current.
 
 Index progress reports observed work, not a guessed completion percentage. Initial full walks support cooperative cancellation. Setup failures clean up only resources acquired by that worker. Following a hard Windows reboot, a lease conclusively proven to predate the new OS boot may be moved intact into private evidence before a new writer is acquired. Same-boot, active, foreign, linked or ambiguous leases are never stolen. Recovery diagnostics remain attached to authenticated per-root status. The owner control panel distinguishes saved settings from a ready index and uses a responsive progress dialog for index changes.
 
 These changes do not establish universal crash recovery. Blocking OS calls and individual SQLite operations are not preemptible, and an uncertain shutdown still requires inspection. Details are in [readiness and recovery](docs/READINESS_AND_RECOVERY.md).
 
+## Upstream 0.3.0 integration
+
+This candidate carries forward rc.14's installed reliability fixes while modernizing the pinned engine. Its exact tool matrices are now 24 / 25 / 25 / 26. Refresh client tool metadata when upgrading; do not recreate the private tunnel merely because get_prompts was removed.
+
+Upstream's document packages preload after MCP initialization rather than blocking the handshake. Windows Store PowerShell aliases resolve through their known installation path to a verified executable, without searching the work directory. A narrowly pinned PDF compatibility overlay enables the real font metadata expected by pdf2md 0.3.4; no fake text/font data is substituted.
+
+The dependency overrides used by upstream must also be declared in the consuming project's root package.json. This candidate pins those reviewed overrides and its private production audit reports zero findings at qualification time. That is not a guarantee of absence of vulnerabilities. See [the integration evidence and limits](docs/UPSTREAM_030_INTEGRATION.md).
+
 ## Requirements
 
-Windows x64, PowerShell 7.4 or newer, and Node.js 22 or newer are the core baseline. **Optional indexed search requires Node.js 25 or newer; this candidate has been exercised on Node.js 25.2.1.** A newer major is not automatically a qualified runtime. Project inspection also needs an installed, trusted Git executable. The engine remains pinned to Desktop Commander 0.2.52 and tunnel-client 0.0.16.
+Windows x64, PowerShell 7.4 or newer, and Node.js 22.12 or newer are the core baseline. **Optional indexed search requires Node.js 25 or newer; this candidate has been exercised on Node.js 25.2.1.** A newer major is not automatically a qualified runtime. Project inspection also needs an installed, trusted Git executable. The engine remains pinned to Desktop Commander 0.3.0 and tunnel-client 0.0.16.
 
 The test runner reports which suites it selects. On Node 22 it runs core suites without claiming indexing qualification; `npm run test:all` requires Node 25+. See [qualification](docs/QUALIFICATION.md) for observed evidence and remaining acceptance steps.
 
@@ -45,6 +53,6 @@ Without an existing authorized computer-control connection, an AI cannot bootstr
 
 Source manifests bind exact bytes, but are not publisher signatures. Operation receipts distinguish preparation, local readiness and actual ChatGPT verification. DeskSom never blindly replays an ambiguous write. Private configuration, credentials, task exports and raw logs do not belong in the public source archive.
 
-A narrow, exactly pinned markdown-it 14.3.3 patch removes two disclosed parser advisories without changing the engine or other package versions. Other pinned dependencies still have disclosed advisories. Read [the dependency review](docs/DEPENDENCY_REVIEW.md); passing functional tests is not proof that every dependency is vulnerability-free. A dependency audit is not an extra manual installation approval gate.
+The engine and its dependencies are pinned in the lockfile, with the reviewed upstream root-level overrides and markdown-it 14.3.3. The production audit at this integration pass reports zero findings; future advisory data can change. Read [the dependency review](docs/DEPENDENCY_REVIEW.md); passing functional tests is not proof that every dependency is vulnerability-free. A dependency audit is not an extra manual installation approval gate.
 
 [Performance](docs/PERFORMANCE.md) · [Installation](INSTALLATION.md) · [AI installation](AI_INSTALL.md) · [Owner controls](docs/OWNER_CONTROLS.md) · [Features](docs/INDEX_AND_INSPECTION.md) · [Recovery](docs/READINESS_AND_RECOVERY.md) · [Security](SECURITY.md) · [Qualification](docs/QUALIFICATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)

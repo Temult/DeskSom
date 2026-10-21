@@ -12,7 +12,7 @@ async function fixture(indexed=false){
  const source=import.meta.dirname,base=fsSync.realpathSync.native(await fs.mkdtemp(path.join(os.tmpdir(),'desksom-owner-cycle-'))),stateRoot=path.join(base,'private'),allowed=path.join(base,'allowed');
  await fs.mkdir(path.join(stateRoot,'dc'),{recursive:true});await fs.mkdir(path.join(stateRoot,'indices'));await fs.mkdir(allowed);await fs.writeFile(path.join(allowed,'README.md'),'fixture\n');
  const body={schemaVersion:'desksom.plan/v1',instance:'owner-test',sourceRoot:source,installRoot:path.join(base,'install'),stateRoot,port:19977,
-  version:'0.2.0-rc.14',sourceFingerprint:'f'.repeat(64),allowedDirectories:[allowed],tasks:{local:'DeskSom-owner-test-Local',tunnel:'DeskSom-owner-test-Tunnel'},
+  version:'0.2.0-rc.15',sourceFingerprint:'f'.repeat(64),allowedDirectories:[allowed],tasks:{local:'DeskSom-owner-test-Local',tunnel:'DeskSom-owner-test-Tunnel'},
   binding:{host:os.hostname(),sid:'fixture-only',architecture:'x64'},permissions:{},downloads:{},externalRequirements:[]};
  const plan={...body,planSha256:hashObject(body)},s={schemaVersion:'desksom.install/v1',installationId:randomUUID(),plan,planSha256:plan.planSha256,
   environment:{wscript:'C:\\Windows\\System32\\wscript.exe'},completed:{local_task:{}},operatorStopped:false,credentialsConfigured:false,phase:'LOCAL_READY',rootsRevision:0};
@@ -44,15 +44,15 @@ async function fixture(indexed=false){
 }
 for(const indexed of [false,true])test('owner workflow changes the real broker catalog and preserves indexing='+indexed,{timeout:90000,skip:indexed&&Number(process.versions.node.split('.')[0])<25},async()=>{
  const f=await fixture(indexed);try{
-  const before=await f.start();assert.equal(before.advertisedToolCount,25+Number(indexed));
+  const before=await f.start();assert.equal(before.advertisedToolCount,24+Number(indexed));
   const p=(await planInspection(f.source,f.stateRoot,{enabled:true},f.platform,{load:f.load})).proposal;
   await applyInspection(f.source,f.stateRoot,p,p.approvalSha256,true,f.platform,{load:f.load});
-  const after=await f.status();assert.notEqual(after.bootId,before.bootId);assert.equal(after.advertisedToolCount,26+Number(indexed));assert.equal(after.projectInspection.revision,1);
+  const after=await f.status();assert.notEqual(after.bootId,before.bootId);assert.equal(after.advertisedToolCount,25+Number(indexed));assert.equal(after.projectInspection.revision,1);
   const inspection=await f.rpc('tools/call',{name:'inspect_project',arguments:{path:f.allowed}});assert.notEqual(inspection.isError,true);
   assert.equal(inspection.structuredContent.execution.projectScriptsRun,false);
   const off=(await planInspection(f.source,f.stateRoot,{enabled:false},f.platform,{load:f.load})).proposal;
   await applyInspection(f.source,f.stateRoot,off,off.approvalSha256,true,f.platform,{load:f.load});
-  assert.equal((await f.status()).advertisedToolCount,25+Number(indexed));assert.equal((await f.load()).indexProfile?.enabled===true,indexed);
+  assert.equal((await f.status()).advertisedToolCount,24+Number(indexed));assert.equal((await f.load()).indexProfile?.enabled===true,indexed);
   assert.equal(f.starts,3);assert.equal(f.stops,2);
  }finally{await f.clean()}
 });
@@ -60,7 +60,7 @@ test('missing optional Git does not disable core file access or report full read
  const f=await fixture();try{
   const cfg=await settings({...f.s,projectInspectEnabled:true,projectInspectGitExecutable:path.join(f.base,'missing','git.exe')});
   await atomicJson(path.join(f.stateRoot,'settings.json'),cfg);const status=await f.start();
-  assert.equal(status.ready,true);assert.equal(status.allFeaturesReady,false);assert.equal(status.projectInspection.ready,false);assert.equal(status.advertisedToolCount,26);
+  assert.equal(status.ready,true);assert.equal(status.allFeaturesReady,false);assert.equal(status.projectInspection.ready,false);assert.equal(status.advertisedToolCount,25);
   assert.notEqual((await f.rpc('tools/call',{name:'read_file',arguments:{path:path.join(f.allowed,'README.md')}})).isError,true);
   const denied=await f.rpc('tools/call',{name:'inspect_project',arguments:{path:f.allowed}});assert.equal(denied.isError,true);assert.match(JSON.stringify(denied),/GIT_EXECUTABLE_UNAVAILABLE/);
  }finally{await f.clean()}

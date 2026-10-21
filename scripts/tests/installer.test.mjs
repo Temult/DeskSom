@@ -6,7 +6,7 @@ import path from 'node:path';
 import {canonical,hashObject,normalizeWin,insideWin,overlapWin,safeRelative,instanceName,DeskSomError,loadRelease,hashFile,createJson,envelope,redactedError,assertNoLinks} from '../lib/common.mjs';
 import {makePlan,checkPlanShape,taskDefinition,taskMatches,identityMatches,ensureTask,install,phaseAfterVerifiedStart} from '../lib/install-core.mjs';
 import {parseArgs,run} from '../cli.mjs';
-const env={platform:'win32',architecture:'x64',host:'TEST-PC',sid:'S-1-5-21-1-2-3-1001',localAppData:'C:\\Users\\Test\\AppData\\Local',windowsDir:'C:\\Windows',programFiles:'C:\\Program Files',elevated:false,node:'C:\\Node\\node.exe',pwsh:'C:\\PowerShell\\pwsh.exe',nodeMajor:22,pwshSupported:true};
+const env={platform:'win32',architecture:'x64',host:'TEST-PC',sid:'S-1-5-21-1-2-3-1001',localAppData:'C:\\Users\\Test\\AppData\\Local',windowsDir:'C:\\Windows',programFiles:'C:\\Program Files',elevated:false,node:'C:\\Node\\node.exe',pwsh:'C:\\PowerShell\\pwsh.exe',nodeMajor:22,nodeVersion:'22.12.0',pwshSupported:true};
 const release={fingerprint:'a'.repeat(64),manifest:{version:'0.2.0-rc.2'}};
 const spec={instance:'test',installRoot:'C:\\Install\\DeskSom',stateRoot:'C:\\State\\DeskSom',allowedDirectories:['C:\\Work'],port:19671};
 const source='C:\\Downloads\\DeskSom';
@@ -115,4 +115,10 @@ test('release digest checks reject changed source and duplicate manifest entries
 test('confirmed service restart records local or tunnel readiness, not stale STOPPED',()=>{
  assert.equal(phaseAfterVerifiedStart({credentialsConfigured:false,phase:'STOPPED'}),'LOCAL_READY');
  assert.equal(phaseAfterVerifiedStart({credentialsConfigured:true,phase:'STOPPED'}),'TUNNEL_READY');
+});
+
+test('upstream runtime floor rejects Node22 before 22.12 and incomplete version evidence',()=>{
+ for(const nodeVersion of ['22.0.0','22.11.9','bad'])assert.throws(()=>plan({},{nodeMajor:22,nodeVersion}),errorCode('PREREQUISITES_MISSING'));
+ assert.doesNotThrow(()=>plan({},{nodeMajor:22,nodeVersion:'22.12.0'}));
+ assert.doesNotThrow(()=>plan({},{nodeMajor:25,nodeVersion:'25.2.1'}));
 });

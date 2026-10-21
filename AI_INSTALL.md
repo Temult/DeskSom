@@ -1,4 +1,4 @@
-> rc.14 development status: do not deploy this checkout as a qualified release. Ordinary DeskSom retains the Node 22+ baseline; optional filename indexing requires Node 25+ and separate owner selection. Read docs/READINESS_AND_RECOVERY.md: core ready does not mean every optional index is ready.
+> rc.15 development status: do not deploy this checkout as a qualified release. Ordinary DeskSom retains the Node 22.12+ baseline; optional filename indexing requires Node 25+ and separate owner selection. Read docs/READINESS_AND_RECOVERY.md: core ready does not mean every optional index is ready.
 
 # AI-directed installation
 
@@ -6,7 +6,7 @@ Use this runbook when the owner has authorized terminal access to their Windows 
 
 ## 1. Inspect before changing anything
 
-Confirm Windows x64, the intended machine, a non-elevated user, PowerShell 7.4+, Node.js 22+, and npm. Use a prepared release with release-manifest.json; do not reseal a downloaded release to suppress a checksum error. Inspect existing DeskSom installations, tasks, paths and the requested port. Do not stop or replace another instance. Preflight independently repeats these checks.
+Confirm Windows x64, the intended machine, a non-elevated user, PowerShell 7.4+, Node.js 22.12+, and npm. Use a prepared release with release-manifest.json; do not reseal a downloaded release to suppress a checksum error. Inspect existing DeskSom installations, tasks, paths and the requested port. Do not stop or replace another instance. Preflight independently repeats these checks.
 
 Ask which existing work folder the owner wants available. Default runtime/state locations are per-user under LocalAppData. They must remain outside work-folder roots. Explain the full-user terminal capability. Ask the owner to confirm access to custom MCP connections and Secure MCP Tunnels before assuming the remote portion is available or free.
 

@@ -61,7 +61,7 @@ test('a failed optional index leaves HTTP, files, terminal, inspection and healt
  }
  assert.equal(observed.ready,true);assert.equal(observed.indexWorkerReady,false);assert.equal(observed.allFeaturesReady,false);
  assert.equal(observed.readinessContract,'CORE_SERVICE_WITH_OPTIONAL_FEATURE_HEALTH_V1');
- assert.equal(observed.advertisedToolCount,27);
+ assert.equal(observed.advertisedToolCount,26);
  assert.equal(observed.indexStatus.roots[0].ready,true);assert.equal(observed.indexStatus.roots[1].errorCode,'ERR_SQLITE_ERROR');
  assert.equal(JSON.stringify(observed.indexStatus).includes(state),false);
  const health=await fetch(startup.address+'/readyz');assert.equal(health.status,200);

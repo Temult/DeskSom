@@ -1,6 +1,6 @@
 ## rc.14 optional-feature requirement
 
-Core DeskSom retains Node.js 22+. Native filename indexing separately requires Node.js 25+ and is exercised on 25.2.1 in this candidate. A newer major is not automatically qualified. The installer test runner explicitly selects core versus index suites; it does not silently claim index coverage on Node 22. Project inspection also needs a trusted Git executable and still lacks a general installed-owner activation UI.
+Core DeskSom retains Node.js 22.12+. Native filename indexing separately requires Node.js 25+ and is exercised on 25.2.1 in this candidate. A newer major is not automatically qualified. The installer test runner explicitly selects core versus index suites; it does not silently claim index coverage on Node 22. Project inspection also needs a trusted Git executable and has an owner-approved activation UI.
 
 # Prerequisites and the first connection
 

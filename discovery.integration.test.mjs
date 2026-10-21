@@ -55,7 +55,7 @@ test('isolated broker reports a full catalog and supports actual writes', {timeo
  const listing=await invoke('tools/list');
  assert.equal(listing.code,200);
  const advertised=listing.data.result.tools;
- assert.equal(advertised.length,25);
+ assert.equal(advertised.length,24);
  const names=advertised.map(t=>t.name);
  for(const name of ['desksom_status','write_file','edit_block','create_directory','start_process'])
    assert.ok(names.includes(name),'Missing '+name);
@@ -68,7 +68,7 @@ test('isolated broker reports a full catalog and supports actual writes', {timeo
  assert.equal(status.advertisedCapabilities.clientVisibility,'NOT_OBSERVABLE_FROM_DESKSOM_SERVER');
  assert.equal(status.advertisedCapabilities.advertisesFileWrites,true);
  assert.equal(status.advertisedCapabilities.advertisesHostExecution,true);
- assert.equal(status.advertisedToolCount,25);
+ assert.equal(status.advertisedToolCount,24);
  assert.equal(status.instance,'discovery-qa');
  assert.equal(status.installationId,'11111111-1111-4111-8111-111111111111');
  assert.equal(status.sourceFingerprint,'f'.repeat(64));
@@ -85,7 +85,7 @@ test('isolated broker reports a full catalog and supports actual writes', {timeo
  assert.match(JSON.stringify(reading.data.result),/CATALOG_PROBE_2/);
  const terminal=await invoke('tools/call',{name:'start_process',arguments:{
   command:'Write-Output DISCOVERY_TERMINAL_OK',shell:'pwsh.exe',timeout_ms:2000}});
- assert.equal(terminal.code,200);assert.notEqual(terminal.data.result.isError,true);
+ assert.equal(terminal.code,200);assert.notEqual(terminal.data.result.isError,true,JSON.stringify(terminal.data.result));
  const legacyInit=await invoke('initialize',{protocolVersion:'2025-11-25',
     capabilities:{},clientInfo:{name:'legacy-probe',version:'1'}},false);
  assert.equal(legacyInit.code,200);

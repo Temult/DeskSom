@@ -2,7 +2,7 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 . (Join-Path (Split-Path -Parent $PSScriptRoot) 'WindowsHost.ps1') -Action Library
-$script:reply=@{ready=$true;host='FIXTURE';version='0.2.0-rc.14';instance='fixture';installationId='fixture-id';
+$script:reply=@{ready=$true;host='FIXTURE';version='0.2.0-rc.15';instance='fixture';installationId='fixture-id';
  sourceFingerprint='fixture-hash';bootId='11111111-1111-4111-8111-111111111111';activeCalls=0;
  readinessContract='CORE_SERVICE_WITH_OPTIONAL_FEATURE_HEALTH_V1';indexWorkerReady=$false;allFeaturesReady=$false;
  indexStatus=@{enabled=$true;ready=$false;roots=@(@{root='C:\Fixture';state='FAILED';errorCode='ERR_SQLITE_ERROR';ready=$false})};
@@ -24,7 +24,7 @@ Assert-True ($observed.projectInspection.enabled -eq $true) 'Inspection flag dro
 Assert-True ($observed.projectInspection.ready -eq $false) 'Inspection failure hidden'
 Assert-True ($observed.projectInspection.revision -eq 3) 'Inspection revision dropped'
 Assert-True (-not $observed.ContainsKey('unknownSensitiveValue')) 'Probe copied an unapproved field'
-$state=@{installationId='fixture-id';plan=@{binding=@{host='FIXTURE'};version='0.2.0-rc.14';sourceFingerprint='fixture-hash';instance='fixture'}}
+$state=@{installationId='fixture-id';plan=@{binding=@{host='FIXTURE'};version='0.2.0-rc.15';sourceFingerprint='fixture-hash';instance='fixture'}}
 Assert-True (Ds-Identity $observed $state) 'Verified core identity must not require a ready optional index'
 $observed.sourceFingerprint='foreign'
 Assert-True (-not (Ds-Identity $observed $state)) 'Core identity validation was weakened'
