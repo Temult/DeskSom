@@ -38,3 +38,9 @@ Inspect the exact installation, boot, writer identity, process lifetime and priv
 ## Preserved guarantees
 
 Quiescence is authenticated and bound to the current boot and installation. The final idle check and admission closure are atomic in the broker event loop. Successful indexed shutdown still requires the exact stop acknowledgment, clean worker exit and current lease absence. Cached success cannot conceal a reappeared lease. A later tool call is rejected after admission closes. No user file write is automatically replayed because an index update or acknowledgment was lost.
+
+## Inspection owner controls and optional failures
+
+Authenticated status includes projectInspection with enabled, ready, revision and a bounded errorCode. allFeaturesReady now includes inspection health; ready remains core admission. Public /readyz exposes only the corresponding boolean, never an executable path. Missing Git refuses inspection without taking down ordinary tools. A selected index root missing at startup reports UNAVAILABLE and is not opened; remaining roots stay usable.
+
+The inspection CLI returns INSPECTION_PLAN_READY, INSPECTION_UPDATED or INSPECTION_UPDATED_STOPPED. Pending changes block ordinary management until reconciled; explicit guarded rollback returns INSPECTION_ROLLED_BACK_STOPPED. START_AUTHORIZED is the sole pending phase permitting the planned local restart. No field claims visual acceptance, scheduled-task qualification or new ChatGPT tool exposure.

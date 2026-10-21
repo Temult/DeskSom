@@ -122,7 +122,7 @@ function Ds-Probe($State) {
     $r=Ds-Rpc $State 'tools/call' @{name='desksom_status';arguments=@{}}
     if($r.status -ne 200 -or $r.body.ContainsKey('error') -or -not $r.body.result.ContainsKey('structuredContent')){return @{ready=$false;reason='INVALID_STATUS_RESPONSE'}}
     $v=$r.body.result.structuredContent
-    $out=@{};foreach($key in @('host','version','instance','installationId','sourceFingerprint','bootId','ready','activeCalls','upstreamVersion','mode','allowedFileRoots','rootsRevision','statistics','readinessContract','indexWorkerReady','allFeaturesReady','indexStatus')){if($v.ContainsKey($key)){$out[$key]=$v[$key]}}
+    $out=@{};foreach($key in @('host','version','instance','installationId','sourceFingerprint','bootId','ready','activeCalls','upstreamVersion','mode','allowedFileRoots','rootsRevision','statistics','readinessContract','indexWorkerReady','allFeaturesReady','indexStatus','projectInspection')){if($v.ContainsKey($key)){$out[$key]=$v[$key]}}
     return $out
   }catch{return @{ready=$false;reason='LOCAL_UNREACHABLE_OR_UNAUTHENTICATED'}}
 }

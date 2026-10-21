@@ -6,6 +6,7 @@ import path from 'node:path';
 import os from 'node:os';
 import {spawn} from 'node:child_process';
 import {validateGitDataSources} from './project-inspect-git-policy.mjs';
+import {createConcurrencyGate} from './concurrency.mjs';
 
 const MAX_TRACKED_OUTPUT=384*1024,MAX_STATUS_OUTPUT=160*1024,MAX_LOG_OUTPUT=8*1024;
 const MAX_RETURN=12*1024, TIMEOUT_MS=6000,MAX_HINT_BYTES=65536,MAX_CONCURRENT_GIT=3;
@@ -151,13 +152,7 @@ function childEnv(){
  e.GIT_CONFIG_SYSTEM=process.platform==='win32'?'NUL':'/dev/null';e.GIT_EXTERNAL_DIFF='0';
  return e;
 }
-let active=0;
-const queue=[];
-async function gate(fn){
- if(active>=MAX_CONCURRENT_GIT)await new Promise(resolve=>queue.push(resolve));
- active++;
- try{return await fn();}finally{active--;queue.shift()?.();}
-}
+const gate=createConcurrencyGate(MAX_CONCURRENT_GIT);
 function runGit(gitExecutable,cwd,repoRoot,args,maxBytes){
  return gate(()=>new Promise(resolve=>{
    let chunks=[],size=0,limited=false,done=false,timer,child;

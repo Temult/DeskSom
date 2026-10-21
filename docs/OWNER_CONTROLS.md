@@ -6,6 +6,11 @@ The older feature-introduction notes below explain inherited behavior. They do n
 
 # DeskSom owner controls
 
+## Project inspection controls (rc.14)
+
+Overview > Project inspection prepares and approves an enable/disable change. It checks the trusted Git executable, installation, source, folder revision and unchanged index profile. A running idle local broker is restarted once; the tunnel is not stopped. An owner-stopped installation stays stopped. Interrupted operations remain visible through the same control and support guarded rollback without repeating the original change. Follow [the feature guide](INDEX_AND_INSPECTION.md) for CLI equivalents and connection metadata refresh.
+
+
 DeskSom 0.2.0-rc.4 adds supported, owner-approved management of file-tool folders, lightweight statistics, a Windows tray and control panel, and improved task restart settings. The original installation plan remains immutable.
 
 ## Everyday use

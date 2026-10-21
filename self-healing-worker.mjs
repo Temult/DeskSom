@@ -43,6 +43,8 @@ const remove=db.prepare('DELETE FROM entries WHERE id=?');
 const ftsAdd=db.prepare('INSERT INTO names_fts(rowid,name) VALUES(?,?)');
 const buildAllFts=db.prepare('INSERT INTO names_fts(rowid,name) SELECT id,name FROM entries');
 const ftsRemove=db.prepare('DELETE FROM names_fts WHERE rowid=?');
+const updateName=db.prepare('UPDATE entries SET name=? WHERE id=?');
+function refreshName(previous,name){ftsRemove.run(previous.id);updateName.run(name,previous.id);ftsAdd.run(previous.id,name)}
 const subtree=db.prepare("SELECT id FROM entries WHERE fullpath=? OR fullpath LIKE ? ESCAPE '^'");
 const mark=(state,why='')=>{setMeta.run('state',state);setMeta.run('reason',why);setMeta.run('updatedAt',new Date().toISOString())};
 setMeta.run('schema','desksom.self-healing/v1');
@@ -120,7 +122,10 @@ function crawlDirectory(start,{deep=false}={}){
     if(prev){if(prev.kind==='d')dropTree(prev.fullpath);else dropId(prev.id)}
     put(value.next,value.name,value.kind,dir);
     if(value.kind==='d')queue.push(value.next);
-   } else if(deep&&value.kind==='d')queue.push(value.next);
+   } else {
+    if(prev.name!==value.name)refreshName(prev,value.name);
+    if(deep&&value.kind==='d')queue.push(value.next);
+   }
   }
  }
  return seen.size;
@@ -169,7 +174,7 @@ function diffFull(){
  try{
   beginScan('FULL_RECONCILIATION');
   transaction(()=>{
-   const prior=new Map(db.prepare('SELECT id,fullpath,kind FROM entries').all().map(x=>[norm(x.fullpath),x]));
+   const prior=new Map(db.prepare('SELECT id,fullpath,name,kind FROM entries').all().map(x=>[norm(x.fullpath),x]));
    const stack=[root];
    while(stack.length){
     checkStop();reportProgress();
@@ -186,6 +191,7 @@ function diffFull(){
      if(before){
       prior.delete(key);
       if(before.kind!==kind){dropId(before.id);put(full,m.name,kind,dir)}
+      else if(before.name!==m.name)refreshName(before,m.name);
      }else put(full,m.name,kind,dir);
      if(kind==='d')stack.push(full);
     }

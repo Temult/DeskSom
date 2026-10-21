@@ -7,6 +7,9 @@ $ErrorActionPreference='Stop'
 $state=Ds-State $StateFile -CheckSource
 if($state.operatorStopped){Ds-Fail 'OWNER_STOPPED' 'The owner stopped this service.'}
 if($state.ContainsKey('pendingRootsChange') -and $state.pendingRootsChange){Ds-Fail 'ROOTS_CHANGE_UNCERTAIN' 'An unfinished folder update blocks service startup until reconciled.'}
+if($state.ContainsKey('pendingInspectionChange') -and $state.pendingInspectionChange -and $state.pendingInspectionChange.phase -cne 'START_AUTHORIZED'){
+ Ds-Fail 'INSPECTION_CHANGE_UNCERTAIN' 'Inspection configuration is unfinished; owner reconciliation is required.'
+}
 $roots=@(if($state.ContainsKey('activeAllowedDirectories') -and @($state.activeAllowedDirectories).Count){$state.activeAllowedDirectories}else{$state.plan.allowedDirectories})
 $revision=if($state.ContainsKey('rootsRevision')){[int]$state.rootsRevision}else{0}
 $principal=[Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -18,6 +21,10 @@ if($settings.installationId -cne $state.installationId -or $settings.sourceFinge
    $settings.instance -cne $state.plan.instance -or $settings.stateDir -ine $state.plan.stateRoot -or
    $settings.workDir -ine $roots[0] -or $settings.rootsRevision -ne $revision -or
    (($settings.allowedDirectories|ConvertTo-Json -Compress) -cne ($roots|ConvertTo-Json -Compress))){Ds-Fail 'SETTINGS_DRIFT' 'Runtime settings changed.'}
+$inspectionEnabled=$state.ContainsKey('projectInspectEnabled') -and $state.projectInspectEnabled -eq $true
+$inspectionRevision=if($state.ContainsKey('inspectionRevision')){[int]$state.inspectionRevision}else{0}
+if($settings.enableProjectInspect -cne $inspectionEnabled -or $settings.projectInspectRevision -ne $inspectionRevision){Ds-Fail 'INSPECTION_SETTINGS_DRIFT' 'Inspection settings differ from approved owner state.'}
+if($inspectionEnabled -and $state.ContainsKey('projectInspectGitExecutable') -and $settings.projectInspectGitExecutable -cne $state.projectInspectGitExecutable){Ds-Fail 'INSPECTION_SETTINGS_DRIFT' 'Inspection Git path differs from approved owner state.'}
 $engine=Ds-ReadJson (Join-Path $state.plan.stateRoot 'dc\config.json')
 if(($engine.allowedDirectories|ConvertTo-Json -Compress) -cne ($roots|ConvertTo-Json -Compress)){Ds-Fail 'ROOTS_CONFIG_DRIFT' 'Engine folders differ from approved owner state.'}
 $psi=[Diagnostics.ProcessStartInfo]::new();$psi.UseShellExecute=$false;$psi.CreateNoWindow=$true

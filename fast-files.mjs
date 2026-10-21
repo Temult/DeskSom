@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {startSelfHealingIndex} from './self-healing-client.mjs';
 import {indexWriterLeaseAbsent} from './index-writer-lock.mjs';
+import {filenameQuery} from './filename-query.mjs';
 
 const normalize=p=>path.win32.resolve(p).replace(/\\+$/,'').toLowerCase();
 const inside=(root,p)=>normalize(p)===normalize(root)||normalize(p).startsWith(normalize(root)+'\\');
@@ -21,41 +22,44 @@ export const fastTool={
   },required:['root','query'],additionalProperties:false
  }
 };
-const like=s=>'%'+s.replace(/[\\%_]/g,x=>'\\'+x)+'%';
 export function createFastFileSearch(cfg){
  const feature=cfg.fastFilenameIndex;
  if(feature?.enabled!==true)return null;
  if(!Array.isArray(feature.indices)||feature.indices.length<1||feature.indices.length>12)throw Error('FAST_INDEX_CONFIG_INVALID');
  if(!path.win32.isAbsolute(cfg.stateDir))throw Error('FAST_INDEX_STATE_NOT_ABSOLUTE');
  const realState=fs.realpathSync.native(cfg.stateDir);
- const allowed=(cfg.allowedDirectories??[]).map(p=>fs.realpathSync.native(p));
+ const approved=cfg.allowedDirectories??[];
+ const allowed=approved.flatMap(p=>{try{return [fs.realpathSync.native(p)]}catch{return []}});
  const bound=new Map();
  for(const i of feature.indices){
   if(!i||typeof i.root!=='string'||typeof i.database!=='string')throw Error('FAST_INDEX_CONFIG_INVALID');
   if(!path.win32.isAbsolute(i.root)||!path.win32.isAbsolute(i.database))throw Error('FAST_INDEX_PATH_NOT_ABSOLUTE');
-  const r=fs.realpathSync.native(i.root);
-  if(!allowed.some(a=>normalize(a)===normalize(r)))throw Error('FAST_INDEX_ROOT_NOT_APPROVED');
+  let r,unavailable=false;
+  try{r=fs.realpathSync.native(i.root)}catch{r=i.root;unavailable=true}
+  // Missing roots grant no access. Retain only an exact selected/approved name
+  // for diagnostics; do not start a writer or search its old database.
+  if(unavailable?!approved.some(a=>normalize(a)===normalize(i.root)):!allowed.some(a=>normalize(a)===normalize(r)))throw Error('FAST_INDEX_ROOT_NOT_APPROVED');
   const dbFolder=fs.realpathSync.native(path.dirname(i.database));
   if(!inside(realState,dbFolder))throw Error('FAST_INDEX_DB_NOT_PRIVATE');
   if(bound.has(normalize(r)))throw Error('FAST_INDEX_DUPLICATE_ROOT');
-  bound.set(normalize(r),{root:r,database:i.database});
+  bound.set(normalize(r),{root:r,database:i.database,unavailable});
  }
  const live=feature.selfHealing===true;
  const clients=new Map();
  if(live)for(const item of bound.values()){
+  if(item.unavailable)continue;
   clients.set(normalize(item.root),startSelfHealingIndex({...item,privateState:realState,periodicReconcileMs:feature.periodicReconcileMs??1800000}));
  }
- const health=(root)=>!live||(root
-  ?clients.get(normalize(root))?.latest==='READY'
-  :[...clients.values()].every(c=>c.latest==='READY'));
+ const rootHealthy=item=>!!item&&!item.unavailable&&(!live||clients.get(normalize(item.root))?.latest==='READY');
+ const health=root=>root?rootHealthy(bound.get(normalize(root))):[...bound.values()].every(rootHealthy);
  const snapshot=()=>({enabled:true,selfHealing:live,ready:health(),roots:[...bound.values()].map(item=>({
-  root:item.root,...(clients.get(normalize(item.root))?.snapshot?.()??{state:'SNAPSHOT'}),
+  root:item.root,...(clients.get(normalize(item.root))?.snapshot?.()??(item.unavailable?{state:'UNAVAILABLE',errorCode:'ROOT_UNAVAILABLE'}:{state:'SNAPSHOT'})),
   ready:health(item.root)
  }))});
  const ready=async()=>{
   if(!live)return {status:'DISABLED'};
   const responses=await Promise.all([...clients.values()].map(c=>c.whenReady()));
-  if(responses.some(r=>r.status!=='READY'))
+  if([...bound.values()].some(item=>item.unavailable)||responses.some(r=>r.status!=='READY'))
    throw Object.assign(new Error('INDEX_WORKER_NOT_READY'),{code:'INDEX_WORKER_NOT_READY'});
   return {status:'READY'};
  };
@@ -70,12 +74,12 @@ export function createFastFileSearch(cfg){
    const read=db.prepare('SELECT val FROM meta WHERE key=?');
    if(read.get('root')?.val!==normalize(item.root))return err('INDEX_ROOT_MISMATCH','Index belongs to another root.');
    const state=read.get('state')?.val??'UNKNOWN',name=arg.query.toLowerCase(),limit=arg.limit??30;
-   const quick=[...name].length>=3;
-   const sql=quick?
-    "SELECT e.fullpath path,e.name,e.kind FROM names_fts f JOIN entries e ON e.id=f.rowid WHERE f.name LIKE ? ESCAPE '\\' LIMIT ?":
-    "SELECT fullpath path,name,kind FROM entries WHERE name LIKE ? ESCAPE '\\' LIMIT ?";
-   const max=Math.min(1000,limit*10),found=db.prepare(sql).all(like(name),max),results=[];
+   if(live&&(state!=='WATCHING_BEST_EFFORT'||!health(item.root)))return err('INDEX_WORKER_UNAVAILABLE','Index health changed during reconciliation. Use ordinary search.');
+   const max=Math.min(1000,limit*10),plan=filenameQuery(name,max);
+   const found=db.prepare(plan.sql).all(...plan.parameters),results=[];
+   let checked=0;
    for(const row of found){
+    checked++;
     if(!inside(item.root,row.path))continue;
     try{
      if(fs.lstatSync(row.path).isSymbolicLink())continue;
@@ -85,7 +89,8 @@ export function createFastFileSearch(cfg){
    }
    return text({status:'INDEXED_RESULTS',root:item.root,query:arg.query,results,indexState:state,
     lastScan:read.get('lastFull')?.val??read.get('lastScan')?.val??null,
-    candidatesChecked:found.length,possibleTruncation:found.length>=max,
+    candidatesChecked:checked,candidatesFetched:found.length,possibleTruncation:found.length>=max||checked<found.length,
+    queryStrategy:plan.strategy,
     absenceAuthoritative:false,searchIsContentSearch:false,
     selfHealing:live && health(item.root),flushStatus:flush?.status??null,repairStatus:repair?.status??null,
     nextAction:results.length?'Read or inspect matching files with the ordinary authorized tools.':'No indexed hit. Use verifyMiss or start_search before concluding the file is absent.'});
@@ -100,6 +105,7 @@ export function createFastFileSearch(cfg){
     return err('INVALID_QUERY','Use a configured root and bounded filename substring.');
   const item=bound.get(normalize(arg.root));
   if(!item)return err('ROOT_NOT_INDEXED','Root is not explicitly approved for indexed search.');
+  if(item.unavailable)return err('ROOT_UNAVAILABLE','This selected root was unavailable at startup. Restore it and deliberately restart indexing; ordinary tools remain available.');
   let current;
   try{current=fs.realpathSync.native(arg.root)}catch{return err('ROOT_UNAVAILABLE','Root cannot be verified.')}
   if(normalize(current)!==normalize(item.root))return err('ROOT_CHANGED','Root path now resolves elsewhere.');
@@ -114,6 +120,9 @@ export function createFastFileSearch(cfg){
   const flushed=client?await client.call('flush',{},2500):null;
   if(client&&!['NO_CHANGES','RECONCILED'].includes(flushed?.status))
    return err('INDEX_RECONCILIATION_UNAVAILABLE','Index worker flush could not be verified. Use ordinary start_search.');
+  // Yield between worker reconciliation and bounded synchronous SQLite work.
+  // Concurrent search calls must not monopolize the broker microtask queue.
+  await new Promise(resolve=>setImmediate(resolve));
   let result=await readQuery(item,arg,{flush:flushed});
   if(client&&arg.verifyMiss===true&&!result.isError&&result.structuredContent?.results?.length===0){
    const repaired=await client.call('full',{},45000);
@@ -134,9 +143,9 @@ export function createFastFileSearch(cfg){
     const client=clients.get(normalize(item.root));
     // An acknowledged file write must not wait behind an initial full crawl.
     // The watcher and subsequent full reconciliation cover the skipped hint.
-    results.push(client.latest==='READY'
+    results.push(client?.latest==='READY'
       ?await client.call('touch',{paths:targets},2500)
-      :{status:'INDEX_NOT_READY',state:client.latest});
+      :{status:'INDEX_NOT_READY',state:client?.latest??'UNAVAILABLE'});
    }
   }
   return {status:'UPDATE_ATTEMPTED',results};

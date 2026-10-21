@@ -37,3 +37,9 @@ The folders command supports list, plan and apply. ROOTS_LISTED and ROOTS_PLAN_R
 ## DeskSom MCP identity capability extension
 
 The MCP `desksom_status` tool also provides `advertisedToolCount`, `advertisedCapabilities` and `catalogSha256`. The 24 upstream tools are counted in `tools` for backward compatibility; `advertisedToolCount` includes the identity tool itself, totaling 25. The capability summary lists advertised file-mutation and host-execution names plus server-only discovery limits. It cannot see what actions ChatGPT exposed in the current conversation and does not prove authorization. Use `docs/CHAT_DISCOVERY_DIAGNOSTIC.md` to distinguish a client-side omitted tool from an actual server or Windows access error.
+
+## Inspection owner controls and optional failures
+
+Authenticated status includes projectInspection with enabled, ready, revision and a bounded errorCode. allFeaturesReady now includes inspection health; ready remains core admission. Public /readyz exposes only the corresponding boolean, never an executable path. Missing Git refuses inspection without taking down ordinary tools. A selected index root missing at startup reports UNAVAILABLE and is not opened; remaining roots stay usable.
+
+The inspection CLI returns INSPECTION_PLAN_READY, INSPECTION_UPDATED or INSPECTION_UPDATED_STOPPED. Pending changes block ordinary management until reconciled; explicit guarded rollback returns INSPECTION_ROLLED_BACK_STOPPED. START_AUTHORIZED is the sole pending phase permitting the planned local restart. No field claims visual acceptance, scheduled-task qualification or new ChatGPT tool exposure.

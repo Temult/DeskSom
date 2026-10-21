@@ -162,6 +162,7 @@ export async function settings(state) {
     instance:p.instance,installationId:state.installationId,sourceFingerprint:p.sourceFingerprint,
     // Strict default-off inspection flag. Preserve independently from the index profile.
     enableProjectInspect:state.projectInspectEnabled===true,
+    projectInspectRevision:state.inspectionRevision??0,
     ...(state.projectInspectEnabled===true && typeof state.projectInspectGitExecutable==='string'
       ? {projectInspectGitExecutable:state.projectInspectGitExecutable} : {}),
     ...(state.indexProfile ? {fastFilenameIndex:profileToBrokerSettings(state,state.indexProfile)} : {})};
@@ -288,7 +289,7 @@ export async function ensureTask(state,kind,platform) {
   await platform.taskCreate(expected);
   if (!taskMatches(await platform.taskGet(expected.name),expected)) fail('TASK_WRITE_UNCERTAIN','Task registration could not be independently verified.', 'Read task status before retrying; no success has been recorded.',25);
 }
-export async function loadOwned(sourceRoot,stateRoot,platform,deep=false) {
+export async function loadOwned(sourceRoot,stateRoot,platform,deep=false,{inspectionRecovery=false}={}) {
   const state=await readState(stateRoot);
   if (!state) fail('NOT_INSTALLED','No DeskSom installation record was found here.', 'Run preflight and install, or select the existing state directory.',10);
   const callerRelease=await loadRelease(sourceRoot), environment=await platform.environment();
@@ -299,11 +300,26 @@ export async function loadOwned(sourceRoot,stateRoot,platform,deep=false) {
   await assertOwnership(state.plan,state);
   if (state.pendingRootsChange) fail('ROOTS_CHANGE_UNCERTAIN','An interrupted folder update must be inspected before further management commands.', 'Preserve state and pending change receipt; do not blindly replay.',25);
   if (state.pendingIndexChange) fail('INDEX_CHANGE_UNCERTAIN','An interrupted indexed-search configuration change must be inspected before other management commands.','Use the guarded index status and rollback path after verifying service state.',25);
+  if(state.pendingInspectionChange&&!inspectionRecovery)fail('INSPECTION_CHANGE_UNCERTAIN','An inspection change is unfinished. Use inspection list and explicit rollback.',undefined,25);
   const runtimeRelease=await loadRelease(state.runtimeRoot);
   if (runtimeRelease.fingerprint!==state.plan.sourceFingerprint || await hashFile(path.join(state.runtimeRoot,'release-manifest.json'))!==state.releaseManifestSha256)
     fail('RUNTIME_SOURCE_DRIFT','The deployed source no longer matches the installation record.',undefined,21);
   const expected=await settings(state), actual=await readJson(path.join(state.plan.stateRoot,'settings.json'));
-  if (canonical(expected)!==canonical(actual)) fail('SETTINGS_DRIFT','Runtime settings differ from the approved root policy.',undefined,21);
+  if(state.pendingInspectionChange&&inspectionRecovery){
+    const pending=state.pendingInspectionChange,p=pending.proposal;
+    if(pending.schema!=='desksom.inspection-intent/v1'||!p)fail('INSPECTION_RECOVERY_DRIFT','Invalid inspection recovery receipt.');
+    const {approvalSha256,...body}=p;
+    if(hashObject(body)!==approvalSha256||p.installationId!==state.installationId||p.planSha256!==state.planSha256||p.sourceFingerprint!==state.plan.sourceFingerprint||
+      p.rootsRevision!==rootsRevision(state)||p.indexProfileSha256!==hashObject(state.indexProfile??null))fail('INSPECTION_RECOVERY_DRIFT','Inspection recovery identity changed.',undefined,21);
+    const variants=[];
+    for(const value of [p.previous,p.next]){
+      if(typeof value?.enabled!=='boolean'||!Number.isSafeInteger(value.revision))fail('INSPECTION_RECOVERY_DRIFT','Invalid inspection recovery state.');
+      const copy={...state,projectInspectEnabled:value.enabled,inspectionRevision:value.revision};
+      if(value.gitExecutable)copy.projectInspectGitExecutable=value.gitExecutable;else delete copy.projectInspectGitExecutable;
+      variants.push(await settings(copy));
+    }
+    if(!variants.some(v=>canonical(v)===canonical(actual)))fail('INSPECTION_RECOVERY_SETTINGS_DRIFT','Settings match neither side of the approved inspection change.',undefined,21);
+  }else if (canonical(expected)!==canonical(actual)) fail('SETTINGS_DRIFT','Runtime settings differ from the approved root policy.',undefined,21);
   const dcConfig=await readJson(path.join(state.plan.stateRoot,'dc','config.json'));
   if (canonical(dcConfig.allowedDirectories)!==canonical(effectiveRoots(state)))
     fail('ROOTS_CONFIG_DRIFT','Engine file-tool folders differ from the approved policy.', 'Inspect private state and engine configuration; do not auto-repair.',21);
@@ -351,6 +367,7 @@ export async function status(sourceRoot,stateRoot,platform,{deep=false,exercise=
     readyForChatGPTVerification:localReady && verification?.passed===true && tunnel?.ready===true && tunnel.controlPlane==='ok',
     tasks,local,tunnel,verification,operatorStopped:state.operatorStopped,
     allowedDirectories:effectiveRoots(state),rootsRevision:rootsRevision(state),statistics:local?.statistics??null,
+    projectInspection:localReady?(local?.projectInspection??null):null,
     indexWorkerReady:localReady?(local?.indexWorkerReady??null):null,
     indexStatus:localReady?(local?.indexStatus??null):null,
     allFeaturesReady:localReady?(local?.allFeaturesReady??null):false,

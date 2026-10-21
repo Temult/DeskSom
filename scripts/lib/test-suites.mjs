@@ -1,6 +1,8 @@
 // One test inventory for development, CI and installed qualification.
 export const coreTests=Object.freeze([
   "security.test.mjs",
+  "concurrency.test.mjs",
+  "markdown-patch.test.mjs",
   "modern.test.mjs",
   "catalog.test.mjs",
   "discovery.integration.test.mjs",
@@ -16,7 +18,9 @@ export const coreTests=Object.freeze([
   "project-inspect.r5-ordinary.test.mjs",
   "project-inspect.integration.test.mjs",
   "unified.settings.test.mjs",
-  "scripts/tests/test-selection.test.mjs"
+  "scripts/tests/test-selection.test.mjs",
+  "scripts/tests/inspection-control.test.mjs",
+  "inspection-owner.integration.test.mjs"
 ]);
 export const indexTests=Object.freeze([
   "scripts/tests/index-feature.test.mjs",
@@ -32,6 +36,7 @@ export const indexTests=Object.freeze([
   "self-healing.release.test.mjs",
   "self-healing.integration.test.mjs",
   "index-resilience.test.mjs",
+  "filename-query.test.mjs",
   "index-resilience.integration.test.mjs"
 ]);
 export function selectTests(version=process.versions.node,mode='auto'){

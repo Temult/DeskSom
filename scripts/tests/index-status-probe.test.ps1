@@ -6,6 +6,7 @@ $script:reply=@{ready=$true;host='FIXTURE';version='0.2.0-rc.14';instance='fixtu
  sourceFingerprint='fixture-hash';bootId='11111111-1111-4111-8111-111111111111';activeCalls=0;
  readinessContract='CORE_SERVICE_WITH_OPTIONAL_FEATURE_HEALTH_V1';indexWorkerReady=$false;allFeaturesReady=$false;
  indexStatus=@{enabled=$true;ready=$false;roots=@(@{root='C:\Fixture';state='FAILED';errorCode='ERR_SQLITE_ERROR';ready=$false})};
+ projectInspection=@{enabled=$true;ready=$false;revision=3;errorCode='GIT_EXECUTABLE_UNAVAILABLE'};
  unknownSensitiveValue='synthetic-do-not-copy'}
 $script:unauthorized=$false
 function Ds-Rpc($State,[string]$Method,$Parameters=@{}){
@@ -19,6 +20,9 @@ Assert-True ($observed.ready -eq $true) 'Optional index failure changed core rea
 Assert-True ($observed.indexWorkerReady -eq $false) 'Optional health was dropped'
 Assert-True ($observed.allFeaturesReady -eq $false) 'Aggregate feature health was dropped'
 Assert-True ($observed.indexStatus.roots[0].errorCode -eq 'ERR_SQLITE_ERROR') 'Root diagnostics did not reach owner status'
+Assert-True ($observed.projectInspection.enabled -eq $true) 'Inspection flag dropped'
+Assert-True ($observed.projectInspection.ready -eq $false) 'Inspection failure hidden'
+Assert-True ($observed.projectInspection.revision -eq 3) 'Inspection revision dropped'
 Assert-True (-not $observed.ContainsKey('unknownSensitiveValue')) 'Probe copied an unapproved field'
 $state=@{installationId='fixture-id';plan=@{binding=@{host='FIXTURE'};version='0.2.0-rc.14';sourceFingerprint='fixture-hash';instance='fixture'}}
 Assert-True (Ds-Identity $observed $state) 'Verified core identity must not require a ready optional index'

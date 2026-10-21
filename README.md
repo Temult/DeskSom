@@ -11,11 +11,11 @@ The base installation exposes 25 tools for file access, content/path search, ter
 - `find_files_fast`: selected-root, case-insensitive filename-substring search using a private SQLite index. Filesystem watching, acknowledged-write hints and periodic full reconciliation keep derived data current. It does not search file contents, and a missing result is never proof of absence.
 - `inspect_project`: a bounded, read-only project/Git snapshot with branch, commit, working-tree counts, tracked languages and script names. It does not run project scripts, install dependencies, recurse into child repositories, or write Git state.
 
-Both optional features are off by default. Filename indexing has an owner-approved control-panel workflow. Project inspection is integrated and tested, but a general installed-owner enable/disable workflow is still outstanding; do not edit an installation's sealed state by hand to activate it. See [the feature guide](docs/INDEX_AND_INSPECTION.md).
+Both optional features are off by default and have owner-approved control-panel workflows. Use Folders > Fast search for indexing and Overview > Project inspection for inspection. Inspection changes restart only the owned local broker, preserve indexing/tunnel/credentials, and support explicit interrupted-change rollback. See [the feature guide](docs/INDEX_AND_INSPECTION.md).
 
 ## Index trouble no longer means a dead connection
 
-In rc.14, the core endpoint can serve ordinary tools while selected indices initialize or need attention. `desksom_status.ready` describes the core service; `indexWorkerReady`, `allFeaturesReady` and authenticated per-root `indexStatus` report optional-feature health separately. A failed root does not disable a healthy root's search. An unready root rejects fast searches with an explicit status rather than serving a stale snapshot as current.
+In rc.14, the core endpoint can serve ordinary tools while selected indices initialize or need attention. `desksom_status.ready` describes the core service; `indexWorkerReady`, `allFeaturesReady` and authenticated per-root `indexStatus` report optional-feature health separately. A failed or missing selected root does not disable a healthy root's search. An unavailable optional Git executable likewise does not disable the core connection. An unready root rejects fast searches with an explicit status rather than serving a stale snapshot as current.
 
 Index progress reports observed work, not a guessed completion percentage. Initial full walks support cooperative cancellation. Setup failures clean up only resources acquired by that worker; existing foreign or crash-held writer leases are never stolen. The owner control panel distinguishes saved settings from a ready index and uses a responsive progress dialog for index changes.
 
@@ -45,6 +45,6 @@ Without an existing authorized computer-control connection, an AI cannot bootstr
 
 Source manifests bind exact bytes, but are not publisher signatures. Operation receipts distinguish preparation, local readiness and actual ChatGPT verification. DeskSom never blindly replays an ambiguous write. Private configuration, credentials, task exports and raw logs do not belong in the public source archive.
 
-The pinned dependency tree has disclosed advisories. Read [the dependency review](docs/DEPENDENCY_REVIEW.md); passing functional tests is not proof that every dependency is vulnerability-free. A dependency audit is not an extra manual installation approval gate.
+A narrow, exactly pinned markdown-it 14.3.3 patch removes two disclosed parser advisories without changing the engine or other package versions. Other pinned dependencies still have disclosed advisories. Read [the dependency review](docs/DEPENDENCY_REVIEW.md); passing functional tests is not proof that every dependency is vulnerability-free. A dependency audit is not an extra manual installation approval gate.
 
-[Installation](INSTALLATION.md) · [AI installation](AI_INSTALL.md) · [Owner controls](docs/OWNER_CONTROLS.md) · [Features](docs/INDEX_AND_INSPECTION.md) · [Recovery](docs/READINESS_AND_RECOVERY.md) · [Security](SECURITY.md) · [Qualification](docs/QUALIFICATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
+[Performance](docs/PERFORMANCE.md) · [Installation](INSTALLATION.md) · [AI installation](AI_INSTALL.md) · [Owner controls](docs/OWNER_CONTROLS.md) · [Features](docs/INDEX_AND_INSPECTION.md) · [Recovery](docs/READINESS_AND_RECOVERY.md) · [Security](SECURITY.md) · [Qualification](docs/QUALIFICATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)

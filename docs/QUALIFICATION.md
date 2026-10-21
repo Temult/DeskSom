@@ -6,7 +6,7 @@ This is the **0.2.0-rc.14 development candidate**. It combines the rc.13 R3 sour
 
 The current test effort is maintainer verification, not an independent external audit. Earlier unresolved independent dynamic reviews remain historical evidence gaps, not retroactive passes. Public rc.12 downloads retain their original hashes; no rc.14 binary installer has been qualified by this document.
 
-## Evidence categories
+## Historical initial rc.14 evidence categories
 
 | Check | Scope and status |
 | --- | --- |
@@ -19,6 +19,12 @@ The current test effort is maintainer verification, not an independent external 
 | Native owner-status bridge | Nine synthetic checks passed for propagation of optional health, preserved core identity validation, rejected unauthenticated responses and excluded unapproved fields. |
 
 Private execution logs retain failed attempts and their corrections. The first extracted native run exposed an inherited stop-barrier fixture that omitted the identity fields required since R3. Its mock was corrected to provide the complete synthetic identity; the actual stop check was not relaxed. Additional negative cases now exercise foreign identities and missing fields. In particular, an initial broker fixture was missing its engine-overlay receipt, and another used a Windows short-name temporary path rejected by the existing file policy. Corrected fixtures did not weaken runtime permissions. Sanitized summaries may be published; raw host paths, process logs and credentials must not be.
+
+## Completion and performance follow-up
+
+The follow-up adds owner inspection plan/apply/rollback and revision-bound startup checks, missing-root and missing-Git fault isolation, indexed literal query planning, accurate truncation, case-only rename updates, a strict three-slot Git queue, and one compatible markdown-it patch. Current measured results and reproducible harnesses are in PERFORMANCE.md. Fresh final-package receipts and the PR distinguish these results from the initial candidate numbers above.
+
+The matched A/B comparison uses alternating same-process queries against separate derived indices over identical fixtures, rather than comparing separate runs under different host load. Common/short queries have a small measured overhead; inspection is essentially unchanged. No cold-disk, remote ChatGPT latency or universal performance guarantee is claimed.
 
 ## Reproducible test selection
 
@@ -36,6 +42,6 @@ Release preparation must inspect the exact public file set, verify a clean extra
 
 ## Remaining acceptance work
 
-Before a new downloadable release: qualify a fresh normal-user installation using its exact source package; exercise owner index changes, long/failed initial crawls, stop/start and retained-state recovery; visually accept the responsive progress UI; and verify the genuine account/ChatGPT connection. A second Windows computer must exercise prerequisite discovery, path differences, security software and first-user behavior. General owner-facing activation of project inspection remains an explicit product gap.
+Before a new downloadable release: qualify a fresh normal-user installation using its exact source package; exercise owner index changes, long/failed initial crawls, stop/start and retained-state recovery; visually accept the responsive progress UI; and verify the genuine account/ChatGPT connection. A second Windows computer must exercise prerequisite discovery, path differences, security software and first-user behavior. Owner-facing project-inspection activation is now implemented and exercised against both mocked lifecycle controls and real isolated brokers. A real scheduled-task installation remains separate from that evidence.
 
 No result here establishes complete power-loss recovery, pre-login operation, atomic protection against adversarial filesystem replacement, unlimited concurrent workloads, or vulnerability-free dependencies. See the dependency disclosure and readiness/recovery contract for separate limitations.

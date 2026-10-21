@@ -22,5 +22,8 @@
     "test:index": "node scripts/Run-Tests.mjs --mode index",
     "test:all": "node scripts/Run-Tests.mjs --mode all"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "markdown-it": "14.3.3"
+  }
 }

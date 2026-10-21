@@ -63,7 +63,13 @@ const projectInspectTool={
  inputSchema:{type:'object',properties:{path:{type:'string',description:'Absolute project directory within currently approved file roots'}},required:['path'],additionalProperties:false},
  annotations:{readOnlyHint:true,destructiveHint:false,openWorldHint:false}
 };
-const trustedProjectInspectGit=projectInspectEnabled?await resolveTrustedGit(cfg.projectInspectGitExecutable):null;
+let trustedProjectInspectGit=null,projectInspectError=null;
+if(projectInspectEnabled){
+ try{trustedProjectInspectGit=await resolveTrustedGit(cfg.projectInspectGitExecutable)}
+ catch(error){const code=String(error?.message??'');projectInspectError=/^GIT_[A-Z_]+$/.test(code)?code:'GIT_EXECUTABLE_UNAVAILABLE'}
+}
+const inspectionHealth=()=>({enabled:projectInspectEnabled,ready:!projectInspectEnabled||trustedProjectInspectGit!==null,
+ revision:cfg.projectInspectRevision??0,errorCode:projectInspectError});
 const extraTools=[...(fastIndex?[fastIndex.tool]:[]),...(projectInspectEnabled?[projectInspectTool]:[])];
 const upstreamNames=new Set(catalog.map(t=>t.name));
 if(upstreamNames.has('desksom_status')||extraTools.some(t=>upstreamNames.has(t.name)))throw Error('TOOL_NAME_COLLISION');
@@ -82,7 +88,8 @@ client.onclose = () => {
 function status() {
   return { name: 'DeskSom', version: '0.2.0-rc.14', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready:ready&&!quiescing, indexWorkerReady:fastIndex?.health?.()??true, mode,
     readinessContract:'CORE_SERVICE_WITH_OPTIONAL_FEATURE_HEALTH_V1',
-    allFeaturesReady:ready&&!quiescing&&(fastIndex?.health?.()??true),
+    allFeaturesReady:ready&&!quiescing&&(fastIndex?.health?.()??true)&&inspectionHealth().ready,
+    projectInspection:inspectionHealth(),
     indexStatus:fastIndex?.snapshot?.()??{enabled:false,ready:true,roots:[]},
     upstreamVersion: '0.2.52', enginePid: child.pid ?? null, tools: catalog.length + extraTools.length, catalogSha256: catalogHash,
     advertisedToolCount: advertisedCapabilities.toolCount, advertisedCapabilities,
@@ -116,6 +123,7 @@ async function dispatchTool(params) {
         ? await fastIndex.search(args)
         : name === 'inspect_project' && projectInspectEnabled
           ? await (async()=>{
+            if(!trustedProjectInspectGit)return {isError:true,content:[{type:'text',text:projectInspectError??'GIT_EXECUTABLE_UNAVAILABLE'}]};
             try{
               if(!args||typeof args.path!=='string'||Object.keys(args).length!==1)
                 return {isError:true,content:[{type:'text',text:'PROJECT_INVALID_ARGUMENTS'}]};
@@ -181,7 +189,8 @@ if (mode === 'stdio') {
       // Public liveness contains no root names, private paths or error details.
       return send(res, healthy ? 200 : 503, { ready:healthy, bootId,
         indexWorkerReady:fastIndex?.health?.()??true,
-        allFeaturesReady:healthy&&(fastIndex?.health?.()??true) });
+        projectInspectionReady:inspectionHealth().ready,
+        allFeaturesReady:healthy&&(fastIndex?.health?.()??true)&&inspectionHealth().ready });
     }
     // Local authenticated control only: guarded Windows task owner invokes this
     // before stopping an indexed broker. It does not stop tasks or remove stale locks.

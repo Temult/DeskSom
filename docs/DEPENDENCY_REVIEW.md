@@ -1,3 +1,13 @@
+# Dependency review: rc.14 compatible patch follow-up
+
+A fresh isolated lockfile install and audit on October 20 evening (October 21 UTC) retained Desktop Commander 0.2.52 and SDK 1.32.1, and changed exactly one locked package: markdown-it 14.3.2 to 14.3.3. The package.json override pins the reviewed patch. No other dependency version changed, and no shared/installed dependency tree was edited.
+
+The refreshed audit reports **11 affected-package findings: 5 high, 6 moderate, 0 critical**, down from 12 (6 high, 6 moderate). markdown-it no longer appears. Its two parser advisories are GHSA-vfgh-jcmw-g37q and GHSA-gfr2-rv44-r23c. Ordinary renderer behavior and bounded malformed-input cases are exercised in markdown-patch.test.mjs; full tool acceptance is a separate test category.
+
+This does not resolve the remaining sharp/image-codec, braces, sprintf-js, uuid or propagated-parent findings. The registry checks in this work found braces 3.0.3 and sprintf-js 1.1.3 still current, so blindly selecting their latest versions is not a fix. A newer major engine or incompatible leaf override requires separate compatibility work. Reachability is not established merely by package severity, and the count is not eleven demonstrated independent exploits.
+
+## Preserved previous audit history
+
 ## rc.14 audit refresh: October 20, 2026 local / October 21 UTC
 
 A fresh read-only npm audit of the candidate lockfile at 2026-10-21T01:01:25Z reported **12 affected-package findings: 6 high, 6 moderate, 0 critical**. npm exited 1 because advisories were present, not because the lookup failed. The lockfile SHA-256 was 2990533fcc3585006a2cf89200d395fed95b922f79c5ea93f643f8e7a8b5d41f. No dependency version was changed and no audit-fix command was run.

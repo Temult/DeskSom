@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0-rc.14 follow-up: complete owner inspection controls and measure performance
+
+Add approved inspection enable/disable, revision-bound restart confirmation and guarded rollback. Only the local broker restarts; indexing, tunnel and credentials are preserved. Missing optional Git or a missing selected index root no longer prevents core access. The public installer still defaults optional tools off.
+
+Use an indexable literal anchor for SQLite trigram queries instead of disabling the optimization with ESCAPE on every query. Preserve wildcard-literal semantics, report bounded-result truncation accurately, refresh case-only filenames and yield between concurrent queries. Reserve Git subprocess slots for queued work. See docs/PERFORMANCE.md for measured gains, unchanged paths and small regressions.
+
+Pin only markdown-it to patched 14.3.3. Engine, SDK and all other locked packages remain unchanged. A fresh audit reports eleven affected-package findings (five high, six moderate, no critical), with the two markdown-it advisory paths removed. Remaining findings are disclosed, not suppressed.
+
+
 ## 0.2.0-rc.14: Optional-index resilience (development candidate)
 
 Separate core service readiness from optional index health. The endpoint starts without waiting for all initial scans; authenticated status exposes truthful per-root progress and errors. Healthy-root search and ordinary file, terminal and inspection tools remain usable when another index fails. Searches of unready roots are explicitly refused.

@@ -14,8 +14,8 @@
     },
     {
       "path": ".github/workflows/windows.yml",
-      "bytes": 2908,
-      "sha256": "9cbd1a7997d69b6d14450b66f903953cad2cc9fce061d36cfc1b5b59352c04cc"
+      "bytes": 3394,
+      "sha256": "3928409b5e8d13d267029e172d7dabdd9bcdd830656e7034b950b16b1fba0d96"
     },
     {
       "path": ".gitignore",
@@ -39,8 +39,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 10980,
-      "sha256": "1f29c46fa3a0b7c229a576eb821ecb53a0c870d7466b3d812bbc6e99e2e1a9fe"
+      "bytes": 12086,
+      "sha256": "fb249bae5d4ca9f6d5299b83d0e6f6d4cabaa175e0388ff4fffb9843fd986ded"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -74,8 +74,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 6213,
-      "sha256": "dd6f0d801ca21c9b3c407e274b89ee8a4e5741cfc5e7e429d00961646728580c"
+      "bytes": 6537,
+      "sha256": "fd968dc9d8201d234dd7bcfd412e8dfb9a59fab7a7a6d7f4165153257cd18bdf"
     },
     {
       "path": "SECURITY.md",
@@ -114,8 +114,8 @@
     },
     {
       "path": "broker.mjs",
-      "bytes": 19054,
-      "sha256": "626e191d9d871ec687bf75e3fb019a3e85415f0a2bee3525128aee0b626abc8f"
+      "bytes": 19738,
+      "sha256": "4192e5e2800841c0cd6e4092df52ae3dcb7c1e8f1f289fdb36fb15d7cd5f6c12"
     },
     {
       "path": "catalog.mjs",
@@ -126,6 +126,16 @@
       "path": "catalog.test.mjs",
       "bytes": 2510,
       "sha256": "fdffdd841a4367991829eb8e27523b4a89a356d5fd7f294f5dd271060d8363a1"
+    },
+    {
+      "path": "concurrency.mjs",
+      "bytes": 558,
+      "sha256": "479f112383bb79cf197149e3683b34d721cf9b5a58f28717beddf2d7f7a606ad"
+    },
+    {
+      "path": "concurrency.test.mjs",
+      "bytes": 1010,
+      "sha256": "8805e9f90b12601c09f7e0cfdc35399ce6e283515fd7439126e96310cd88d9f2"
     },
     {
       "path": "discovery.integration.test.mjs",
@@ -139,8 +149,8 @@
     },
     {
       "path": "docs/DEPENDENCY_REVIEW.md",
-      "bytes": 5160,
-      "sha256": "3d4b7f4b3e61c186363804ae4c9b3ec259d4dca6e010d0b009ef7bb61be46812"
+      "bytes": 6454,
+      "sha256": "274eda5206732bd1b3fc66b2c0fe14b6653c56eb4346618c2879dc4b6e50c129"
     },
     {
       "path": "docs/DISCOVERY_R1_INTEGRATION.md",
@@ -154,13 +164,23 @@
     },
     {
       "path": "docs/INDEX_AND_INSPECTION.md",
-      "bytes": 4002,
-      "sha256": "14e4e3b545584879283a49c668fc82195db56c6058118fb4d7e5bfcc2ff1e22e"
+      "bytes": 5659,
+      "sha256": "fb43d9e24eb6703529a3b505e5802c621b6e9f748aeb2c368b7102f9ce45fea9"
     },
     {
       "path": "docs/OWNER_CONTROLS.md",
-      "bytes": 6258,
-      "sha256": "6c7ffd781d7265d738d6d297c8fb76b7db58249946da8a6e31d066ebf4dd6e5f"
+      "bytes": 6838,
+      "sha256": "fac467279e9921d720978f33472401b2e39c14ed217543ea251c00d64f06bf03"
+    },
+    {
+      "path": "docs/PERFORMANCE.md",
+      "bytes": 5411,
+      "sha256": "65df6263892edb3cca54130482350a3cda069215e73cd1b5cce5f56d82e2b3c8"
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS.json",
+      "bytes": 4689,
+      "sha256": "6166c1e135d6f8d3c898e436e052181b5ce2c7a0f1f43752b6ce119cf8b32552"
     },
     {
       "path": "docs/PREREQUISITES.md",
@@ -169,13 +189,13 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 5948,
-      "sha256": "7508b8c57585c28901949dea162672196103aa8fa58f0b860feb96b21e3d6389"
+      "bytes": 6971,
+      "sha256": "ffd428e663aaff443b607e8fd3d8002c1394538060cc6a39aacb9823f08ebb03"
     },
     {
       "path": "docs/READINESS_AND_RECOVERY.md",
-      "bytes": 4449,
-      "sha256": "bdad53b14a0558765a9d0a6e9fbd17e0f3c3e1fbf8eab7a091c93b8e3c927565"
+      "bytes": 5343,
+      "sha256": "032b1d846af215c4a53a296f74799b242ecb62bdff06a727f8c7c76d11fa8440"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -184,8 +204,8 @@
     },
     {
       "path": "docs/RESULT_CONTRACT.md",
-      "bytes": 4639,
-      "sha256": "d87a78baae7b2d75a51d63cae2afab1739f5e5480580888c90e3fa910f244555"
+      "bytes": 5533,
+      "sha256": "f9e53fc264276b8d42d0671c846f2c605a811a631660b1bdc59ebabd4fd9a6d2"
     },
     {
       "path": "docs/STATE_MACHINE.md",
@@ -269,13 +289,23 @@
     },
     {
       "path": "fast-files.mjs",
-      "bytes": 9502,
-      "sha256": "987da6928eec6c6729d07c10349403f5c77f22d5ef19745583060ef0f155e5d9"
+      "bytes": 10539,
+      "sha256": "7c805bb09f678ee4d62196b52cf51d3fb3bfc229291032e553be701bcc77f715"
     },
     {
       "path": "fast-files.test.mjs",
       "bytes": 3148,
       "sha256": "d1693026b41bb2eb0fe2a16b1570597f655f5c45b3f269b143f61b4e93eae237"
+    },
+    {
+      "path": "filename-query.mjs",
+      "bytes": 966,
+      "sha256": "648eb10156bd5f16a570505f62cdcd998bd9670bd01d871bc7c5fbe198e459fd"
+    },
+    {
+      "path": "filename-query.test.mjs",
+      "bytes": 4865,
+      "sha256": "ec7d5d030f5fcb19891946e90002d19dace5218d029e8a731390dc9c7366a769"
     },
     {
       "path": "index-resilience.integration.test.mjs",
@@ -293,6 +323,16 @@
       "sha256": "13134ac0dfed7b608918b1680f30293ca2b08ddb2d373e62824afac7a34403a9"
     },
     {
+      "path": "inspection-owner.integration.test.mjs",
+      "bytes": 9257,
+      "sha256": "6ad7b36431c52c18ac735248389bf9164db32c0218894935dd2098ba8cd5536b"
+    },
+    {
+      "path": "markdown-patch.test.mjs",
+      "bytes": 1470,
+      "sha256": "b7492c2bcdcce6763cdd65cf76c48cd4e4f12f0f469d6f0c6b785041e3299a2b"
+    },
+    {
       "path": "modern.mjs",
       "bytes": 3505,
       "sha256": "809a49f716ee28f2e235112d3971d89e6a8fa793660f3ad3d60326017e1d8028"
@@ -305,12 +345,12 @@
     {
       "path": "package-lock.json",
       "bytes": 318764,
-      "sha256": "2990533fcc3585006a2cf89200d395fed95b922f79c5ea93f643f8e7a8b5d41f"
+      "sha256": "b97df91729740d805e7951ab2b2d5c9650eb94f90a8fcf5f3c717a123817d86f"
     },
     {
       "path": "package.json",
-      "bytes": 964,
-      "sha256": "f95cd3b3bca786a5eb02741ce1715a5928459382bc2121ac195dfe48ec6e828c"
+      "bytes": 1014,
+      "sha256": "435ba3fa16890fd9d48ac238deb15671cc3a817ada6d8423b68862e4be66a913"
     },
     {
       "path": "project-inspect-git-policy.mjs",
@@ -324,8 +364,8 @@
     },
     {
       "path": "project-inspect.mjs",
-      "bytes": 15513,
-      "sha256": "00e3555fcfb765e85172a900ee58244153dacbb2fdaca4ab4434bd896ad9cb01"
+      "bytes": 15415,
+      "sha256": "6df53ef000ef3a2aea1040e59b9aea936cb0e461556a29e2712b37037aba10d4"
     },
     {
       "path": "project-inspect.r3-boundaries.test.mjs",
@@ -394,8 +434,8 @@
     },
     {
       "path": "scripts/ControlPanel.ps1",
-      "bytes": 24679,
-      "sha256": "7b62640ba90064c4c3efaf828664ce006e62587647db2c0ffc335ed5f4acace6"
+      "bytes": 27487,
+      "sha256": "b7a8e30536b430c566689edc83a555d39ba096bf09a8b806560f00456e3be283"
     },
     {
       "path": "scripts/Export-Diagnostics.ps1",
@@ -413,6 +453,11 @@
       "sha256": "5b401ba02ee5f8659952c30e95b2f0da64b482b39a223892130c3f47c3eb680e"
     },
     {
+      "path": "scripts/Package-Source.py",
+      "bytes": 4737,
+      "sha256": "69b1db9acb71c205fdb28fd2f216fca76bd7bddef7230c84d049b45552f53dae"
+    },
+    {
       "path": "scripts/Preflight.ps1",
       "bytes": 304,
       "sha256": "44267899442140c1176598556e79a7f7fc4c9f6b3e004fa5c5044a97711822b8"
@@ -424,8 +469,8 @@
     },
     {
       "path": "scripts/Run-Service.ps1",
-      "bytes": 6536,
-      "sha256": "4966b63d7dd80c1e78802b06dbbb8377a09d6ff3dea3d6af235f6f9cceb1a40c"
+      "bytes": 7485,
+      "sha256": "a8d99e381534e1a6149041f87aa0aeec9a7b95d981962b259babbc55e2fb16f5"
     },
     {
       "path": "scripts/Run-Tests.mjs",
@@ -464,13 +509,28 @@
     },
     {
       "path": "scripts/WindowsHost.ps1",
-      "bytes": 36859,
-      "sha256": "72f86f1f2fbc2ff528223e5e8b163514689e8758a8a808ebcbdd928ba046e159"
+      "bytes": 36879,
+      "sha256": "1170d7143a93d6c4d5c1c932280c726db3e51fdb1977240bb642f65b8bd6e856"
+    },
+    {
+      "path": "scripts/benchmarks/fixture-sweep.mjs",
+      "bytes": 7147,
+      "sha256": "53af319ffcc1f25b257bae38eb59a9e6053e4846e8ce6bba3f31345bd6778d05"
+    },
+    {
+      "path": "scripts/benchmarks/loopback-sweep.mjs",
+      "bytes": 6954,
+      "sha256": "7d428b102c894d2de814fbacd209980425f3b02da771a7a3fff6188e6eebf6e9"
+    },
+    {
+      "path": "scripts/benchmarks/paired-sweep.mjs",
+      "bytes": 3715,
+      "sha256": "b0a500615e450e823ffd8e4e9cc04dea5f068651198476ccf54b3789773ff86d"
     },
     {
       "path": "scripts/cli.mjs",
-      "bytes": 9874,
-      "sha256": "9db49863df084bc3d435f1caf559b82b914b631d772fcc6653048de71b2030f8"
+      "bytes": 10883,
+      "sha256": "e642c1807ae09986b443779c1a48fc02c8cf8cffd89e2e90b935f5b2b40d9e33"
     },
     {
       "path": "scripts/lib/common.mjs",
@@ -488,9 +548,14 @@
       "sha256": "6aac9d64fcb4badc87c1a35233805f61c4ef949fd4ee5537adb0a79c92546907"
     },
     {
+      "path": "scripts/lib/inspection-control.mjs",
+      "bytes": 9669,
+      "sha256": "e80bcaea982d94e76a28abef47bc8ff4e9b3b5b8871aa565b8535166ffce586f"
+    },
+    {
       "path": "scripts/lib/install-core.mjs",
-      "bytes": 34382,
-      "sha256": "e9a4dac79ceb56836db52b2fca53d38b9947789bad22ca62020d3f14b45722af"
+      "bytes": 36071,
+      "sha256": "c754ece85906e76acb02a1f981c32c7c2a8836ebfa30e50f1f3ac09ca30e2592"
     },
     {
       "path": "scripts/lib/roots.mjs",
@@ -499,8 +564,8 @@
     },
     {
       "path": "scripts/lib/test-suites.mjs",
-      "bytes": 2007,
-      "sha256": "635df0161cb83a6dfd4cf1a7c534c4819e7a59d39d885eeada127364b2ccd4d3"
+      "bytes": 2181,
+      "sha256": "41cde84d4227d86dbb0afa11b56dccde574a6151132d0b20fb48490e2dc5cf3c"
     },
     {
       "path": "scripts/lib/windows.mjs",
@@ -559,13 +624,18 @@
     },
     {
       "path": "scripts/tests/index-status-probe.test.ps1",
-      "bytes": 2207,
-      "sha256": "2d86f46d68f1754185d5c250203b3b5038512a9febe206c8685e3f26cdbb48c2"
+      "bytes": 2567,
+      "sha256": "221aa02dad78718af89a900201cdfd26746299563cfddfcf2ecbe508921152c0"
     },
     {
       "path": "scripts/tests/index-stop-proof.test.mjs",
       "bytes": 6454,
       "sha256": "e0a50dfad65b75d2219196152345b83b8de00afee0c2b2d1d48e3f0ae93c395c"
+    },
+    {
+      "path": "scripts/tests/inspection-control.test.mjs",
+      "bytes": 8793,
+      "sha256": "628c954975dc87c57ac470e5f32b27d3235ccbcdce12612bacbe2bb35dc2d95e"
     },
     {
       "path": "scripts/tests/installer.test.mjs",
@@ -629,8 +699,8 @@
     },
     {
       "path": "self-healing-worker.mjs",
-      "bytes": 17111,
-      "sha256": "ced9400040342bb08bdcc7d26e2e833e8f8ea7d6956b7c738adc1118089166e1"
+      "bytes": 17445,
+      "sha256": "f6fdf9856b2ea96b5aa3ca9d8671c288ca7b3ef36e378597c9e4fa9faa749de6"
     },
     {
       "path": "self-healing.cold-benchmark.mjs",

@@ -123,6 +123,8 @@ $startupValue=Add-Field $statusGroup 'Startup' 147
 $indexSummary=Add-Label $overview 'Fast search: checking optional index status...' 24 282 610 27
 $indexSummary.AutoEllipsis=$true
 $btnChatSetup=Add-Button $overview 'Finish ChatGPT setup' 24 315 202
+$btnInspection=Add-Button $overview 'Project inspection...' 241 315 190
+$btnInspection.Add_Click({try{Configure-ProjectInspection}catch{Show-Error $_}})
 $foldersPage=$tabs.TabPages['Folders']
 [void](Add-Heading $foldersPage 'Folders ChatGPT can access')
 [void](Add-Label $foldersPage 'These folders are available to file tools; terminal commands are not sandboxed.' 24 53 603 30)
@@ -196,6 +198,10 @@ function Refresh-Overview {
  $versionValue.Text=[string]$s.version
  $revisionValue.Text=[string]$s.rootsRevision
  $startupValue.Text='At Windows sign-in'
+ $btnInspection.Text='Project inspection...'
+ if($s.PSObject.Properties['projectInspection'] -and $null -ne $s.projectInspection){
+  $btnInspection.Text=if(-not $s.projectInspection.enabled){'Inspection: off...'}elseif($s.projectInspection.ready){'Inspection: on...'}else{'Inspection: attention...'}
+ }
  $indexSummary.Text='Fast search: status unavailable; ordinary tools are separate.'
  if($s.PSObject.Properties['indexStatus'] -and $null -ne $s.indexStatus){
   if(-not $s.indexStatus.enabled){$indexSummary.Text='Fast search: disabled. Ordinary file and terminal tools are unchanged.'}
@@ -229,6 +235,33 @@ function Refresh-Statistics {
  }else{'None'}
  $names=@($m.tools | Select-Object -First 3 | ForEach-Object { $_.name+': '+$_.completed })
  $topTools.Text=if($names.Count){'Top tools: '+($names -join '    ')}else{'Top tools: No calls recorded yet.'}
+}
+function Configure-ProjectInspection {
+ if($PreviewOnly -or $LayoutCheck){return}
+ $current=Invoke-DeskSomResponsive @('inspection','--action','list','--state',$root) -Owner $form
+ if($current.status -eq 'INSPECTION_CHANGE_INTERRUPTED'){
+  $message='An inspection change is unfinished ('+$current.pendingPhase+'). Restore the previous approved setting? The guarded rollback leaves the local broker stopped and never replays Apply.'
+  if([Windows.Forms.MessageBox]::Show($message,'Recover project inspection',[Windows.Forms.MessageBoxButtons]::YesNo) -ne 'Yes'){return}
+  $result=Invoke-DeskSomResponsive @('inspection','--action','rollback','--state',$root,'--confirm-rollback') -Owner $form
+  [void][Windows.Forms.MessageBox]::Show($result.status+'. Review state, then use Start service.','DeskSom')
+  return
+ }
+ $next=-not [bool]$current.enabled
+ $nonce=[Guid]::NewGuid().ToString('N')
+ $request=Join-Path $root ('inspection-request-'+$nonce+'.json')
+ $proposal=Join-Path $root ('inspection-proposal-'+$nonce+'.json')
+ [IO.File]::WriteAllText($request,(@{enabled=$next}|ConvertTo-Json -Compress),[Text.UTF8Encoding]::new($false))
+ $planned=Invoke-DeskSomResponsive @('inspection','--action','plan','--state',$root,'--request',$request,'--out',$proposal) -Owner $form
+ $verb=if($next){'Enable'}else{'Disable'}
+ $message=$verb+' read-only project inspection?'+[Environment]::NewLine+[Environment]::NewLine+
+  'It reports Git state and project hints inside approved folders. It does not run project scripts or write Git.'+[Environment]::NewLine+
+  'Only the local broker restarts. The tunnel and credentials remain unchanged; active indexing may reconcile after restart.'+[Environment]::NewLine+
+  'Refresh this connection in ChatGPT afterward to update its tool list.'+[Environment]::NewLine+[Environment]::NewLine+
+  'Plan SHA-256: '+$planned.proposal.approvalSha256
+ if([Windows.Forms.MessageBox]::Show($message,'Approve project inspection',[Windows.Forms.MessageBoxButtons]::YesNo,[Windows.Forms.MessageBoxIcon]::Question) -ne 'Yes'){return}
+ $result=Invoke-DeskSomResponsive @('inspection','--action','apply','--state',$root,'--plan',$proposal,'--approve',$planned.proposal.approvalSha256,'--confirm-restart') -Owner $form
+ [void][Windows.Forms.MessageBox]::Show($result.status+'. '+$result.nextAction,'DeskSom')
+ Refresh-Overview
 }
 function Configure-IndexedSearch {
  if($LayoutCheck){return}
@@ -413,7 +446,7 @@ if($PreviewOnly -or $LayoutCheck){
  $statsValues['avgElapsedMs'].Text='85 ms'
  $statsValues['lastCompletedAt'].Text='12:34:56'
  $topTools.Text='Top tools: read_file: 24    start_process: 9'
- foreach($button in @($btnOverview,$btnChatSetup,$btnAdd,$btnRemove,$btnRefreshFolders,$btnFastIndex,$btnStats,$btnStart,$btnStop,$btnOpenState)){
+ foreach($button in @($btnOverview,$btnChatSetup,$btnInspection,$btnAdd,$btnRemove,$btnRefreshFolders,$btnFastIndex,$btnStats,$btnStart,$btnStop,$btnOpenState)){
    $button.Enabled=$false
  }
  if($PreviewOnly){$btnFastIndex.Enabled=$true}
