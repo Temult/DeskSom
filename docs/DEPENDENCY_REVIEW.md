@@ -1,3 +1,15 @@
+# rc.15 dependency review
+
+The integration pins Desktop Commander 0.3.0 and SDK 1.32.1. The lockfile retains exact resolved packages and integrity values. Upstream 0.3.0 root-level overrides are not automatically inherited when it is installed as a dependency: the first private integration audit showed 10 affected-package findings. Promoting the reviewed overrides into DeskSom's own root package.json reduced the local production audit to **zero findings**. This was freshly observed, not copied from upstream's own audit report.
+
+Exact overrides: markdown-it 14.3.3; md-to-pdf > chokidar 4.0.3; exceljs > uuid 11.1.1; proxy-addr 2.0.8; argparse 2.0.1. No dependency from a shared or live runtime was changed. Install lifecycle scripts remain disabled except the explicitly qualified ripgrep rebuild. No browser download is requested by setup.
+
+Two source-bound private overlays are documented: the existing per-installation config-directory redirection and the one-option pdf2md 0.3.4 fontExtraProperties compatibility repair. Both original and patched font-parser hashes are pinned in pdf-font-overlay.mjs and the exact patched dependency bytes are covered by the installed dependency seal. Engine startup and management verification check the overlay before use.
+
+Zero npm audit findings do not constitute a proof that no vulnerability exists. Deprecation warnings, unpublished issues, future advisories and runtime correctness require separate interpretation.
+
+## Historical rc.14 dependency review
+
 # Dependency review: rc.14 compatible patch follow-up
 
 A fresh isolated lockfile install and audit on October 20 evening (October 21 UTC) retained Desktop Commander 0.2.52 and SDK 1.32.1, and changed exactly one locked package: markdown-it 14.3.2 to 14.3.3. The package.json override pins the reviewed patch. No other dependency version changed, and no shared/installed dependency tree was edited.

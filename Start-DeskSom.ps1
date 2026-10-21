@@ -38,11 +38,11 @@ $pwsh=Find-App 'pwsh.exe' @((Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\
 $script:node=Find-App 'node.exe' @((Join-Path $env:ProgramFiles 'nodejs\node.exe'))
 $needPwsh=(-not $pwsh);$needNode=(-not $script:node)
 if($pwsh){try{$v=& $pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()';$needPwsh=([Version]($v -join '') -lt [Version]'7.4.0')}catch{$needPwsh=$true}}
-if($script:node){try{$v=& $script:node --version;$needNode=([int]$v.TrimStart('v').Split('.')[0] -lt 22)}catch{$needNode=$true}}
+if($script:node){try{$v=& $script:node --version;$needNode=([version]$v.TrimStart('v') -lt [version]'22.12.0')}catch{$needNode=$true}}
 if($needPwsh -or $needNode){
   Write-Host 'Missing or old prerequisites:'
   if($needPwsh){Write-Host '  PowerShell 7.4 or newer (Microsoft.PowerShell)'}
-  if($needNode){Write-Host '  Node.js 22 or newer (OpenJS.NodeJS.LTS)'}
+  if($needNode){Write-Host '  Node.js 22.12 or newer (OpenJS.NodeJS.LTS)'}
   Write-Host 'WinGet may display licenses or a Windows administrator confirmation. You must approve those yourself.'
   if((Read-Host 'Type PREREQUISITES to ask WinGet to install the missing tools') -cne 'PREREQUISITES'){Write-Host 'See docs/PREREQUISITES.md for manual installation.';exit 10}
   $winget=Get-Command winget.exe -ErrorAction SilentlyContinue

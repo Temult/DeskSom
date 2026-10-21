@@ -54,7 +54,7 @@ try{
  let r=await call('tools/list',{},false);assert.equal(r.status,401);
  r=await call('tools/list');assert.equal(r.status,200);
  const tools=r.body.result.tools;
- assert.equal(tools.length,26);
+ assert.equal(tools.length,25);
  const fast=tools.filter(t=>t.name==='find_files_fast');
  assert.equal(fast.length,1);assert.equal(fast[0].annotations.readOnlyHint,true);
  r=await call('tools/call',{name:'find_files_fast',arguments:{root,query:'native-broker',limit:5}});
@@ -94,8 +94,8 @@ try{
  assert.equal(repaired.body.result.structuredContent.repairStatus,'RECONCILED');
  assert.equal(repaired.body.result.structuredContent.absenceAuthoritative,false);
  r=await call('tools/call',{name:'desksom_status',arguments:{}});
- assert.equal(r.body.result.structuredContent.advertisedToolCount,26);
- const summary={status:'SELF_HEALING_MCP_PASS',tools:26,privateIndex:true,externalDownload:true,writeThrough:true,differentialMissRepair:true,
+ assert.equal(r.body.result.structuredContent.advertisedToolCount,25);
+ const summary={status:'SELF_HEALING_MCP_PASS',tools:25,privateIndex:true,externalDownload:true,writeThrough:true,differentialMissRepair:true,
   authorizedPositive:true,unauthorizedRootRejected:true,negativeNonAuthoritative:true,
   syntheticTokenOnly:true,rc12ProductionUnchanged:true};
  console.log(JSON.stringify(summary));

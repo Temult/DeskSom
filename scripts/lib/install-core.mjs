@@ -1,3 +1,4 @@
+import {verifyPdfFontOverlay} from '../../pdf-font-overlay.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -13,8 +14,10 @@ export function makePlan(sourceRoot, spec, environment, release) {
   const instance = instanceName(spec.instance ?? 'default');
   if (environment.platform !== 'win32' || environment.architecture !== 'x64')
     fail('UNSUPPORTED_PLATFORM', 'This release supports Windows x64 only.', 'Use a supported Windows x64 computer; Linux, macOS and ARM are not qualified.');
-  if (!environment.pwsh || !environment.node || environment.nodeMajor < 22 || !environment.pwshSupported)
-    fail('PREREQUISITES_MISSING', 'PowerShell 7.4+ and Node.js 22+ are required.', 'Run Start-DeskSom.cmd or follow docs/PREREQUISITES.md.');
+  const nodeParts=String(environment.nodeVersion??(environment.nodeMajor+'.0.0')).replace(/^v/,'').split('.').map(Number);
+  const nodeSupported=nodeParts.length===3&&nodeParts.every(Number.isInteger)&&(nodeParts[0]>22||(nodeParts[0]===22&&nodeParts[1]>=12));
+  if (!environment.pwsh || !environment.node || environment.nodeMajor < 22 || !nodeSupported || !environment.pwshSupported)
+    fail('PREREQUISITES_MISSING', 'PowerShell 7.4+ and Node.js 22.12+ are required.', 'Run Start-DeskSom.cmd or follow docs/PREREQUISITES.md.');
   if (environment.elevated) fail('ELEVATED_SESSION', 'The installer must run as a normal, non-elevated user.', 'Close this administrator terminal and open a normal terminal.');
   if (!environment.sid || !environment.host) fail('IDENTITY_UNAVAILABLE', 'Windows user and host identity could not be established.');
   sourceRoot = normalizeWin(sourceRoot);
@@ -189,6 +192,7 @@ async function checkDependencies(runtime,seal,deep=false) {
     if ((await readJson(path.join(runtime,'node_modules/@modelcontextprotocol/sdk/package.json'))).version!==policy.sdkVersion) return false;
     const overlay=await readJson(path.join(runtime,'engine-overlay.json'));
     if (await hashFile(path.join(runtime,'node_modules/@wonderwhy-er/desktop-commander/dist/config.js'))!==overlay.patched_sha256) return false;
+    await verifyPdfFontOverlay(runtime,overlay);
     if (deep) {
       for (const item of seal.files) {
         if (!item.path.startsWith('node_modules/') || item.path.split('/').some(s=>s==='..') || item.path.includes('\\')) return false;

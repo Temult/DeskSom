@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0-rc.15: Desktop Commander 0.3.0 integration candidate
+
+Pin upstream 0.3.0 and adopt its Windows file/process/search/configuration fixes and deferred document support. Remove retired get_prompts; exact catalogs become 24/25/25/26. Require Node 22.12+ for core and retain Node 25+ for optional filename indexing. Preserve all rc.14 recovery, owner-control and broker security safeguards.
+
+Resolve known Windows Store PowerShell aliases to the actual installed executable without current-directory search. Initialize upstream background Office/PDF preloading. Fix a reproduced text-PDF extraction regression with one pinned option enabling real PDF.js font metadata required by pdf2md 0.3.4. Cover text extraction, PDF page editing, XLSX/DOCX roundtrips and default/explicit-bare PowerShell calls.
+
+Promote upstream's security dependency overrides to the consumer root and pin exact values; fresh private production audit reports zero findings. This source entry does not claim rc.15 live deployment, new downloadable installer publication or a whole-computer reboot trial.
+
+
 ## 0.2.0-rc.14 release integration: targeted upstream security guards
 
 Keep engine 0.2.52 and tool metadata unchanged while applying two narrow compatibility guards at the DeskSom dispatch boundary. Reject invalid destructive process IDs before engine invocation, and resolve prospective file-mutation destinations through dangling links before checking approved roots. Cover rename operands and PDF output paths; keep asynchronous checking inside the active-call/quiescence barrier. Add pure and actual-broker regressions and document upstream #759/#767 scope in docs/UPSTREAM_SECURITY_REVIEW.md. Full engine 0.3.0 migration remains a separate rc.15 effort.

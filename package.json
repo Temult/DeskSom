@@ -1,14 +1,14 @@
 {
   "name": "desksom",
-  "version": "0.2.0-rc.14",
+  "version": "0.2.0-rc.15",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@wonderwhy-er/desktop-commander": "0.2.52"
+    "@wonderwhy-er/desktop-commander": "0.3.0"
   },
   "description": "Private Windows-to-ChatGPT MCP bridge built on open-source Desktop Commander",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "test:acceptance": "node acceptance.mjs",
@@ -24,6 +24,14 @@
   },
   "license": "MIT",
   "overrides": {
-    "markdown-it": "14.3.3"
+    "markdown-it": "14.3.3",
+    "md-to-pdf": {
+      "chokidar": "4.0.3"
+    },
+    "exceljs": {
+      "uuid": "11.1.1"
+    },
+    "proxy-addr": "2.0.8",
+    "argparse": "2.0.1"
   }
 }

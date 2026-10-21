@@ -16,7 +16,7 @@ const meta={'io.modelcontextprotocol/protocolVersion':'2026-07-28',
  'io.modelcontextprotocol/clientInfo':{name:'unified-fixture',version:'1'},
  'io.modelcontextprotocol/clientCapabilities':{}};
 const sha=s=>createHash('sha256').update(JSON.stringify(s)).digest('hex');
-test('one broker and engine: exact 25/26/26/27 catalogs, shared live operations and private roots',{timeout:240000},async t=>{
+test('one broker and engine: exact 24/25/25/26 catalogs, shared live operations and private roots',{timeout:240000},async t=>{
  const base=fsSync.realpathSync.native(await fs.mkdtemp(path.join(os.tmpdir(),'desksom-unified-')));
  const repo=path.join(base,'repo'),other=path.join(base,'unselected'),outside=path.join(base,'outside');
  await fs.mkdir(repo);await fs.mkdir(other);await fs.mkdir(outside);
@@ -88,7 +88,7 @@ test('one broker and engine: exact 25/26/26/27 catalogs, shared live operations 
  }
  for(const [idx,ins] of [[false,false],[true,false],[false,true],[true,true]]){
   const b=await start(idx,ins),tools=(await b.call('tools/list')).body.result.tools;
-  const names=tools.map(t=>t.name),want=25+Number(idx)+Number(ins);
+  const names=tools.map(t=>t.name),want=24+Number(idx)+Number(ins);
   assert.equal(names.length,want);assert.equal(new Set(names).size,want);
   assert.equal(names.includes('find_files_fast'),idx);
   assert.equal(names.includes('inspect_project'),ins);

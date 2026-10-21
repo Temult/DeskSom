@@ -288,11 +288,11 @@ function Ds-VerifyMcp($State,[bool]$Exercise) {
   }
   $indexed=($State.ContainsKey('indexProfile') -and $State.indexProfile.enabled -eq $true)
   $inspection=($State.ContainsKey('projectInspectEnabled') -and $State.projectInspectEnabled -is [bool] -and $State.projectInspectEnabled -eq $true)
-  # Exact qualified MCP names, not merely a count. A different 25-name set is drift.
+  # Exact qualified MCP names, not merely a count. A different 24-name set is drift.
   $expectedBase=@('desksom_status','get_config','read_file','read_multiple_files','write_file','write_pdf',
     'create_directory','list_directory','move_file','start_search','get_more_search_results','stop_search',
     'list_searches','get_file_info','edit_block','start_process','read_process_output','interact_with_process',
-    'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls','get_prompts')
+    'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls')
   $tools=@($catalog.body.result.tools)
   $actualNames=@($tools|ForEach-Object {$_.name})
   $expectedNames=@($expectedBase)
@@ -304,7 +304,7 @@ function Ds-VerifyMcp($State,[bool]$Exercise) {
     if($name -isnot [string] -or -not $unique.Add([string]$name) -or $name -cnotin $expectedNames){$validNames=$false}
   }
   if(-not $validNames -or $unique.Count -ne $expectedNames.Count){
-    Ds-Fail 'TOOL_CATALOG_FAILED' 'The broker catalog names or uniqueness differ from the qualified exact 25/26-tool profile.'
+    Ds-Fail 'TOOL_CATALOG_FAILED' 'The broker catalog names or uniqueness differ from the qualified exact 24/25/26-tool profile.'
   }
   $text=$catalog.body.result|ConvertTo-Json -Depth 30 -Compress
   if($text -match 'ui://desktop-commander/'){Ds-Fail 'UNSERVED_UI_REFERENCE' 'The catalog advertises unsupported UI resources.'}

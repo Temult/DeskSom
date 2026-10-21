@@ -18,6 +18,15 @@ export function childEnvironment(source) {
   for (const key of Object.keys(env)) {
     if (/^(CONTROL_PLANE_|TUNNEL_CLIENT_|OPENAI_ADMIN_KEY$|OPENAI_API_KEY$|DESKSOM_HTTP_TOKEN$|DESKSOM_MCP_AUTH$|CLOUDFLARED_)/i.test(key)) delete env[key];
   }
+  // Worker threads use case-sensitive env lookups even on Windows. Upstream
+  // 0.3.0 resolves executable paths itself; normalize PATH rather than rely
+  // on Windows' implicit current-directory executable search.
+  if(process.platform==='win32')for(const canonical of ['PATH','PATHEXT']){
+    const keys=Object.keys(env).filter(k=>k.toUpperCase()===canonical);
+    const value=keys.map(k=>env[k]).find(v=>typeof v==='string');
+    for(const k of keys)delete env[k];
+    if(value!==undefined)env[canonical]=value;
+  }
   env.DESKTOP_COMMANDER_DISABLE_TELEMETRY = '1';
   return env;
 }

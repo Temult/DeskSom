@@ -9,7 +9,7 @@ $script:boot='11111111-1111-4111-8111-111111111111'
 $script:probeOverride=@{};$script:omitField=$null;$script:fixtureReady=$true
 $state=@{installationId='22222222-2222-4222-8222-222222222222';
  plan=@{port=19991;stateRoot='C:\NO_REAL_STATE';tasks=@{local='DeskSom-unit-Local';tunnel='DeskSom-unit-Tunnel'};
-  binding=@{host='SYNTHETIC-HOST'};version='0.2.0-rc.14';instance='unit';sourceFingerprint='synthetic-source'};
+  binding=@{host='SYNTHETIC-HOST'};version='0.2.0-rc.15';instance='unit';sourceFingerprint='synthetic-source'};
  indexProfile=@{enabled=$false;indices=@()}}
 function Ds-ExpectedTask($State,[string]$Kind){return @{name=if($Kind -eq 'local'){'DeskSom-unit-Local'}else{'DeskSom-unit-Tunnel'}}}
 function Ds-TaskGet([string]$Name){return @{name=$Name;state='Running';enabled=$true}}

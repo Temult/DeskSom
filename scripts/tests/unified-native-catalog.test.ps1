@@ -14,7 +14,7 @@ function Ds-Rpc($State,[string]$Method,$Parameters=@{},[switch]$NoAuth){
 $base=@('desksom_status','get_config','read_file','read_multiple_files','write_file','write_pdf',
 'create_directory','list_directory','move_file','start_search','get_more_search_results','stop_search',
 'list_searches','get_file_info','edit_block','start_process','read_process_output','interact_with_process',
-'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls','get_prompts')
+'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls')
 function Verify([bool]$Indexed,[bool]$Inspection,[string[]]$Names,[bool]$Accepted,[string]$Label){
  $s=@{plan=@{stateRoot='C:\FIXTURE';instance='qa';version='0.2.0-rc.13';sourceFingerprint='qa';binding=@{host='SYNTHETIC'}};installationId='qa';indexProfile=@{enabled=$Indexed};projectInspectEnabled=$Inspection}
  $script:toolNames=@($Names)
@@ -23,10 +23,10 @@ function Verify([bool]$Indexed,[bool]$Inspection,[string[]]$Names,[bool]$Accepte
  if($ok -ne $Accepted){throw ('FAIL '+$Label)}
  Write-Output ('PASS '+$Label)
 }
-Verify $false $false $base $true 'baseline_25'
-Verify $true $false (@($base)+@('find_files_fast')) $true 'index_only_26'
-Verify $false $true (@($base)+@('inspect_project')) $true 'inspect_only_26'
-Verify $true $true (@($base)+@('find_files_fast','inspect_project')) $true 'combined_27'
+Verify $false $false $base $true 'baseline_24'
+Verify $true $false (@($base)+@('find_files_fast')) $true 'index_only_25'
+Verify $false $true (@($base)+@('inspect_project')) $true 'inspect_only_25'
+Verify $true $true (@($base)+@('find_files_fast','inspect_project')) $true 'combined_26'
 Verify $false $false (@($base)+@('inspect_project')) $false 'disabled_inspection_rejected'
 Verify $false $true (@($base)+@('find_files_fast')) $false 'foreign_optional_tool_rejected'
 Verify $true $true (@($base)+@('find_files_fast','find_files_fast')) $false 'duplicate_optional_rejected'

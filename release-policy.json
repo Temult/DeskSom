@@ -4,12 +4,13 @@
   "supportedArchitecture": "x64",
   "minimumNodeMajor": 22,
   "minimumPowerShell": "7.4.0",
-  "engineVersion": "0.2.52",
+  "engineVersion": "0.3.0",
   "sdkVersion": "1.32.1",
   "tunnelVersion": "0.0.16",
   "tunnelArchiveUrl": "https://github.com/openai/tunnel-client/releases/download/v0.0.16/tunnel-client-v0.0.16-windows-amd64.zip",
   "tunnelArchiveSha256": "edef7241b0c647fcb30f1a80ff376b6b25c51927960f257a3f01e21b17c2aba6",
   "tunnelExeSha256": "4226bb74a72388147882881f29f79801b95e285d731a138071812e3aa6766571",
   "maximumArchiveBytes": 83886080,
-  "maximumExtractedBytes": 209715200
+  "maximumExtractedBytes": 209715200,
+  "minimumNodeVersion": "22.12.0"
 }

@@ -26,7 +26,7 @@ function Check-Prerequisites {
  $script:node=Find-Exe 'node.exe' @((Join-Path $env:ProgramFiles 'nodejs\node.exe'))
  $script:pwsh=Find-Exe 'pwsh.exe' @((Join-Path $env:ProgramFiles 'PowerShell\7\pwsh.exe'),(Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\pwsh.exe'))
  $script:nodeOK=$false;$script:pwshOK=$false
- if($script:node){try{$v=& $script:node --version;$script:nodeOK=([int]$v.TrimStart('v').Split('.')[0] -ge 22)}catch{}}
+ if($script:node){try{$v=& $script:node --version;$script:nodeOK=([version]$v.TrimStart('v') -ge [version]'22.12.0')}catch{}}
  if($script:pwsh){try{$v=& $script:pwsh -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()';$script:pwshOK=([version]($v -join '') -ge [version]'7.4')}catch{}}
  return ($script:nodeOK -and $script:pwshOK)
 }
@@ -190,7 +190,7 @@ function Review-Prerequisites {
   $overview.Text='DeskSom needs a few Windows components before installation.'
   $missing=@()
   if(-not $script:pwshOK){$missing+='PowerShell 7.4+'}
-  if(-not $script:nodeOK){$missing+='Node.js 22+'}
+  if(-not $script:nodeOK){$missing+='Node.js 22.12+'}
   $status.Text='Missing: '+($missing -join ' and ')+'. Use the prerequisite button below.'
   $prereq.Visible=$true
  }else{

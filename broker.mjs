@@ -12,6 +12,7 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { modernExchange } from './modern.mjs';
 import { validateFileOperation } from './file-operation-guard.mjs';
+import { prepareShellArguments } from './windows-shell.mjs';
 import { prepareCatalog, catalogCapabilities } from './catalog.mjs';
 import { createFastFileSearch } from './fast-files.mjs';
 import { inspectProject, resolveTrustedGit } from './project-inspect.mjs';
@@ -34,7 +35,7 @@ if (mode === 'http' && (!httpToken || httpToken.length < 32)) throw new Error('A
 const env = childEnvironment(process.env);
 env.DESKSOM_STATE_DIR = path.join(privateState, 'dc');
 const child = new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'engine.mjs')], cwd: cfg.workDir, env, stderr: 'pipe' });
-const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.14' }, { capabilities: {} });
+const client = new Client({ name: 'somnerai-desksom-broker', version: '0.2.0-rc.15' }, { capabilities: {} });
 let ready = false, closing = false, completed = 0, active = 0;
 // In-memory per-boot counters only. No command arguments, file paths or contents.
 const metrics={attempted:0,succeeded:0,rejected:0,uncertain:0,elapsedMs:0,lastCompletedAt:null};
@@ -87,12 +88,12 @@ client.onclose = () => {
   if (!closing) { audit({ event: 'upstream_lost', replay: false }); process.stderr.write('DeskSom engine disconnected. No tool call will be replayed.\n'); }
 };
 function status() {
-  return { name: 'DeskSom', version: '0.2.0-rc.14', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready:ready&&!quiescing, indexWorkerReady:fastIndex?.health?.()??true, mode,
+  return { name: 'DeskSom', version: '0.2.0-rc.15', instance: cfg.instance ?? null, installationId: cfg.installationId ?? null, sourceFingerprint: cfg.sourceFingerprint ?? null, host: os.hostname(), bootId, started, ready:ready&&!quiescing, indexWorkerReady:fastIndex?.health?.()??true, mode,
     readinessContract:'CORE_SERVICE_WITH_OPTIONAL_FEATURE_HEALTH_V1',
     allFeaturesReady:ready&&!quiescing&&(fastIndex?.health?.()??true)&&inspectionHealth().ready,
     projectInspection:inspectionHealth(),
     indexStatus:fastIndex?.snapshot?.()??{enabled:false,ready:true,roots:[]},
-    upstreamVersion: '0.2.52', enginePid: child.pid ?? null, tools: catalog.length + extraTools.length, catalogSha256: catalogHash,
+    upstreamVersion: '0.3.0', enginePid: child.pid ?? null, tools: catalog.length + extraTools.length, catalogSha256: catalogHash,
     advertisedToolCount: advertisedCapabilities.toolCount, advertisedCapabilities,
     activeCalls: active, completedCalls: completed, allowedFileRoots: cfg.allowedDirectories,
     rootsRevision:cfg.rootsRevision??0,
@@ -109,7 +110,7 @@ const identityTool = { name: 'desksom_status', description: 'Read DeskSom host i
 async function guardedUpstreamCall(name,args){
   // Runs after dispatch has incremented active: quiescence cannot race this
   // asynchronous preflight. A rejection means the upstream tool was not run.
-  try{await validateFileOperation(name,args,cfg)}
+  try{await validateFileOperation(name,args,cfg);args=prepareShellArguments(name,args)}
   catch(e){return {isError:true,content:[{type:'text',text:safeError(e)}]};}
   return client.callTool({name,arguments:args},undefined,{timeout:120000});
 }
@@ -164,7 +165,7 @@ async function dispatchTool(params) {
 }
 
 function makeServer() {
-  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.14' }, { capabilities: { tools: {} },
+  const server = new Server({ name: 'somnerai-desksom', version: '0.2.0-rc.15' }, { capabilities: { tools: {} },
     instructions: 'DeskSom runs on the explicitly named Windows host. Preserve project authority boundaries. A terminal has the Windows account permissions, not a sandbox. Never reuse a consumed grant or infer production authorization. No automatic retries of writes after ambiguous errors. Check desksom_status after reconnect. Its advertisedToolCount and advertisedCapabilities describe the SERVER catalog, not the tool subset visible or permitted in this ChatGPT conversation. If a tool is unavailable here, report client tool exposure/permission separately from Windows authorization; never bypass a genuine denial.' });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: [identityTool, ...catalog, ...extraTools] }));
   server.setRequestHandler(CallToolRequestSchema, async request => dispatchTool(request.params));
