@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.14 release integration: targeted upstream security guards
+
+Keep engine 0.2.52 and tool metadata unchanged while applying two narrow compatibility guards at the DeskSom dispatch boundary. Reject invalid destructive process IDs before engine invocation, and resolve prospective file-mutation destinations through dangling links before checking approved roots. Cover rename operands and PDF output paths; keep asynchronous checking inside the active-call/quiescence barrier. Add pure and actual-broker regressions and document upstream #759/#767 scope in docs/UPSTREAM_SECURITY_REVIEW.md. Full engine 0.3.0 migration remains a separate rc.15 effort.
+
 ## 0.2.0-rc.14 power-loss startup recovery
 
 Repair the recurring reboot failure where a prior-boot index writer lease causes INDEX_WORKER_NOT_READY and takes the rc.13 broker and private tunnel offline. On a fresh rc.14 boot the broker already admits ordinary tools independently of optional index health. The new index recovery recognizes only marker and filesystem timestamps conclusively predating the current Windows boot, verifies an intact private database/lease, moves the entire obsolete lease to private evidence with receipts, and obtains a new atomic writer lease. Same-boot, linked, foreign and uncertain leases are retained and refused. Native regression cases cover immediate sign-in recovery, accepted orphans, refused ambiguity and byte-identical database/marker preservation. This source change does not alter the already running rc.13 installation or credentials.

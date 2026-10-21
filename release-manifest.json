@@ -14,8 +14,8 @@
     },
     {
       "path": ".github/workflows/windows.yml",
-      "bytes": 3623,
-      "sha256": "1c45abc02635857f11fe3bdae973281409310da653f347756356a7caf96c1652"
+      "bytes": 3653,
+      "sha256": "f6f5b08aefa6c7716922213dbd21e5165a37ac2152025ed5edb58e2b15808a16"
     },
     {
       "path": ".gitignore",
@@ -39,8 +39,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 13512,
-      "sha256": "279fd8fbefe2e5c296249291c18f8d81262f4877f9d62af18eb8b324b707f70e"
+      "bytes": 14172,
+      "sha256": "278716be24d3323ca2266a36ceac810852ec407eaccb1c4cba0e0d9b31421c48"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -114,8 +114,8 @@
     },
     {
       "path": "broker.mjs",
-      "bytes": 19738,
-      "sha256": "4192e5e2800841c0cd6e4092df52ae3dcb7c1e8f1f289fdb36fb15d7cd5f6c12"
+      "bytes": 20169,
+      "sha256": "564221c81fa43f709e1078f1f7ad9d6621a8c38d4376ca1df59cd00b8ff5d35a"
     },
     {
       "path": "catalog.mjs",
@@ -223,6 +223,11 @@
       "sha256": "28745180a13cf4eac25cf0fa7ec9839dba952d7d482dede57a189eaa255c6809"
     },
     {
+      "path": "docs/UPSTREAM_SECURITY_REVIEW.md",
+      "bytes": 3357,
+      "sha256": "cf9521d20a1d3338816a35c504e48c8775f6e0d0be447bbddb1d09917350ce8c"
+    },
+    {
       "path": "engine.mjs",
       "bytes": 1744,
       "sha256": "44e72047a70c8b78a09c4dbfb88f1677c6d9fefc3a7882284508175d1b96fcf9"
@@ -298,6 +303,16 @@
       "sha256": "d1693026b41bb2eb0fe2a16b1570597f655f5c45b3f269b143f61b4e93eae237"
     },
     {
+      "path": "file-operation-guard.mjs",
+      "bytes": 2565,
+      "sha256": "f7c2ab18aef38f9e2cb562de34c270de679d97a67872fec775a95a30667ff5bb"
+    },
+    {
+      "path": "file-operation-guard.test.mjs",
+      "bytes": 3392,
+      "sha256": "bdebdf39d02f51dcc0a9607b866db9f9dc00ed8b36e9a4657b6991f896f4794d"
+    },
+    {
       "path": "filename-query.mjs",
       "bytes": 966,
       "sha256": "648eb10156bd5f16a570505f62cdcd998bd9670bd01d871bc7c5fbe198e459fd"
@@ -324,8 +339,8 @@
     },
     {
       "path": "inspection-owner.integration.test.mjs",
-      "bytes": 9257,
-      "sha256": "6ad7b36431c52c18ac735248389bf9164db32c0218894935dd2098ba8cd5536b"
+      "bytes": 10579,
+      "sha256": "31bb323b55d9d8453fb2269b7984349a9b321b2c7437420ed0e55d3d0fe73869"
     },
     {
       "path": "markdown-patch.test.mjs",
@@ -574,8 +589,8 @@
     },
     {
       "path": "scripts/lib/test-suites.mjs",
-      "bytes": 2215,
-      "sha256": "318ecdcc011e9f8d8c5b28f1fa70ce42eb4484bac48099ec60deaa9021eabc0a"
+      "bytes": 2250,
+      "sha256": "b3ca7d9ea585610e16b1b8f9065e5c938e8d19f29e964e090bfffa9999f230c3"
     },
     {
       "path": "scripts/lib/windows.mjs",
@@ -699,8 +714,8 @@
     },
     {
       "path": "security.mjs",
-      "bytes": 1739,
-      "sha256": "3a3cc7ae2fe995ed309c7429dbabaceaab7f09e4bb235fdb76c34833f902f627"
+      "bytes": 2109,
+      "sha256": "c1238cc7f0b0015f7cf539054f658b431b5cecc68ac4058c084076609f8b7aa6"
     },
     {
       "path": "security.test.mjs",

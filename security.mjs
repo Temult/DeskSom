@@ -23,6 +23,11 @@ export function childEnvironment(source) {
 }
 export function boundedArguments(name, args = {}) {
   const copy = { ...args };
+  // Upstream 0.2.52 accepts PID 0/negative/fractional values. Reject before
+  // any call reaches the process engine; positive ordinary PIDs are unchanged.
+  if (['kill_process','force_terminate'].includes(name) &&
+      (!Number.isSafeInteger(copy.pid)||copy.pid<=0||copy.pid>0x7fffffff))
+    throw new Error('INVALID_PID: a positive integer process ID is required');
   if (PROCESS_TOOLS.has(name)) {
     const supplied = copy.timeout_ms;
     if (supplied !== undefined && (!Number.isFinite(supplied) || supplied < 0)) throw new Error('timeout_ms must be a nonnegative finite number');

@@ -11,6 +11,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { modernExchange } from './modern.mjs';
+import { validateFileOperation } from './file-operation-guard.mjs';
 import { prepareCatalog, catalogCapabilities } from './catalog.mjs';
 import { createFastFileSearch } from './fast-files.mjs';
 import { inspectProject, resolveTrustedGit } from './project-inspect.mjs';
@@ -105,6 +106,13 @@ function status() {
 }
 const identityTool = { name: 'desksom_status', description: 'Read DeskSom host identity, engine generation, health, and boundaries. Verify the intended host before actions. Does not authorize project gates.',
   inputSchema: { type: 'object', properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false } };
+async function guardedUpstreamCall(name,args){
+  // Runs after dispatch has incremented active: quiescence cannot race this
+  // asynchronous preflight. A rejection means the upstream tool was not run.
+  try{await validateFileOperation(name,args,cfg)}
+  catch(e){return {isError:true,content:[{type:'text',text:safeError(e)}]};}
+  return client.callTool({name,arguments:args},undefined,{timeout:120000});
+}
 async function dispatchTool(params) {
     const name = params.name;
     if (name === 'desksom_status') return { content: [{ type: 'text', text: JSON.stringify(status()) }], structuredContent: status() };
@@ -137,7 +145,7 @@ async function dispatchTool(params) {
               return {isError:true,content:[{type:'text',text:accepted?code:'PROJECT_INSPECTION_FAILED'}]};
             }
           })()
-          : await client.callTool({ name, arguments: args }, undefined, { timeout: 120000 });
+          : await guardedUpstreamCall(name,args);
       // Write-through indexing runs only after an acknowledged successful upstream file operation.
       // An index failure does not rewrite the underlying tool outcome or trigger a write replay.
       if(result.isError !== true && name !== 'find_files_fast' && fastIndex?.notifyCompletedWrite){

@@ -79,3 +79,23 @@ test('a missing configured root leaves the real broker and remaining indexed roo
   assert.notEqual((await f.rpc('tools/call',{name:'read_file',arguments:{path:path.join(f.allowed,'README.md')}})).isError,true);
  }finally{await f.clean()}
 });
+
+test('real broker rejects invalid process IDs and dangling-junction writes before upstream execution',{timeout:60000},async()=>{
+ const f=await fixture();try{
+  const initial=await f.start();
+  for(const name of ['kill_process','force_terminate'])for(const pid of [0,-1,1.5]){
+   const result=await f.rpc('tools/call',{name,arguments:{pid}});
+   assert.equal(result.isError,true);assert.match(JSON.stringify(result),/INVALID_PID/);
+   assert.equal((await f.status()).bootId,initial.bootId);
+  }
+  const outside=path.join(f.base,'never-created'),link=path.join(f.allowed,'dangling-junction');
+  await fs.symlink(outside,link,process.platform==='win32'?'junction':'dir');
+  const refused=await f.rpc('tools/call',{name:'write_file',arguments:{path:path.join(link,'escape.txt'),content:'must not land outside'}});
+  assert.equal(refused.isError,true);assert.match(JSON.stringify(refused),/FILE_GUARD_OUTSIDE_APPROVED_ROOTS/);
+  assert.equal(fsSync.existsSync(outside),false);
+  const normal=path.join(f.allowed,'normal.txt');
+  assert.notEqual((await f.rpc('tools/call',{name:'write_file',arguments:{path:normal,content:'ordinary write works'}})).isError,true);
+  assert.equal(await fs.readFile(normal,'utf8'),'ordinary write works');
+  assert.equal((await f.status()).bootId,initial.bootId);
+ }finally{await f.clean()}
+});

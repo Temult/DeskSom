@@ -1,6 +1,7 @@
 // One test inventory for development, CI and installed qualification.
 export const coreTests=Object.freeze([
   "security.test.mjs",
+  "file-operation-guard.test.mjs",
   "concurrency.test.mjs",
   "markdown-patch.test.mjs",
   "modern.test.mjs",

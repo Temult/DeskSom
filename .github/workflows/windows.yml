@@ -19,7 +19,7 @@ jobs:
       - name: Core policy and installer unit tests on Node 22
         shell: pwsh
         run: |
-          node --test scripts/tests/installer.test.mjs security.test.mjs concurrency.test.mjs scripts/tests/test-selection.test.mjs scripts/tests/inspection-control.test.mjs
+          node --test scripts/tests/installer.test.mjs security.test.mjs file-operation-guard.test.mjs concurrency.test.mjs scripts/tests/test-selection.test.mjs scripts/tests/inspection-control.test.mjs
           if ($LASTEXITCODE) { throw 'Core unit tests failed' }
       - name: Install exact dependencies without lifecycle scripts for parser checks
         shell: pwsh
