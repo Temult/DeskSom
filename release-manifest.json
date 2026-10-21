@@ -13,6 +13,11 @@
       "sha256": "094b5c309fad9bfd4cecc374c01f078c097a3434d44e6f951612a8ec501d610e"
     },
     {
+      "path": ".github/workflows/publish-rc15.yml",
+      "bytes": 2670,
+      "sha256": "0b84263c6e0b74403c21939265995840faafd1f83d52b974c29b649cccdd3226"
+    },
+    {
       "path": ".github/workflows/windows.yml",
       "bytes": 3681,
       "sha256": "c7db008165f6663735b3a0d1615a00c264c7495cb72a91ead50cfa1b624e0afb"
@@ -74,8 +79,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7920,
-      "sha256": "e73461363d4d40687fd6ff9c2106ddf870ee179c9927ebd7e8c5200e4988063a"
+      "bytes": 7362,
+      "sha256": "c1fd5ec8f976df0b25d24e7f0af9aced2ff0bcd9b65847a0c2e0c8877493113b"
     },
     {
       "path": "SECURITY.md",

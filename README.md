@@ -1,58 +1,88 @@
 # DeskSom
 
-Give ChatGPT a private connection to your Windows files and terminal through your own OpenAI Secure MCP Tunnel. DeskSom uses the pinned open-source Desktop Commander engine; it does not use Desktop Commander's paid hosted relay.
+**Let ChatGPT work with your Windows computer, without turning it into a public server.**
 
-**Development candidate: 0.2.0-rc.15.** This branch adds resilient optional filename indexing and bounded project inspection. It is not a claim that rc.15 has passed a new-owner installation or been released as an installer. Existing rc.12 downloads and their exact hashes remain preserved under `downloads/v0.2.0-rc.12/`.
+DeskSom connects ChatGPT to the files, projects, and command-line tools on a Windows PC you control. You can ask an assistant to find a document, inspect a codebase, make an edit, or run a local command. The work runs on your computer, using your Windows account, through your own private OpenAI Secure MCP Tunnel.
 
-## What it does
+DeskSom is a self-hosted bridge built around the open-source [Desktop Commander](https://github.com/wonderwhy-er/DesktopCommanderMCP) engine. It doesn't use Desktop Commander's hosted relay.
 
-The base installation exposes 24 tools for file access, content/path search, terminal execution, process sessions, configuration and diagnostics. Upstream 0.3.0 retired the legacy get_prompts tool. Two optional tools extend that catalog to 25 or 26 tools:
+**[Get DeskSom v0.2.0-rc.15](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15)** · [Setup guide](INSTALLATION.md) · [Security model](SECURITY.md)
 
-- `find_files_fast`: selected-root, case-insensitive filename-substring search using a private SQLite index. Filesystem watching, acknowledged-write hints and periodic full reconciliation keep derived data current. It does not search file contents, and a missing result is never proof of absence.
-- `inspect_project`: a bounded, read-only project/Git snapshot with branch, commit, working-tree counts, tracked languages and script names. It does not run project scripts, install dependencies, recurse into child repositories, or write Git state.
+## What can I do with it?
 
-Both optional features are off by default and have owner-approved control-panel workflows. Use Folders > Fast search for indexing and Overview > Project inspection for inspection. Inspection changes restart only the owned local broker, preserve indexing/tunnel/credentials, and support explicit interrupted-change rollback. See [the feature guide](docs/INDEX_AND_INSPECTION.md).
+For example, you can ask ChatGPT to:
 
-## Index trouble no longer means a dead connection
+> “Find the latest budget spreadsheet in my project folder and summarize what's changed.”
+>
+> “Show me the state of this Git repository before we start editing.”
+>
+> “Update this configuration file, run the tests, and tell me what failed.”
 
-In rc.15, the core endpoint can serve ordinary tools while selected indices initialize or need attention. `desksom_status.ready` describes the core service; `indexWorkerReady`, `allFeaturesReady` and authenticated per-root `indexStatus` report optional-feature health separately. A failed or missing selected root does not disable a healthy root's search. An unavailable optional Git executable likewise does not disable the core connection. An unready root rejects fast searches with an explicit status rather than serving a stale snapshot as current.
+DeskSom provides tools for reading and editing files, searching content and paths, working with spreadsheets and documents, running PowerShell and other local commands, and checking processes and command output.
 
-Index progress reports observed work, not a guessed completion percentage. Initial full walks support cooperative cancellation. Setup failures clean up only resources acquired by that worker. Following a hard Windows reboot, a lease conclusively proven to predate the new OS boot may be moved intact into private evidence before a new writer is acquired. Same-boot, active, foreign, linked or ambiguous leases are never stolen. Recovery diagnostics remain attached to authenticated per-root status. The owner control panel distinguishes saved settings from a ready index and uses a responsive progress dialog for index changes.
+Two optional features add useful context without getting in the way:
 
-These changes do not establish universal crash recovery. Blocking OS calls and individual SQLite operations are not preemptible, and an uncertain shutdown still requires inspection. Details are in [readiness and recovery](docs/READINESS_AND_RECOVERY.md).
+- **Fast filename search** finds names across folders you select for indexing. A local SQLite index is maintained in the background; it searches filenames, not file contents.
+- **Project inspection** gives a bounded, read-only overview of a Git project: its branch, recent commits, changed files, tracked languages, and available script names. It does not execute project scripts.
 
-## Upstream 0.3.0 integration
+Both are off by default. Enable them from the DeskSom Control Panel when you want them. The regular file and terminal tools remain available if an optional index is still building or needs attention.
 
-This candidate carries forward rc.14's installed reliability fixes while modernizing the pinned engine. Its exact tool matrices are now 24 / 25 / 25 / 26. Refresh client tool metadata when upgrading; do not recreate the private tunnel merely because get_prompts was removed.
+## Get started
 
-Upstream's document packages preload after MCP initialization rather than blocking the handshake. Windows Store PowerShell aliases resolve through their known installation path to a verified executable, without searching the work directory. A narrowly pinned PDF compatibility overlay enables the real font metadata expected by pdf2md 0.3.4; no fake text/font data is substituted.
+DeskSom currently targets **Windows x64**. You will need PowerShell **7.4+**, Node.js **22.12+**, and a normal Windows user account. Optional fast filename indexing requires **Node.js 25+**. Connecting to ChatGPT also requires an account and workspace with access to custom MCP connections and OpenAI Secure MCP Tunnels; availability and charges depend on your account.
 
-The dependency overrides used by upstream must also be declared in the consuming project's root package.json. This candidate pins those reviewed overrides and its private production audit reports zero findings at qualification time. That is not a guarantee of absence of vulnerabilities. See [the integration evidence and limits](docs/UPSTREAM_030_INTEGRATION.md).
+1. **Download** the [current release](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15). The rc.15 download is a portable ZIP, not an installer EXE. Check its SHA-256 against the checksum file provided with the release.
+2. **Extract** the ZIP to a folder you intend to keep. Double-click `Start-DeskSom.cmd`. The setup wizard checks prerequisites, asks which folders to make available to file tools, and explains the access being granted.
+3. **Connect your account.** The local setup assistant walks you through your own private tunnel and ChatGPT connection. Enter the restricted tunnel key in DeskSom's *local, masked* dialog, never in a chat message or GitHub issue.
+4. **Try it in ChatGPT.** Ask the connected DeskSom to report its status, then approve a small disposable file test. A successful local installation alone does not prove the ChatGPT connection works.
 
-## Requirements
+You can finish the ChatGPT connection later without reinstalling. For the full walkthrough, see [Installation](INSTALLATION.md). If you're already using DeskSom, **don't overwrite its running files with a newly downloaded ZIP**; use a reviewed upgrade path that retains the previous installation for rollback.
 
-Windows x64, PowerShell 7.4 or newer, and Node.js 22.12 or newer are the core baseline. **Optional indexed search requires Node.js 25 or newer; this candidate has been exercised on Node.js 25.2.1.** A newer major is not automatically a qualified runtime. Project inspection also needs an installed, trusted Git executable. The engine remains pinned to Desktop Commander 0.3.0 and tunnel-client 0.0.16.
+## How it works
 
-The test runner reports which suites it selects. On Node 22 it runs core suites without claiming indexing qualification; `npm run test:all` requires Node 25+. See [qualification](docs/QUALIFICATION.md) for observed evidence and remaining acceptance steps.
+```text
+ChatGPT
+   │
+   │ Your private OpenAI Secure MCP Tunnel
+   ▼
+DeskSom on your Windows PC
+   │
+   ├── Authenticated local broker
+   │      └── Desktop Commander: files, terminal, search, processes
+   │
+   ├── Optional private filename index
+   └── Optional read-only project inspection
+```
 
-## Installation and everyday use
+The tunnel makes an outbound connection; DeskSom does not need an internet-facing port or a public web server on your PC. The local broker listens only on loopback and authenticates requests. Tunnel credentials are entered locally and encrypted for your Windows login.
 
-Use a prepared, qualified release package, extract it, and double-click **Start-DeskSom.cmd**. The Windows wizard guides folder selection, installation and the optional account-connection checklist. **Start-DeskSom-CLI.cmd** retains the console route. Run as your normal Windows user, not as administrator. Do not replace a running installation with this development checkout.
+DeskSom starts under your user account when you sign in to Windows. It doesn't run while the PC is shut down, asleep, or waiting at the sign-in screen. A tray icon and Control Panel let you review status, manage folders and optional tools, and deliberately start or stop the service.
 
-The non-elevated tray icon and four-tab control panel provide service status, allowed file folders, optional filename-index selection, statistics and deliberate service controls. Startup occurs at Windows sign-in, not before login and not while the computer is asleep. Closing the tray does not stop the service.
+## Understand the permissions
 
-**Powerful access, not a sandbox:** allowed folders restrict file tools, not terminal commands. Terminal tools have your Windows account's permissions. Keep the connection private and authorize only intended work. The selected index roots are a separate subset of approved file-tool roots.
+**DeskSom is powerful local access, not a sandbox.** Folders you select restrict its direct *file tools*. They **do not restrict terminal commands**, which run with your Windows account's permissions and can reach other files and programs that account can access. Give the connection only to assistants and workflows you trust, and review actions with consequences.
 
-## Ask an authorized AI to help install a qualified release
+The private tunnel protects the connection path; it does not turn commands into harmless or read-only operations. DeskSom avoids automatically replaying writes after an uncertain result, keeps installation state and credentials separate from shared project folders, and reports core service health separately from optional indexing. These are safeguards, not a promise that every mistake or compromised account is contained.
 
-> Read AGENTS.md and AI_INSTALL.md, inspect the existing installation, and use the prepared release's preflight and approved-plan installer. Explain Windows-user terminal access. Keep API keys out of chat and guide me through the local masked prompt. Preserve existing installations and verify an actual ChatGPT identity call and disposable file round-trip before calling setup complete.
+Read the [security model](SECURITY.md) before granting access, particularly if the Windows account contains sensitive files.
 
-Without an existing authorized computer-control connection, an AI cannot bootstrap local access by itself. The double-click launcher is the human entry point. Each recipient needs their own private account association; account availability, permissions, billing and usage limits are separate from DeskSom.
+## For developers and AI assistants
 
-## Evidence, privacy and limitations
+The README is the starting point. The detailed contracts live with the code:
 
-Source manifests bind exact bytes, but are not publisher signatures. Operation receipts distinguish preparation, local readiness and actual ChatGPT verification. DeskSom never blindly replays an ambiguous write. Private configuration, credentials, task exports and raw logs do not belong in the public source archive.
+| Start here | For |
+| --- | --- |
+| [INSTALLATION.md](INSTALLATION.md) | A human walkthrough of setup and connecting ChatGPT |
+| [AGENTS.md](AGENTS.md) and [AI_INSTALL.md](AI_INSTALL.md) | Agents working on an already-authorized PC: permissions, installation plans, verification, and recovery |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Broker, tunnel, engine, Windows tasks, and configuration |
+| [SECURITY.md](SECURITY.md) | Trust boundaries and the limits of folder permissions |
+| [Owner controls](docs/OWNER_CONTROLS.md) and [Troubleshooting](docs/TROUBLESHOOTING.md) | Everyday administration and recovery |
+| [Features](docs/INDEX_AND_INSPECTION.md) and [Contributing](CONTRIBUTING.md) | Indexing, Git inspection, development, and tests |
 
-The engine and its dependencies are pinned in the lockfile, with the reviewed upstream root-level overrides and markdown-it 14.3.3. The production audit at this integration pass reports zero findings; future advisory data can change. Read [the dependency review](docs/DEPENDENCY_REVIEW.md); passing functional tests is not proof that every dependency is vulnerability-free. A dependency audit is not an extra manual installation approval gate.
+If you're an AI assistant asked to install or maintain DeskSom, **read [AGENTS.md](AGENTS.md) first**. Confirm which Windows machine you're operating on, review the exact installation plan and full-user shell access with the owner, never request a key in chat, and verify the result through a real ChatGPT tool call. Discovering tools does not itself grant permission to use them.
 
-[Performance](docs/PERFORMANCE.md) · [Installation](INSTALLATION.md) · [AI installation](AI_INSTALL.md) · [Owner controls](docs/OWNER_CONTROLS.md) · [Features](docs/INDEX_AND_INSPECTION.md) · [Recovery](docs/READINESS_AND_RECOVERY.md) · [Security](SECURITY.md) · [Qualification](docs/QUALIFICATION.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
+## Project status
+
+The current public download is **[DeskSom v0.2.0-rc.15](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15)**, a **portable prerelease** using Desktop Commander **0.3.0**. It has been tested on a Windows owner installation, but a second-machine/new-user evaluation and a real whole-machine power-loss trial remain outstanding. See the [release notes](https://github.com/Temult/DeskSom/releases/tag/v0.2.0-rc.15) for qualifications and known limits.
+
+DeskSom is an independent community project, not an official OpenAI or Desktop Commander product. Each person installs their own copy and connects their own account. Contributions and focused bug reports are welcome via [Contributing](CONTRIBUTING.md).
