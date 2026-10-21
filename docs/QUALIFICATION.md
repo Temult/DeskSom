@@ -6,6 +6,12 @@ This is the **0.2.0-rc.14 development candidate**. It combines the rc.13 R3 sour
 
 The current test effort is maintainer verification, not an independent external audit. Earlier unresolved independent dynamic reviews remain historical evidence gaps, not retroactive passes. Public rc.12 downloads retain their original hashes; no rc.14 binary installer has been qualified by this document.
 
+## October 21 power-loss recovery follow-up
+
+An actual overnight laptop power loss left the rc.13 default installation's core broker and private tunnel disconnected. Its local stderr confirmed INDEX_WORKER_NOT_READY during rc.13's mandatory index readiness wait, and its private index directory retained a writer marker from the prior Windows boot. On October 21 a new guarded one-time owner script verified the exact host/SID/source/installation, stopped tasks and port, index profile and prior PID, then preserved the old lease as intact private evidence; a single official Start restored the original rc.13 broker, private tunnel and direct ChatGPT indexed search. No installed sources, index database, credentials or tunnel configuration were changed.
+
+The rc.14 source now additionally recognizes *only* a conclusively prior-Windows-boot marker for automatic evidence-preserving quarantine and a fresh atomic writer acquisition. A real Windows worker fixture, immediate-sign-in clock scenario, same-boot refusal, live PID refusal and malformed-marker cases are tested. This is a source-candidate test, not proof that the installed rc.13 can perform automatic recovery. Future genuine cold-reboot/sleep-loss trials and new-owner installation acceptance remain outstanding.
+
 ## Painted-preview visual check and navigation regression
 
 An instrumented *disposable copy* of the actual WinForms setup and control-panel sources was rendered with Windows PowerShell 5.1 at the observed 200% display scale. The first painted preview found a genuine wizard navigation defect: Show-Page reset Back to unscaled coordinates after the form was scaled. Earlier checks examined only offscreen bounds and therefore missed the overlap. The candidate fixes the dynamic position and now checks all three steps for footer placement, expected scaled coordinates, and collisions with page content, dividers, Next and Finish. The first and corrected images are retained privately for comparison. No GUI clicks or service operations were automated by the fixture. The owner has not yet performed a manual visual acceptance of an actually installed task-based instance.

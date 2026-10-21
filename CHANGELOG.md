@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.14 power-loss startup recovery
+
+Repair the recurring reboot failure where a prior-boot index writer lease causes INDEX_WORKER_NOT_READY and takes the rc.13 broker and private tunnel offline. On a fresh rc.14 boot the broker already admits ordinary tools independently of optional index health. The new index recovery recognizes only marker and filesystem timestamps conclusively predating the current Windows boot, verifies an intact private database/lease, moves the entire obsolete lease to private evidence with receipts, and obtains a new atomic writer lease. Same-boot, linked, foreign and uncertain leases are retained and refused. Native regression cases cover immediate sign-in recovery, accepted orphans, refused ambiguity and byte-identical database/marker preservation. This source change does not alter the already running rc.13 installation or credentials.
+
 ## 0.2.0-rc.14 visual polish: scaled wizard navigation
 
 The first real painted WinForms preview at 200% display scaling revealed that the Setup wizard's dynamically relocated Back button was using unscaled pixel positions after the rest of the window had been scaled. It could overlap the folder field or ChatGPT setup controls. Fix dynamic positioning for all three steps and add an explicit footer/content/button collision regression, included in installer qualification and Windows CI. No service, tunnel or credential change is required.

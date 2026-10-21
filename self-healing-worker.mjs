@@ -25,7 +25,7 @@ const fixtureFast=workerData.fixtureOnly===true && norm(root).includes('\\ops\\s
 if(!Number.isSafeInteger(period)||period<(fixtureFast?100:300000)||period>86400000)throw Error('PERIODIC_INTERVAL_OUT_OF_RANGE');
 const privateState=fs.realpathSync.native(workerData.privateState);
 if(!inside(privateState,fs.realpathSync.native(path.dirname(dbFile))))throw Error('DB_OUTSIDE_PRIVATE_STATE');
-const writerLease=resources.lease=acquireIndexWriterLock(dbFile);
+const writerLease=resources.lease=acquireIndexWriterLock(dbFile,{privateState});
 const existed=fs.existsSync(dbFile);
 const db=resources.database=new DatabaseSync(dbFile,{timeout:5000});
 db.exec('PRAGMA journal_mode=WAL;PRAGMA synchronous=NORMAL;PRAGMA busy_timeout=5000;');
@@ -54,6 +54,7 @@ let watcher=null,closed=false,dirty=new Set(),timer=null,failed=false,periodicTi
 let gapRecoveryTimer=null,gapRetryMs=1000,lastGapRecoveryAt=0;
 let stats={fullScans:0,dirsRead:0,inserted:0,removed:0,events:0,updatedDirs:0,skippedLinks:0};
 const msg=m=>parentPort?.postMessage(m);
+if(writerLease.recoveredPriorBoot)msg({event:'PRIOR_BOOT_LEASE_RECOVERED'});
 resources.clearTimers=()=>{clearTimeout(timer);clearInterval(periodicTimer);clearTimeout(gapRecoveryTimer)};
 let scanStarted=Date.now(),scanEntries=0,scanDirs=0,lastProgress=0,scanPhase='INITIALIZING';
 function reportProgress(phase=scanPhase,force=false){

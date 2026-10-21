@@ -14,8 +14,8 @@
     },
     {
       "path": ".github/workflows/windows.yml",
-      "bytes": 3594,
-      "sha256": "d8147fa9b27dab64b4a8e823545a17dce1835e0f5abca6d0ef3cbd281c32b576"
+      "bytes": 3623,
+      "sha256": "1c45abc02635857f11fe3bdae973281409310da653f347756356a7caf96c1652"
     },
     {
       "path": ".gitignore",
@@ -39,8 +39,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 12629,
-      "sha256": "08d4f1071e043548219ac183160d8b5b5342f34d9e4d44d6eddbe79c9638910d"
+      "bytes": 13512,
+      "sha256": "279fd8fbefe2e5c296249291c18f8d81262f4877f9d62af18eb8b324b707f70e"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -74,8 +74,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 6537,
-      "sha256": "fd968dc9d8201d234dd7bcfd412e8dfb9a59fab7a7a6d7f4165153257cd18bdf"
+      "bytes": 6781,
+      "sha256": "63946c21d52f57811a5742815efa92e80de8f2e13610d1125388d09e9cdd6d28"
     },
     {
       "path": "SECURITY.md",
@@ -164,8 +164,8 @@
     },
     {
       "path": "docs/INDEX_AND_INSPECTION.md",
-      "bytes": 5659,
-      "sha256": "fb43d9e24eb6703529a3b505e5802c621b6e9f748aeb2c368b7102f9ce45fea9"
+      "bytes": 6105,
+      "sha256": "c6c447131ff87888db1937846469a96489b2709ce7179b9106ba0987db5d48ec"
     },
     {
       "path": "docs/OWNER_CONTROLS.md",
@@ -189,13 +189,13 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 7843,
-      "sha256": "7183621507f9af4d2bec7a2b46e2a8e0cf30ec5d11d5ecfd7de062d05bf2810a"
+      "bytes": 9121,
+      "sha256": "325d3961b48ba329d58062bb8744110bf00f14a2f217fe7ce465babb92df658e"
     },
     {
       "path": "docs/READINESS_AND_RECOVERY.md",
-      "bytes": 5343,
-      "sha256": "032b1d846af215c4a53a296f74799b242ecb62bdff06a727f8c7c76d11fa8440"
+      "bytes": 6462,
+      "sha256": "d1f28d9a676a6dc7225fc3ffdf5ef8fcefb476368c1a0b63b46ca12473eb2316"
     },
     {
       "path": "docs/RELEASE_CHECKLIST.md",
@@ -319,8 +319,8 @@
     },
     {
       "path": "index-writer-lock.mjs",
-      "bytes": 1884,
-      "sha256": "13134ac0dfed7b608918b1680f30293ca2b08ddb2d373e62824afac7a34403a9"
+      "bytes": 2513,
+      "sha256": "c4d116ebb25622271f203c2d3a6921d3979bebba06be2892427735588f9148a4"
     },
     {
       "path": "inspection-owner.integration.test.mjs",
@@ -351,6 +351,16 @@
       "path": "package.json",
       "bytes": 1014,
       "sha256": "435ba3fa16890fd9d48ac238deb15671cc3a817ada6d8423b68862e4be66a913"
+    },
+    {
+      "path": "prior-boot-recovery.mjs",
+      "bytes": 5292,
+      "sha256": "6a6aa52d05ef4f78ac255bfe2febc45b680e68fde992910bccdb46d023bf14ca"
+    },
+    {
+      "path": "prior-boot-recovery.test.mjs",
+      "bytes": 8700,
+      "sha256": "a00e46648aa804ed6cdb7dbdf2da17aa188fea98c3fd2b32ac7b6d75afbc2590"
     },
     {
       "path": "project-inspect-git-policy.mjs",
@@ -564,8 +574,8 @@
     },
     {
       "path": "scripts/lib/test-suites.mjs",
-      "bytes": 2181,
-      "sha256": "41cde84d4227d86dbb0afa11b56dccde574a6151132d0b20fb48490e2dc5cf3c"
+      "bytes": 2215,
+      "sha256": "318ecdcc011e9f8d8c5b28f1fa70ce42eb4484bac48099ec60deaa9021eabc0a"
     },
     {
       "path": "scripts/lib/windows.mjs",
@@ -699,13 +709,13 @@
     },
     {
       "path": "self-healing-client.mjs",
-      "bytes": 6009,
-      "sha256": "d0e7dfd0be9912c615d684ab1894b8a0aef729b284df032b2dae26a603092a68"
+      "bytes": 6135,
+      "sha256": "ce911f34ea42c53044c08a5fe87feb89e7a285c96f9d50ca9f6aa2796587923d"
     },
     {
       "path": "self-healing-worker.mjs",
-      "bytes": 17445,
-      "sha256": "f6fdf9856b2ea96b5aa3ca9d8671c288ca7b3ef36e378597c9e4fa9faa749de6"
+      "bytes": 17537,
+      "sha256": "6a232344fcc5a923c41beaabbc8e40b9b7ea8cb0de193c0b0b1cb20781c6de00"
     },
     {
       "path": "self-healing.cold-benchmark.mjs",

@@ -32,6 +32,7 @@ export const indexTests=Object.freeze([
   "quiesce.race.integration.test.mjs",
   "quiesce.retained-lease.integration.test.mjs",
   "unified.integration.test.mjs",
+  "prior-boot-recovery.test.mjs",
   "self-healing.test.mjs",
   "self-healing.release.test.mjs",
   "self-healing.integration.test.mjs",

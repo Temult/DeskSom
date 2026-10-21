@@ -31,9 +31,11 @@ A successful configuration apply means settings were saved and the core service 
 
 ## When a writer lease remains
 
-A lease may belong to another active worker, a crashed process, or an interrupted shutdown. Ordinary startup never steals it. A duplicate writer is refused while other roots and core tools remain usable. A global stop that cannot verify every selected lease stays unconfirmed and keeps tool admission closed.
+A lease may belong to another active worker, a crashed process, or an interrupted shutdown. Ordinary startup **never steals an active, same-boot, foreign, malformed, linked or ambiguous lease**. A duplicate writer is refused while other roots and core tools remain usable. A global stop that cannot verify every selected lease stays unconfirmed and keeps tool admission closed.
 
-Inspect the exact installation, boot, writer identity, process lifetime and private operation receipt. Do not remove lock directories or reset databases as a generic fix. Preserve evidence and use a separately reviewed owner recovery procedure when needed. This candidate does not introduce automatic stale-lock reclamation or claim complete power-loss recovery.
+**Power-loss recovery:** An index worker can recognize a strictly bounded *previous-Windows-boot* orphan, based on the running OS boot time, the writer's original marker identity and timestamps, and the directory's unchanged private ownership boundary. The recovery requires an intact one-file marker directory, the original SQLite database still in the expected private `indices` folder, and marker/directory creation times at least 30 seconds before the current OS boot. It may proceed immediately after sign-in once Windows uptime is measurable. The original lock directory is atomically **moved intact**, never deleted, into a new uniquely named private `owner-repairs` evidence directory with intent and outcome receipts. Only then does a new writer acquire its own atomic lock. Authenticated root status reports `priorBootLockRecovered` when applicable.
+
+If any proof is missing, incomplete or uncertain, it fails closed and retains the writer lease. The rc.14 core endpoint still starts and ordinary tools remain available even when an optional index cannot start. Existing databases are not reset, and no user/application write is ever replayed. This change is limited to a *provably older Windows boot*: an abandoned **same-boot** writer still requires manual reconciliation. OS clock anomalies, incompatible filesystems or hostile concurrent filesystem changes remain out of scope for automatic repair.
 
 ## Preserved guarantees
 

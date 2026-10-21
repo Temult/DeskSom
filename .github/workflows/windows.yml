@@ -53,7 +53,7 @@ jobs:
       - name: Native SQLite startup, cancellation, ownership and health regressions
         shell: pwsh
         run: |
-          node --test --test-concurrency=1 filename-query.test.mjs index-resilience.test.mjs scripts/tests/index-control.test.mjs scripts/tests/index-feature.test.mjs scripts/tests/index-stop-proof.test.mjs scripts/tests/index-r10-health.test.mjs scripts/tests/index-review-repair.test.mjs self-healing.release.test.mjs
+          node --test --test-concurrency=1 prior-boot-recovery.test.mjs filename-query.test.mjs index-resilience.test.mjs scripts/tests/index-control.test.mjs scripts/tests/index-feature.test.mjs scripts/tests/index-stop-proof.test.mjs scripts/tests/index-r10-health.test.mjs scripts/tests/index-review-repair.test.mjs self-healing.release.test.mjs
           if ($LASTEXITCODE) { throw 'Index source regressions failed' }
       - name: Native responsive-command helper on the GUI PowerShell host
         shell: pwsh

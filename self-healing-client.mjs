@@ -7,7 +7,7 @@ export function startSelfHealingIndex({root,database,privateState,periodicReconc
  const stopSignal=new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT);
  const stopFlag=new Int32Array(stopSignal);
  const startedAt=new Date().toISOString();
- let progress=null,lastProgressAt=null,errorCode=null;
+ let progress=null,lastProgressAt=null,errorCode=null,priorBootLockRecovered=false;
  const safeCode=value=>typeof value==='string'&&/^[A-Z0-9_]{1,80}$/.test(value)?value:'INDEX_WORKER_ERROR';
  const worker=new Worker(new URL('./self-healing-worker.mjs',import.meta.url),{
    workerData:{root,database,privateState,approvedRoot:root,periodicReconcileMs,fixtureOnly,stopSignal}
@@ -24,6 +24,7 @@ export function startSelfHealingIndex({root,database,privateState,periodicReconc
  worker.on('message',m=>{
   if(m.event){
    if(faulted||closed||stopRequested)return;
+   if(m.event==='PRIOR_BOOT_LEASE_RECOVERED')priorBootLockRecovered=true;
    if(m.event==='INDEX_PROGRESS'){
     const p=m.progress??{};
     progress={phase:safeCode(p.phase),elapsedMs:Math.max(0,Number(p.elapsedMs)||0),
@@ -116,7 +117,7 @@ export function startSelfHealingIndex({root,database,privateState,periodicReconc
   return stopPromise;
  }
  return {call,stop,whenReady,
-   snapshot:()=>({state:latest,startedAt,lastProgressAt,errorCode,progress:progress?{...progress}:null}),
+   snapshot:()=>({state:latest,startedAt,lastProgressAt,errorCode,priorBootLockRecovered,progress:progress?{...progress}:null}),
    ...(fixtureOnly ? {terminateForFixture:()=>worker.terminate()} : {}),
    get latest(){return latest}};
 }
