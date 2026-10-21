@@ -62,6 +62,8 @@ jobs:
           if ($LASTEXITCODE) { throw 'UI command regressions failed' }
           pwsh.exe -NoProfile -NonInteractive -File scripts/tests/index-status-probe.test.ps1
           if ($LASTEXITCODE) { throw 'Owner status-probe regressions failed' }
+          powershell.exe -NoProfile -NonInteractive -STA -File scripts/tests/wizard-navigation-dpi.test.ps1
+          if ($LASTEXITCODE) { throw 'Scaled wizard navigation overlap regression failed' }
 # These jobs do not install or activate DeskSom, configure a tunnel, or claim
 # genuine ChatGPT or normal-user installed-lifecycle acceptance. Full local
 # broker tests use the pinned prepared engine in a separate maintainer runtime.

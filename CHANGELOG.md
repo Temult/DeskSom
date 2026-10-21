@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-rc.14 visual polish: scaled wizard navigation
+
+The first real painted WinForms preview at 200% display scaling revealed that the Setup wizard's dynamically relocated Back button was using unscaled pixel positions after the rest of the window had been scaled. It could overlap the folder field or ChatGPT setup controls. Fix dynamic positioning for all three steps and add an explicit footer/content/button collision regression, included in installer qualification and Windows CI. No service, tunnel or credential change is required.
+
 ## 0.2.0-rc.14 follow-up: complete owner inspection controls and measure performance
 
 Add approved inspection enable/disable, revision-bound restart confirmation and guarded rollback. Only the local broker restarts; indexing, tunnel and credentials are preserved. Missing optional Git or a missing selected index root no longer prevents core access. The public installer still defaults optional tools off.

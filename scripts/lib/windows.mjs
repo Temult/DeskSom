@@ -145,6 +145,8 @@ export class WindowsPlatform {
       ['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/ui-command.test.ps1')],{timeout:30000});
     await this.native(state,'high-dpi-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/gui-dpi.test.ps1')],{timeout:30000});
     await this.native(state,'wizard-first-start-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/wizard-startup.test.ps1')],{timeout:45000});
+    await this.native(state,'wizard-navigation-dpi-tests',state.environment.windowsPowerShell,
+      ['-NoProfile','-NonInteractive','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/wizard-navigation-dpi.test.ps1')],{timeout:30000});
     await this.native(state,'wizard-completion-tests',state.environment.windowsPowerShell,['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/gui-completion.test.ps1')],{timeout:45000});
     await this.native(state,'chatgpt-connection-guide-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/chatgpt-connection-guide.test.ps1')],{timeout:30000});
     const target=path.join(state.runtimeRoot,'ACCEPTANCE.json');

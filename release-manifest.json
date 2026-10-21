@@ -14,8 +14,8 @@
     },
     {
       "path": ".github/workflows/windows.yml",
-      "bytes": 3394,
-      "sha256": "3928409b5e8d13d267029e172d7dabdd9bcdd830656e7034b950b16b1fba0d96"
+      "bytes": 3594,
+      "sha256": "d8147fa9b27dab64b4a8e823545a17dce1835e0f5abca6d0ef3cbd281c32b576"
     },
     {
       "path": ".gitignore",
@@ -39,8 +39,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 12086,
-      "sha256": "fb249bae5d4ca9f6d5299b83d0e6f6d4cabaa175e0388ff4fffb9843fd986ded"
+      "bytes": 12629,
+      "sha256": "08d4f1071e043548219ac183160d8b5b5342f34d9e4d44d6eddbe79c9638910d"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -89,8 +89,8 @@
     },
     {
       "path": "Start-DeskSom-GUI.ps1",
-      "bytes": 23352,
-      "sha256": "3c44c180801cb26df3faaae9b5f024a9690cd29e5a00c8f8379e0aef0bbf271e"
+      "bytes": 24716,
+      "sha256": "ede4a461d3be09a69e4dd0ca33dc7b35627964a0a5c3f1251be0351a3c61fc8f"
     },
     {
       "path": "Start-DeskSom.cmd",
@@ -189,8 +189,8 @@
     },
     {
       "path": "docs/QUALIFICATION.md",
-      "bytes": 6971,
-      "sha256": "ffd428e663aaff443b607e8fd3d8002c1394538060cc6a39aacb9823f08ebb03"
+      "bytes": 7843,
+      "sha256": "7183621507f9af4d2bec7a2b46e2a8e0cf30ec5d11d5ecfd7de062d05bf2810a"
     },
     {
       "path": "docs/READINESS_AND_RECOVERY.md",
@@ -569,8 +569,8 @@
     },
     {
       "path": "scripts/lib/windows.mjs",
-      "bytes": 13358,
-      "sha256": "2bf4cba75fc622387d4b49fdcdf594b5c1e1255e08050b1734554bc50b96699d"
+      "bytes": 13601,
+      "sha256": "19129244ea528bbef739d51bf160a51abc5a9bbf7efd1be5148457eba00bc752"
     },
     {
       "path": "scripts/tests/chatgpt-connection-guide.test.ps1",
@@ -671,6 +671,11 @@
       "path": "scripts/tests/windows-helper.test.ps1",
       "bytes": 5501,
       "sha256": "a62cfac4b8ebc6295c873251a0023ab575d234dfa1a0f530c24563f25d868a7a"
+    },
+    {
+      "path": "scripts/tests/wizard-navigation-dpi.test.ps1",
+      "bytes": 1630,
+      "sha256": "415eb9dfd4576ca8023521cd01ae44e1a4186335d190ba231b2038c013e20011"
     },
     {
       "path": "scripts/tests/wizard-startup.test.ps1",

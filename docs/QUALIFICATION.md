@@ -6,6 +6,10 @@ This is the **0.2.0-rc.14 development candidate**. It combines the rc.13 R3 sour
 
 The current test effort is maintainer verification, not an independent external audit. Earlier unresolved independent dynamic reviews remain historical evidence gaps, not retroactive passes. Public rc.12 downloads retain their original hashes; no rc.14 binary installer has been qualified by this document.
 
+## Painted-preview visual check and navigation regression
+
+An instrumented *disposable copy* of the actual WinForms setup and control-panel sources was rendered with Windows PowerShell 5.1 at the observed 200% display scale. The first painted preview found a genuine wizard navigation defect: Show-Page reset Back to unscaled coordinates after the form was scaled. Earlier checks examined only offscreen bounds and therefore missed the overlap. The candidate fixes the dynamic position and now checks all three steps for footer placement, expected scaled coordinates, and collisions with page content, dividers, Next and Finish. The first and corrected images are retained privately for comparison. No GUI clicks or service operations were automated by the fixture. The owner has not yet performed a manual visual acceptance of an actually installed task-based instance.
+
 ## Historical initial rc.14 evidence categories
 
 | Check | Scope and status |
