@@ -1,0 +1,45 @@
+{
+  "schema": "desksom.public-qualification/v1",
+  "version": "0.2.0-rc.15",
+  "sourceCommit": "de10011818bb8345929b05df411377db1e418b8d",
+  "engine": "0.3.0",
+  "sdk": "1.32.1",
+  "tunnelClient": "0.0.16",
+  "sourceFingerprint": "3e6a9adbbca23ba5e0ae23308708f8822fef4985adc5ba93c8f8f7f694405de0",
+  "manifestSha256": "c7b0d25e6dc55290246082f1d53830fa24c8ff098ca8a7d861044a03b617ee6c",
+  "portableSha256": "efde6022692f7ae593236ee286bac2fe3b864e5bb611379449e27a89250476a0",
+  "sourceFiles": 161,
+  "zipEntries": 162,
+  "nodeTests": {
+    "total": 180,
+    "passed": 179,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "Windows file-symlink permission unavailable"
+  },
+  "nativeGroupsPassed": 12,
+  "wizardNavigationPassed": true,
+  "engineAcceptancePassed": 26,
+  "installedLifecycleStepsPassed": 8,
+  "installedLifecycleStepNames": [
+    "initial-installed-identity-and-deep-file-roundtrip",
+    "repeat-approved-install-preserves-identity",
+    "owner-enable-project-inspection",
+    "owner-enable-index-and-write-through-search",
+    "clean-stop-keeps-data-and-restart-changes-boot",
+    "isolated-task-abrupt-stop-and-prior-boot-recovery",
+    "missing-owned-task-restoration-preserves-identity-and-index",
+    "final-deep-verification-and-park-test-instance"
+  ],
+  "defaultChatGPTAcceptance": true,
+  "productionAuditFindings": 0,
+  "crashTest": {
+    "pilotProcessActuallyStopped": true,
+    "previousBootTimestampsSimulated": true,
+    "wholeComputerRestarted": false
+  },
+  "independentExternalAudit": false,
+  "secondMachineAcceptance": false,
+  "binaryExeIncluded": false,
+  "at": "2026-10-21T16:32:21.491Z"
+}

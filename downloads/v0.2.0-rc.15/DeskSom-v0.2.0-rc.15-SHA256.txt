@@ -1,0 +1,3 @@
+efde6022692f7ae593236ee286bac2fe3b864e5bb611379449e27a89250476a0  DeskSom-v0.2.0-rc.15-portable.zip
+86e8fa1c0b0015ce5efa2d00ae41aa0af9cbe74c9e9baa8dd134cda8428eba4d  DeskSom-v0.2.0-rc.15-QUALIFICATION.json
+d02b6d292c17807d10136c548d01cfa116fb30a37878e161b7765dabcfe5f3c3  DeskSom-v0.2.0-rc.15-RELEASE-NOTES.md
