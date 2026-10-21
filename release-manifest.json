@@ -223,6 +223,11 @@
       "sha256": "28745180a13cf4eac25cf0fa7ec9839dba952d7d482dede57a189eaa255c6809"
     },
     {
+      "path": "docs/UPSTREAM_030_ASSESSMENT.md",
+      "bytes": 4700,
+      "sha256": "a6f148da2aecb789b3680d94836c8bfca1041fb4a1321f8a64232c6b10cb522a"
+    },
+    {
       "path": "docs/UPSTREAM_SECURITY_REVIEW.md",
       "bytes": 3357,
       "sha256": "cf9521d20a1d3338816a35c504e48c8775f6e0d0be447bbddb1d09917350ce8c"
