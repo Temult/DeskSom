@@ -1,0 +1,64 @@
+name: Publish DeskSom v0.2.0-rc.15 portable prerelease
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'downloads/v0.2.0-rc.15/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout publication and qualified tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity and archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'v0.2.0-rc.15^{}')" = 'de10011818bb8345929b05df411377db1e418b8d'
+          cd downloads/v0.2.0-rc.15
+          sha256sum -c DeskSom-v0.2.0-rc.15-SHA256.txt
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          source='de10011818bb8345929b05df411377db1e418b8d'
+          with zipfile.ZipFile('DeskSom-v0.2.0-rc.15-portable.zip') as archive:
+              manifest=archive.read('release-manifest.json')
+              assert manifest==subprocess.check_output(['git','show',source+':release-manifest.json'])
+              data=json.loads(manifest)
+              expected={entry['path'] for entry in data['files']}|{'release-manifest.json'}
+              assert len(data['files'])==161 and set(archive.namelist())==expected and len(archive.infolist())==162
+              for entry in data['files']:
+                  payload=archive.read(entry['path'])
+                  assert len(payload)==entry['bytes'] and hashlib.sha256(payload).hexdigest()==entry['sha256']
+                  assert payload==subprocess.check_output(['git','show',source+':'+entry['path']])
+          print('Exact tagged-source archive verified')
+          PY
+      - name: Create new immutable-by-policy prerelease assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          TAG='v0.2.0-rc.15'
+          BASE='downloads/v0.2.0-rc.15'
+          if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo '::error::Release already exists; inspect instead of replacing assets.'
+            exit 1
+          fi
+          gh release create "$TAG" \
+            "$BASE/DeskSom-v0.2.0-rc.15-portable.zip" \
+            "$BASE/DeskSom-v0.2.0-rc.15-QUALIFICATION.json" \
+            "$BASE/DeskSom-v0.2.0-rc.15-RELEASE-NOTES.md" \
+            "$BASE/DeskSom-v0.2.0-rc.15-SHA256.txt" \
+            --repo "$GH_REPO" --verify-tag --prerelease \
+            --title 'DeskSom v0.2.0-rc.15 (portable prerelease)' \
+            --notes-file "$BASE/DeskSom-v0.2.0-rc.15-RELEASE-NOTES.md"

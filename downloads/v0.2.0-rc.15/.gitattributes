@@ -1,0 +1,2 @@
+# Portable archives must retain their exact qualified bytes.
+*.zip binary
