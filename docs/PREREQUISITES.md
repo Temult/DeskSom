@@ -1,3 +1,7 @@
+## rc.14 optional-feature requirement
+
+Core DeskSom retains Node.js 22+. Native filename indexing separately requires Node.js 25+ and is exercised on 25.2.1 in this candidate. A newer major is not automatically qualified. The installer test runner explicitly selects core versus index suites; it does not silently claim index coverage on Node 22. Project inspection also needs a trusted Git executable and still lacks a general installed-owner activation UI.
+
 # Prerequisites and the first connection
 
 This release targets **Windows x64**, PowerShell **7.4+**, Node.js **22+** with npm, and a normal, non-elevated interactive Windows user. These are the enforced baseline, not a claim that every supported version has been separately tested. Read the release qualification report for the actual tested environment.

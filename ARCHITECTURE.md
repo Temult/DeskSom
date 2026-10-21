@@ -1,3 +1,7 @@
+## rc.14 optional feature lifecycle
+
+One authenticated broker fronts the pinned engine. Optional filename indices run in worker threads, with per-root private SQLite databases and explicit writer ownership; project inspection uses bounded read-only Git subprocesses, not another service. Core endpoint readiness is independent of optional index health. Detailed health is authenticated. Cooperative scan cancellation and explicit stop acknowledgment preserve transactional and ownership checks without taking unrelated tools offline for an index-only error. See docs/READINESS_AND_RECOVERY.md for the exact readiness contract and limits.
+
 # Architecture
 
     Human: Start-DeskSom.cmd             Agent: Preflight / JSON CLI

@@ -17,7 +17,7 @@ test('one page per setup step, shared Back/Next navigation and fixed footer',asy
 });
 test('wizard preserves permissions, source check, consent and explicitly approved install',async()=>{
  const s=await wizard();
- for(const word of ['Check-Release','Get-FileHash','Check-Prerequisites','--approve','--accept-shell-access',
+ for(const word of ['Check-Release','[Security.Cryptography.SHA256]::Create()','Check-Prerequisites','--approve','--accept-shell-access',
   'Install DeskSom with this access?','terminal commands','Start-Process','--json']){
   assert.ok(s.includes(word),word);
  }

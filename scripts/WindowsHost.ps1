@@ -122,7 +122,7 @@ function Ds-Probe($State) {
     $r=Ds-Rpc $State 'tools/call' @{name='desksom_status';arguments=@{}}
     if($r.status -ne 200 -or $r.body.ContainsKey('error') -or -not $r.body.result.ContainsKey('structuredContent')){return @{ready=$false;reason='INVALID_STATUS_RESPONSE'}}
     $v=$r.body.result.structuredContent
-    $out=@{};foreach($key in @('host','version','instance','installationId','sourceFingerprint','bootId','ready','activeCalls','upstreamVersion','mode','allowedFileRoots','rootsRevision','statistics')){if($v.ContainsKey($key)){$out[$key]=$v[$key]}}
+    $out=@{};foreach($key in @('host','version','instance','installationId','sourceFingerprint','bootId','ready','activeCalls','upstreamVersion','mode','allowedFileRoots','rootsRevision','statistics','readinessContract','indexWorkerReady','allFeaturesReady','indexStatus','projectInspection')){if($v.ContainsKey($key)){$out[$key]=$v[$key]}}
     return $out
   }catch{return @{ready=$false;reason='LOCAL_UNREACHABLE_OR_UNAUTHENTICATED'}}
 }
@@ -283,7 +283,29 @@ function Ds-VerifyMcp($State,[bool]$Exercise) {
     $discovery.body.result.ttlMs -ne 0 -or $discovery.body.result.cacheScope -ne 'private') {Ds-Fail 'DISCOVERY_FAILED' 'Modern discovery failed validation.'}
   $checks.Add(@{id='modern_discovery';status='PASS'})
   $catalog=Ds-Rpc $State 'tools/list'
-  if($catalog.status -ne 200 -or $catalog.body.ContainsKey('error') -or $catalog.body.result.tools.Count -ne 25){Ds-Fail 'TOOL_CATALOG_FAILED' 'The tool catalog was not the qualified 25-tool catalog.'}
+  if($catalog.status -ne 200 -or $catalog.body.ContainsKey('error') -or -not $catalog.body.ContainsKey('result')){
+    Ds-Fail 'TOOL_CATALOG_FAILED' 'The local broker catalog could not be read.'
+  }
+  $indexed=($State.ContainsKey('indexProfile') -and $State.indexProfile.enabled -eq $true)
+  $inspection=($State.ContainsKey('projectInspectEnabled') -and $State.projectInspectEnabled -is [bool] -and $State.projectInspectEnabled -eq $true)
+  # Exact qualified MCP names, not merely a count. A different 25-name set is drift.
+  $expectedBase=@('desksom_status','get_config','read_file','read_multiple_files','write_file','write_pdf',
+    'create_directory','list_directory','move_file','start_search','get_more_search_results','stop_search',
+    'list_searches','get_file_info','edit_block','start_process','read_process_output','interact_with_process',
+    'force_terminate','list_sessions','list_processes','kill_process','get_usage_stats','get_recent_tool_calls','get_prompts')
+  $tools=@($catalog.body.result.tools)
+  $actualNames=@($tools|ForEach-Object {$_.name})
+  $expectedNames=@($expectedBase)
+  if($indexed){$expectedNames+=@('find_files_fast')}
+  if($inspection){$expectedNames+=@('inspect_project')}
+  $unique=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  $validNames=($actualNames.Count -eq $expectedNames.Count)
+  foreach($name in $actualNames){
+    if($name -isnot [string] -or -not $unique.Add([string]$name) -or $name -cnotin $expectedNames){$validNames=$false}
+  }
+  if(-not $validNames -or $unique.Count -ne $expectedNames.Count){
+    Ds-Fail 'TOOL_CATALOG_FAILED' 'The broker catalog names or uniqueness differ from the qualified exact 25/26-tool profile.'
+  }
   $text=$catalog.body.result|ConvertTo-Json -Depth 30 -Compress
   if($text -match 'ui://desktop-commander/'){Ds-Fail 'UNSERVED_UI_REFERENCE' 'The catalog advertises unsupported UI resources.'}
   $checks.Add(@{id='tool_catalog_and_no_unserved_ui';status='PASS'})
@@ -315,8 +337,53 @@ function Ds-VerifyMcp($State,[bool]$Exercise) {
   }
   return @{passed=$true;checks=$checks.ToArray();exercise=$Exercise;chatGPTVerified=$false}
 }
+function Ds-QuiesceOwnerIdentity($Probe,$State) {
+  # The index may legitimately be STALE while the same authenticated broker
+  # and its writer are still alive. Ready=false is not a foreign process.
+  if($null -eq $Probe -or $null -eq $State -or $Probe -isnot [System.Collections.IDictionary]){return $false}
+  foreach($field in @('host','version','instance','installationId','sourceFingerprint','bootId','activeCalls')){
+    if(-not $Probe.Contains($field)){return $false}
+  }
+  return ($Probe.host -ceq $State.plan.binding.host -and
+    $Probe.version -ceq $State.plan.version -and
+    $Probe.instance -ceq $State.plan.instance -and
+    $Probe.installationId -ceq $State.installationId -and
+    $Probe.sourceFingerprint -ceq $State.plan.sourceFingerprint -and
+    $Probe.bootId -match '^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$' -and
+    $null -ne $Probe.activeCalls -and [int]$Probe.activeCalls -eq 0)
+}
 function Ds-StopService($State,[string]$Kind) {
   $expected=Ds-ExpectedTask $State $Kind;$task=Ds-TaskGet $expected.name;Ds-AssertTask $task $expected
+  # Every local broker stop must atomically close MCP admission. The
+  # previous idle probe is not sufficient across an asynchronous owner Apply.
+  # Never modify a stale or unknown writer lease.
+  if($Kind -eq 'local'){
+    $indexed=($State.ContainsKey('indexProfile') -and $State.indexProfile.enabled -eq $true)
+    $observed=Ds-Probe $State
+    if(-not (Ds-QuiesceOwnerIdentity $observed $State)){
+      Ds-Fail 'BROKER_QUIESCE_IDENTITY' 'Local service is not the verified idle owner broker.'
+    }
+    $headers=@{Authorization=('Bearer '+(Ds-Secret (Join-Path $State.plan.stateRoot 'http-token.dpapi')))}
+    $payload=@{installationId=$State.installationId;bootId=$observed.bootId}|ConvertTo-Json -Compress
+    try{
+      $response=Invoke-WebRequest -Uri ('http://127.0.0.1:'+$State.plan.port+'/index-quiesce') -Method Post -Headers $headers -ContentType 'application/json' -Body $payload -SkipHttpErrorCheck -TimeoutSec 10
+      if([int]$response.StatusCode -ne 200){Ds-Fail 'BROKER_QUIESCE_FAILED' 'Authenticated idle shutdown was not confirmed; leave service running.'}
+      $ack=$response.Content|ConvertFrom-Json -AsHashtable
+      $expectedStatus=if($indexed){'INDEX_QUIESCED'}else{'BROKER_QUIESCED'}
+      if($ack.status -cne $expectedStatus -or $ack.bootId -cne $observed.bootId -or
+        $ack.installationId -cne $State.installationId -or
+        $ack.indexEnabled -cne $indexed -or $ack.writerLeaseReleased -cne $indexed){
+        Ds-Fail 'BROKER_QUIESCE_MISMATCH' 'Shutdown response was not bound to this boot and index profile.'
+      }
+    }finally{$headers.Remove('Authorization');Remove-Variable payload -ErrorAction SilentlyContinue}
+    if($indexed){
+      foreach($item in @($State.indexProfile.indices)){
+        if(Test-Path -LiteralPath ($item.database+'.writer-lock')){
+          Ds-Fail 'INDEX_WRITER_LEASE_RETAINED' 'The writer lock remains after shutdown. Do not stop/restart or remove the lock.'
+        }
+      }
+    }
+  }
   $roots=@(Ds-Processes $State $Kind);$all=@(Get-CimInstance Win32_Process)
   $targets=[Collections.Generic.List[object]]::new();$ids=[Collections.Generic.HashSet[uint32]]::new();$queue=[Collections.Generic.Queue[object]]::new()
   foreach($p in $roots){$queue.Enqueue($p)}

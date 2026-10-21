@@ -6,7 +6,7 @@ try {
   const release=await loadRelease(root);
   const forbidden=/(^|\/)(node_modules|bin|logs|download-cache|npm-cache|\.git)(\/|$)|(^|\/)(settings|connection|install|dependencies)\.json$|\.(dpapi|pem|pfx|key|log|zip|xml)$/i;
   for(const entry of release.manifest.files){
-    if(forbidden.test(entry.path))throw new Error('Private artifact in source manifest');
+    if(forbidden.test(entry.path)||entry.path.startsWith('downloads/'))throw new Error('Private or historical binary artifact in source manifest');
   }
   for(const required of ['AGENTS.md','AI_INSTALL.md','README.md','Start-DeskSom.cmd','scripts/cli.mjs','scripts/lib/install-core.mjs']){
     if(!release.manifest.files.some(entry=>entry.path===required))throw new Error('Required AI-first entry point absent');

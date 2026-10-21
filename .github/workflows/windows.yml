@@ -16,18 +16,54 @@ jobs:
         run: |
           node scripts/Check-Release.mjs
           if ($LASTEXITCODE) { throw 'Source manifest check failed' }
-      - name: Pure installer and security unit tests
+      - name: Core policy and installer unit tests on Node 22
         shell: pwsh
         run: |
-          node --test scripts/tests/installer.test.mjs security.test.mjs
-          if ($LASTEXITCODE) { throw 'Unit tests failed' }
+          node --test scripts/tests/installer.test.mjs security.test.mjs file-operation-guard.test.mjs concurrency.test.mjs scripts/tests/test-selection.test.mjs scripts/tests/inspection-control.test.mjs
+          if ($LASTEXITCODE) { throw 'Core unit tests failed' }
+      - name: Install exact dependencies without lifecycle scripts for parser checks
+        shell: pwsh
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          if ($LASTEXITCODE) { throw 'Pinned dependency installation failed' }
+          node --test markdown-patch.test.mjs
+          if ($LASTEXITCODE) { throw 'Markdown patch regressions failed' }
       - name: Parse all PowerShell source
         shell: pwsh
         run: |
-          foreach ($f in Get-ChildItem -Recurse -File -Filter '*.ps1') {
+          foreach ($name in (git ls-files '*.ps1')) {
+            $f=Get-Item -LiteralPath $name
             $tokens=$null; $errors=$null
             $null=[Management.Automation.Language.Parser]::ParseFile($f.FullName,[ref]$tokens,[ref]$errors)
             if ($errors.Count) { throw ('PowerShell parse failed: '+$f.FullName) }
           }
-# Full installation/lifecycle qualification requires a separate normal-user
-# Windows test. This workflow does not claim hosted-runner service deployment.
+  index-tests:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # reviewed v4 ref
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # reviewed v4 ref
+        with:
+          node-version: '25.2.1'
+      - name: Verify source manifest
+        shell: pwsh
+        run: |
+          node scripts/Check-Release.mjs
+          if ($LASTEXITCODE) { throw 'Source manifest check failed' }
+      - name: Native SQLite startup, cancellation, ownership and health regressions
+        shell: pwsh
+        run: |
+          node --test --test-concurrency=1 prior-boot-recovery.test.mjs filename-query.test.mjs index-resilience.test.mjs scripts/tests/index-control.test.mjs scripts/tests/index-feature.test.mjs scripts/tests/index-stop-proof.test.mjs scripts/tests/index-r10-health.test.mjs scripts/tests/index-review-repair.test.mjs self-healing.release.test.mjs
+          if ($LASTEXITCODE) { throw 'Index source regressions failed' }
+      - name: Native responsive-command helper on the GUI PowerShell host
+        shell: pwsh
+        run: |
+          powershell.exe -NoProfile -NonInteractive -File scripts/tests/ui-command.test.ps1
+          if ($LASTEXITCODE) { throw 'UI command regressions failed' }
+          pwsh.exe -NoProfile -NonInteractive -File scripts/tests/index-status-probe.test.ps1
+          if ($LASTEXITCODE) { throw 'Owner status-probe regressions failed' }
+          powershell.exe -NoProfile -NonInteractive -STA -File scripts/tests/wizard-navigation-dpi.test.ps1
+          if ($LASTEXITCODE) { throw 'Scaled wizard navigation overlap regression failed' }
+# These jobs do not install or activate DeskSom, configure a tunnel, or claim
+# genuine ChatGPT or normal-user installed-lifecycle acceptance. Full local
+# broker tests use the pinned prepared engine in a separate maintainer runtime.

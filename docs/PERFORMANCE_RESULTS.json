@@ -1,0 +1,176 @@
+{
+  "schema": "desksom.performance-public/v1",
+  "observedAt": "2026-10-21T02:03:39.495Z",
+  "node": "25.2.1",
+  "sqlite": "3.50.4",
+  "platform": "Windows x64",
+  "baselineCommit": "ec7da59e46b255f1cceb76d6ff1b859cc3a37005",
+  "fixture": {
+    "selectedRoots": 3,
+    "filesPerRoot": 10000,
+    "gitTrackedFiles": 4001
+  },
+  "paired": {
+    "rareSearch": {
+      "before": {
+        "samples": 60,
+        "medianMs": 3.539700000000039,
+        "p95Ms": 4.8315000000000055,
+        "maxMs": 5.470199999999977
+      },
+      "after": {
+        "samples": 60,
+        "medianMs": 2.6743000000000166,
+        "p95Ms": 3.6847999999999956,
+        "maxMs": 4.194100000000049
+      }
+    },
+    "missingSearch": {
+      "before": {
+        "samples": 60,
+        "medianMs": 3.1995999999999185,
+        "p95Ms": 4.177599999999984,
+        "maxMs": 4.470700000000079
+      },
+      "after": {
+        "samples": 60,
+        "medianMs": 2.0403000000001157,
+        "p95Ms": 2.7380000000000564,
+        "maxMs": 3.357200000000148
+      }
+    },
+    "commonSearch": {
+      "before": {
+        "samples": 60,
+        "medianMs": 2.875,
+        "p95Ms": 3.8333999999999833,
+        "maxMs": 4.380199999999832
+      },
+      "after": {
+        "samples": 60,
+        "medianMs": 2.9661000000000968,
+        "p95Ms": 4.038700000000063,
+        "maxMs": 4.127899999999954
+      }
+    },
+    "shortSearch": {
+      "before": {
+        "samples": 60,
+        "medianMs": 2.7472000000000207,
+        "p95Ms": 3.786299999999983,
+        "maxMs": 4.37279999999987
+      },
+      "after": {
+        "samples": 60,
+        "medianMs": 2.8216999999999643,
+        "p95Ms": 3.8493000000000848,
+        "maxMs": 4.1969000000001415
+      }
+    },
+    "concurrentSearch12": {
+      "before": {
+        "samples": 10,
+        "medianMs": 41.135299999999916,
+        "p95Ms": 55.572000000000116,
+        "maxMs": 55.572000000000116
+      },
+      "after": {
+        "samples": 10,
+        "medianMs": 24.625500000000102,
+        "p95Ms": 29.65039999999999,
+        "maxMs": 29.65039999999999
+      }
+    },
+    "inspectionWarm": {
+      "before": {
+        "samples": 15,
+        "medianMs": 132.6144000000004,
+        "p95Ms": 146.01889999999912,
+        "maxMs": 146.01889999999912
+      },
+      "after": {
+        "samples": 15,
+        "medianMs": 133.1842999999999,
+        "p95Ms": 144.04520000000002,
+        "maxMs": 144.04520000000002
+      }
+    },
+    "concurrentInspection12": {
+      "before": {
+        "samples": 3,
+        "medianMs": 1195.6458000000002,
+        "p95Ms": 1205.7705000000005,
+        "maxMs": 1205.7705000000005
+      },
+      "after": {
+        "samples": 3,
+        "medianMs": 1209.0192000000006,
+        "p95Ms": 1222.4853000000003,
+        "maxMs": 1222.4853000000003
+      }
+    },
+    "eventLoopP95BeforeMs": 294.125567,
+    "eventLoopP95AfterMs": 39.911423
+  },
+  "loopback": {
+    "coreStartupMs": 1273.0023,
+    "allIndicesReadyMs": 1711.8273,
+    "statusWhileWaiting": {
+      "samples": 14,
+      "medianMs": 3.9327999999998156,
+      "p95Ms": 6.1400000000001,
+      "maxMs": 6.1400000000001
+    },
+    "status": {
+      "samples": 40,
+      "medianMs": 0.9719000000000051,
+      "p95Ms": 1.2389000000000578,
+      "maxMs": 1.5142000000000735
+    },
+    "read": {
+      "samples": 20,
+      "medianMs": 65.64409999999998,
+      "p95Ms": 72.0295000000001,
+      "maxMs": 72.81629999999996
+    },
+    "indexSearch": {
+      "samples": 40,
+      "medianMs": 7.367499999999836,
+      "p95Ms": 9.517700000000332,
+      "maxMs": 10.790899999999965
+    },
+    "inspection": {
+      "samples": 10,
+      "medianMs": 155.39270000000033,
+      "p95Ms": 182.87300000000005,
+      "maxMs": 182.87300000000005
+    },
+    "writeAndImmediateSearch": {
+      "samples": 10,
+      "medianMs": 70.38959999999952,
+      "p95Ms": 82.02790000000005,
+      "maxMs": 82.02790000000005
+    },
+    "externalCreateVisible": {
+      "samples": 10,
+      "medianMs": 19.616899999999987,
+      "p95Ms": 22.75250000000051,
+      "maxMs": 22.75250000000051
+    },
+    "mixedConcurrentBatch": {
+      "samples": 10,
+      "medianMs": 264.2455,
+      "p95Ms": 300.14729999999963,
+      "maxMs": 300.14729999999963
+    },
+    "acknowledgedQuiesceMs": 32.70220000000154
+  },
+  "indexReadyAtFirstStatus": false,
+  "qualifiers": [
+    "Same-host maintainer measurements, not an independent benchmark.",
+    "Alternating same-process A/B comparison, separate private indices over identical files.",
+    "Cold index means a new database, not flushed disk or operating-system caches.",
+    "Loopback timings are not remote ChatGPT latency.",
+    "Earlier load-sensitive runs remain in private evidence."
+  ]
+}

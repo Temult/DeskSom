@@ -131,10 +131,22 @@ export class WindowsPlatform {
   }
   prepareTunnel(state,policy){return this.helper('prepare-tunnel',{stateFile:path.join(state.plan.stateRoot,'install.json'),policy},180000);}
   async qualify(state) {
-    await this.native(state,'unit-tests',state.environment.node,['--test','--test-concurrency=1','security.test.mjs','modern.test.mjs','catalog.test.mjs','discovery.integration.test.mjs','scripts/tests/installer.test.mjs','scripts/tests/roots.test.mjs','scripts/tests/gui.test.mjs','scripts/tests/wizard.test.mjs'],{timeout:240000});
+    await this.native(state,'unit-tests',state.environment.node,[path.join(state.runtimeRoot,'scripts/Run-Tests.mjs')],{timeout:240000});
     await this.native(state,'windows-helper-tests',state.environment.pwsh,['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/windows-helper.test.ps1')],{timeout:60000});
+    // Native task-stop admission is a required installer gate for both
+    // currently-disabled and enabled index profiles.
+    await this.native(state,'local-stop-barrier-tests',state.environment.pwsh,
+      ['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/stop-all-local.test.ps1')],{timeout:60000});
+    await this.native(state,'unified-native-catalog-tests',state.environment.pwsh,
+      ['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/unified-native-catalog.test.ps1')],{timeout:60000});
+    await this.native(state,'index-status-probe-tests',state.environment.pwsh,
+      ['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/index-status-probe.test.ps1')],{timeout:30000});
+    await this.native(state,'ui-command-tests',state.environment.windowsPowerShell,
+      ['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/ui-command.test.ps1')],{timeout:30000});
     await this.native(state,'high-dpi-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/gui-dpi.test.ps1')],{timeout:30000});
     await this.native(state,'wizard-first-start-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/wizard-startup.test.ps1')],{timeout:45000});
+    await this.native(state,'wizard-navigation-dpi-tests',state.environment.windowsPowerShell,
+      ['-NoProfile','-NonInteractive','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/wizard-navigation-dpi.test.ps1')],{timeout:30000});
     await this.native(state,'wizard-completion-tests',state.environment.windowsPowerShell,['-NoProfile','-NonInteractive','-File',path.join(state.runtimeRoot,'scripts/tests/gui-completion.test.ps1')],{timeout:45000});
     await this.native(state,'chatgpt-connection-guide-tests',state.environment.windowsPowerShell,['-NoProfile','-STA','-File',path.join(state.runtimeRoot,'scripts/tests/chatgpt-connection-guide.test.ps1')],{timeout:30000});
     const target=path.join(state.runtimeRoot,'ACCEPTANCE.json');

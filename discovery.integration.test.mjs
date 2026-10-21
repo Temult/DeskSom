@@ -33,9 +33,11 @@ test('isolated broker reports a full catalog and supports actual writes', {timeo
  t.after(async ()=>{
   if(child.exitCode===null){child.kill();await Promise.race([
    new Promise(resolve=>child.once('exit',resolve)),new Promise(resolve=>setTimeout(resolve,2500))]);}
-  await fs.rm(temp,{force:true,recursive:true});
+  await fs.rm(temp,{force:true,recursive:true,maxRetries:20,retryDelay:150});
  });
- const startup=await Promise.race([ready,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Fixture startup timeout '+stderr)),60000))]);
+ let startupTimer;
+ const startup=await Promise.race([ready,new Promise((_,reject)=>{startupTimer=setTimeout(()=>reject(new Error('Fixture startup timeout '+stderr)),60000)})])
+  .finally(()=>clearTimeout(startupTimer));
  assert.match(startup.address,/^http:\/\/127\.0\.0\.1:\d+$/);
  async function invoke(method,params={},modern=true,auth=true){
   const headers={'Content-Type':'application/json','Accept':'application/json, text/event-stream'};

@@ -38,7 +38,15 @@ function Check-Release {
   if($f.path -match '(^/|\\|(^|/)\.\.(/|$)|:)'){throw 'Unsafe path in source manifest.'}
   $fp=Join-Path $root $f.path
   if(-not(Test-Path -LiteralPath $fp -PathType Leaf)){throw 'A release file is missing. Obtain a fresh ZIP.'}
-  if((Get-FileHash -LiteralPath $fp -Algorithm SHA256).Hash.ToLowerInvariant() -cne $f.sha256){
+  # Use framework-native SHA-256. Windows PowerShell 5.1 may intermittently fail
+  # to autoload Get-FileHash during first GUI startup. Streaming avoids memory spikes.
+  $hasher=[Security.Cryptography.SHA256]::Create()
+  try {
+   $stream=[IO.File]::OpenRead($fp)
+   try {$actual=[BitConverter]::ToString($hasher.ComputeHash($stream)).Replace('-','').ToLowerInvariant()}
+   finally {$stream.Dispose()}
+  }finally {$hasher.Dispose()}
+  if($actual -cne $f.sha256){
    throw 'Source files differ from the reviewed release. Download a fresh copy.'
   }
  }
@@ -151,7 +159,11 @@ function Show-Page([int]$number) {
  $stepIndicator.Text='Step '+$number+' of 3'
  $pageTitle.Text=@('Choose a folder ChatGPT can access','Review and install DeskSom','Connect ChatGPT')[$number-1]
  $btnBack.Enabled=($number -gt 1 -and -not $script:running -and -not $script:installed)
- $btnBack.Location=if($number -eq 3){[Drawing.Point]::new(383,347)}else{[Drawing.Point]::new(265,347)}
+ # Show-Page runs after the initial form scaling. Dynamic positions must be
+ # scaled explicitly, otherwise Back jumps into the content area at high DPI.
+ $backX=if($number -eq 3){383}else{265}
+ $btnBack.Location=[Drawing.Point]::new([int][math]::Round($backX*$script:uiScale),
+   [int][math]::Round(347*$script:uiScale))
  $btnNext.Visible=($number -ne 3)
  $btnClose.Text=if($number -eq 3){'Finish'}else{'Cancel'}
  $form.AcceptButton=if($number -eq 3){$btnClose}else{$btnNext}
@@ -438,16 +450,36 @@ if($StartupCheck){
     }
   }
   $titles=@()
+  $navigationCollisions=0
   foreach($n in @(1,2,3)){
     Show-Page $n
-    $titles+=@{number=$n;title=$pageTitle.Text;nextButton=if($n -eq 3){'HIDDEN'}else{$btnNext.Text};closeButton=$btnClose.Text;activePage=$script:page}
+    # The Back button is dynamically relocated by Show-Page after Scale().
+    # Checking only window bounds misses a button floating over page content.
+    $expectedX=if($n -eq 3){383}else{265}
+    $xCorrect=($btnBack.Left -eq [int][math]::Round($expectedX*$script:uiScale))
+    $yCorrect=($btnBack.Top -eq [int][math]::Round(347*$script:uiScale))
+    $overlapsContent=$btnBack.Bounds.IntersectsWith($pages[$n-1].Bounds)
+    $overlapsFooter=$btnBack.Bounds.IntersectsWith($footer.Bounds)
+    $overlapsButtons=$btnBack.Bounds.IntersectsWith($btnClose.Bounds) -or
+      ($btnNext.Visible -and $btnBack.Bounds.IntersectsWith($btnNext.Bounds))
+    $withinFooter=($btnBack.Top -ge $footer.Bottom -and
+      $btnBack.Bottom -le $form.ClientSize.Height)
+    if(-not $xCorrect -or -not $yCorrect -or $overlapsContent -or
+      $overlapsFooter -or $overlapsButtons -or -not $withinFooter){$navigationCollisions++}
+    $titles+=@{number=$n;title=$pageTitle.Text;nextButton=if($n -eq 3){'HIDDEN'}else{$btnNext.Text};
+      closeButton=$btnClose.Text;activePage=$script:page;
+      backButtonX=$btnBack.Left;backButtonY=$btnBack.Top;backButtonInFooter=$withinFooter}
   }
   Show-Page 1
   $screen=[Windows.Forms.Screen]::PrimaryScreen.WorkingArea
   $bounds=[ordered]@{windowWidth=$form.Width;windowHeight=$form.Height;availableWidth=$screen.Width;availableHeight=$screen.Height;
     footerButtonsEnd=$btnClose.Bottom;clientHeight=$form.ClientSize.Height;pageCount=$pages.Count;
-    offscreenControls=$within.Count;offscreenPageControls=$badChildren;pages=$titles}
-  if($within.Count -or $badChildren -or $form.Width -gt $screen.Width -or $form.Height -gt $screen.Height){throw ('Layout does not fit current display: '+($bounds|ConvertTo-Json -Compress -Depth 6))}
+    offscreenControls=$within.Count;offscreenPageControls=$badChildren;
+    navigationCollisionCount=$navigationCollisions;uiScale=$script:uiScale;pages=$titles}
+  if($within.Count -or $badChildren -or $navigationCollisions -or
+     $form.Width -gt $screen.Width -or $form.Height -gt $screen.Height){
+    throw ('Layout does not fit current display: '+($bounds|ConvertTo-Json -Compress -Depth 6))
+  }
   $bounds|ConvertTo-Json -Compress -Depth 6
 }else{
   [void]$form.ShowDialog()

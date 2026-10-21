@@ -3,6 +3,8 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {WindowsPlatform} from './lib/windows.mjs';
 import {listRoots,planRoots,applyRoots} from './lib/roots.mjs';
+import {listIndex,planIndex,applyIndex,rollbackIndex} from './lib/index-control.mjs';
+import {listInspection,planInspection,applyInspection,rollbackInspection} from './lib/inspection-control.mjs';
 import {preflight,install,status,repair,serviceControl,loadOwned,ensureTask,startOwned,taskDefinition,taskMatches,readState} from './lib/install-core.mjs';
 import {DeskSomError,fail,readJson,createJson,atomicJson,envelope,redactedError,now} from './lib/common.mjs';
 
@@ -14,8 +16,9 @@ export function parseArgs(argv) {
     'export-diagnostics':['state','out','json'],'enable-tunnel':['state','json'],
     'guard-configure':['state','json'],uninstall:['state','confirm-remove-tasks','json'],
     folders:['state','action','request','out','plan','approve','confirm-restart','json'],
-    tray:['state','action','json'],help:['json']};
-  const booleans=new Set(['json','accept-shell-access','prepare-only','deep','exercise','apply','enable','confirm-stop','confirm-remove-tasks','confirm-restart']);
+    inspection:['state','action','request','out','plan','approve','confirm-restart','confirm-rollback','json'],
+    tray:['state','action','json'],index:['state','action','request','out','plan','approve','confirm-restart','confirm-rollback','json'],help:['json']};
+  const booleans=new Set(['json','accept-shell-access','prepare-only','deep','exercise','apply','enable','confirm-stop','confirm-remove-tasks','confirm-restart','confirm-rollback']);
   if(!Object.hasOwn(allowed,command))fail('UNKNOWN_COMMAND','Use plan, install, status, verify, repair, start, stop, export-diagnostics, or help.');
   const args={};
   for(let i=0;i<rest.length;i++){
@@ -31,7 +34,7 @@ export function parseArgs(argv) {
 const requireArg=(args,key)=>{if(!args[key])fail('MISSING_ARGUMENT',`The --${key} argument is required.`);return args[key];};
 export async function run(argv,sourceRoot,platform=new WindowsPlatform(sourceRoot)) {
   const {command,args}=parseArgs(argv);
-  if(command==='help')return envelope('help',{status:'HELP',commands:['plan','install','status','verify','repair','start','stop','folders','export-diagnostics','uninstall'],documentation:'AI_INSTALL.md',notes:'No command accepts plaintext credentials. Use Configure-Tunnel.ps1 in a local owner terminal.'});
+  if(command==='help')return envelope('help',{status:'HELP',commands:['plan','install','status','verify','repair','start','stop','folders','index','inspection','export-diagnostics','uninstall'],documentation:'AI_INSTALL.md',notes:'No command accepts plaintext credentials. Use Configure-Tunnel.ps1 in a local owner terminal.'});
   if(command==='plan'){
     const result=await preflight(sourceRoot,await readJson(path.resolve(requireArg(args,'spec'))),platform);
     if(args.out)await createJson(path.resolve(args.out),result.plan);
@@ -45,6 +48,29 @@ export async function run(argv,sourceRoot,platform=new WindowsPlatform(sourceRoo
     if(args.action==='status')return envelope('tray',{status:'TRAY_STATUS',...(await platform.trayStatus(state))});
     if(args.action==='launch')return envelope('tray',{status:'TRAY_LAUNCH_REQUESTED',...(await platform.launchTray(state))});
     fail('INVALID_ARGUMENT','Use tray --action status or launch.',undefined,20);
+  }
+  if(command==='inspection'){
+    if(args.action==='list')return listInspection(sourceRoot,stateRoot,platform);
+    if(args.action==='plan'){
+      const result=await planInspection(sourceRoot,stateRoot,await readJson(path.resolve(requireArg(args,'request'))),platform);
+      if(args.out)await createJson(path.resolve(args.out),result.proposal);
+      return result;
+    }
+    if(args.action==='apply')return applyInspection(sourceRoot,stateRoot,await readJson(path.resolve(requireArg(args,'plan'))),requireArg(args,'approve'),!!args['confirm-restart'],platform);
+    if(args.action==='rollback')return rollbackInspection(sourceRoot,stateRoot,!!args['confirm-rollback'],platform);
+    fail('INVALID_ARGUMENT','Use inspection --action list, plan, apply or rollback.');
+  }
+  if(command==='index'){
+    if(args.action==='list')return listIndex(sourceRoot,stateRoot,platform);
+    if(args.action==='plan'){
+      const outcome=await planIndex(sourceRoot,stateRoot,await readJson(path.resolve(requireArg(args,'request'))),platform);
+      if(args.out)await createJson(path.resolve(args.out),outcome.proposal);
+      return outcome;
+    }
+    if(args.action==='apply')return applyIndex(sourceRoot,stateRoot,await readJson(path.resolve(requireArg(args,'plan'))),
+      requireArg(args,'approve'),!!args['confirm-restart'],platform);
+    if(args.action==='rollback')return rollbackIndex(stateRoot,!!args['confirm-rollback'],platform);
+    fail('INVALID_ARGUMENT','Use index --action list, plan, apply or rollback.',undefined,20);
   }
   if(command==='folders'){
     if(args.action==='list')return listRoots(sourceRoot,stateRoot,platform);
